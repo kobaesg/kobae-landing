@@ -25,23 +25,26 @@ A modern, animated landing page for Kobae - where your circles meet. Built with 
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - npm, yarn, pnpm, or bun
 
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/kobaesg/kobae-landing.git
 cd kobae-landing
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 ```
 
 3. Run the development server:
+
 ```bash
 npm run dev
 ```

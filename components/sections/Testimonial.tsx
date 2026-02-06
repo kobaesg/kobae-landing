@@ -1,48 +1,81 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Quote } from "lucide-react";
+import Image from "next/image";
+import Xarrow from "react-xarrows";
 
 export function Testimonial() {
     return (
-        <section className="py-24 px-6 bg-muted/30">
-            <div className="container mx-auto max-w-6xl">
-                <div className="grid md:grid-cols-2 gap-12 items-center">
+        <section className="relative py-24 px-6 lg:px-48 bg-background min-h-[1021px] flex items-center">
+            <div className="container mx-auto max-w-7xl">
+                <div className="grid md:grid-cols-2 gap-16 items-center">
                     {/* Quote */}
                     <motion.div
                         initial={{ opacity: 0, x: -30 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true, margin: "-100px" }}
                         transition={{ duration: 0.6 }}
-                        className="relative"
+                        className="relative text-right pr-12"
                     >
-                        <Quote className="w-12 h-12 text-primary/20 absolute -top-14 -left-4" />
-                        <blockquote className="text-2xl md:text-3xl font-medium leading-relaxed">
-                            &ldquo;Kobae has changed my weekends. I have made
-                            life-long friends through this app.&rdquo;
+                        <blockquote className="text-3xl lg:text-[35px] font-normal leading-tight lg:leading-[44px]">
+                            &ldquo;Kobae{" "}
+                            <span className="font-semibold">
+                                transformed my weekends.
+                            </span>{" "}
+                            Through this app, I finally{" "}
+                            <span className="font-semibold">
+                                found my people!
+                            </span>
+                            &rdquo;
                         </blockquote>
-                        <div className="mt-6">
-                            <p className="font-semibold">Si Min + Ryan</p>
-                            <p className="text-sm text-muted-foreground">
-                                Kobae Members
-                            </p>
+                        <div className="mt-5 text-2xl font-normal leading-9 text-[#453933]">
+                            <p>Si Min, member since 2026.</p>
                         </div>
                     </motion.div>
 
-                    {/* Image */}
+                    {/* Polaroid Image */}
                     <motion.div
-                        initial={{ opacity: 0, x: 30 }}
-                        whileInView={{ opacity: 1, x: 0 }}
+                        initial={{ opacity: 0, rotate: 0 }}
+                        whileInView={{ opacity: 1, rotate: 16.48 }}
                         viewport={{ once: true, margin: "-100px" }}
-                        transition={{ duration: 0.6, delay: 0.2 }}
-                        className="relative"
+                        transition={{ duration: 0.8, delay: 0.2 }}
+                        className="relative flex justify-end items-center h-full pr-8"
                     >
-                        <div className="aspect-[4/3] bg-muted rounded-3xl flex items-center justify-center border border-border rotate-3 hover:rotate-0 transition-transform duration-300">
-                            <span className="text-muted-foreground">
-                                Image of Friends
-                            </span>
+                        <div
+                            id="testimonial-image"
+                            className="relative w-full aspect-[416/661] max-w-[600px]"
+                        >
+                            {/* Polaroid frame */}
+                            <div className="absolute inset-0 bg-white rounded-lg shadow-2xl p-6 pb-24">
+                                <div className="relative w-full h-full">
+                                    <Image
+                                        src="/resources/middle-4.png"
+                                        alt="Si Min & Her Friends"
+                                        fill
+                                        className="object-cover object-center -rotate-16"
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </motion.div>
+                </div>
+
+                {/* Arrow from step 3 to testimonial - only visible on desktop */}
+                <div className="hidden lg:block">
+                    <Xarrow
+                        start="step3-image"
+                        end="testimonial-image"
+                        color="#D71212"
+                        strokeWidth={3}
+                        curveness={0.6}
+                        startAnchor="bottom"
+                        endAnchor={{
+                            position: "top",
+                            offset: { x: -100, y: 0 },
+                        }}
+                        path="smooth"
+                        showHead={false}
+                    />
                 </div>
             </div>
         </section>
