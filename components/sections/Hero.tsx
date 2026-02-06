@@ -2,18 +2,19 @@
 
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 export function Hero() {
     return (
-        <section className="relative min-h-screen flex items-center justify-center px-6 py-32 overflow-hidden">
-            <div className="container mx-auto max-w-6xl relative z-10">
+        <section className="relative min-h-[1046px] flex items-center justify-center px-6 pt-32 pb-16 overflow-hidden bg-background">
+            <div className="container mx-auto max-w-4xl relative z-10">
                 <div className="flex flex-col items-center text-center">
                     {/* Tagline */}
                     <motion.h1
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 0.2 }}
-                        className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight max-w-3xl"
+                        className="text-5xl md:text-6xl lg:text-[68px] font-normal leading-tight lg:leading-[71px] tracking-tight max-w-3xl"
                     >
                         Kobae is where your circles meet.
                     </motion.h1>
@@ -23,11 +24,10 @@ export function Hero() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 0.4 }}
-                        className="mt-6 text-lg text-muted-foreground max-w-xl"
+                        className="mt-6 text-2xl font-normal leading-9 text-[#453933] max-w-2xl"
                     >
-                        Short introduction to kobae. Short introduction to
-                        kobae. Short introduction to kobae. Short introduction
-                        to kobae.
+                        Meet people through mutual friends and shared interests,
+                        and show up to real-world experiences together.
                     </motion.p>
 
                     {/* CTA Button */}
@@ -37,68 +37,84 @@ export function Hero() {
                         transition={{ duration: 0.6, delay: 0.6 }}
                         className="mt-8"
                     >
-                        <Button size="lg" className="px-8">
-                            Get Started
+                        <Button
+                            size="lg"
+                            className="bg-primary hover:bg-primary/90 text-white font-semibold text-lg rounded-[32px] h-16 px-8 shadow-[0px_0px_10px_0px_rgba(255,144,97,0.8)]"
+                        >
+                            Sign Up
                         </Button>
                     </motion.div>
                 </div>
             </div>
 
-            {/* Floating Hero Images - Scattered around the page */}
+            {/* Floating Hero Images - Positioned as in Figma */}
             <div className="absolute inset-0 pointer-events-none">
-                {/* Top Left - Small Square */}
+                {/* Bottom Left - Large Rectangle */}
                 <motion.div
-                    initial={{ opacity: 0, scale: 0.8 }}
+                    initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.8, delay: 0.3 }}
-                    className="absolute top-20 left-8 md:left-16 lg:left-32 w-28 h-28 md:w-32 md:h-32 lg:w-40 lg:h-40"
+                    className="absolute bottom-[50px] left-[148px] w-[356px] h-[237px] hidden lg:block"
                 >
-                    <div className="w-full h-full bg-muted rounded-2xl flex items-center justify-center border border-border">
-                        <span className="text-xs text-muted-foreground">
-                            Hero Image
-                        </span>
+                    <div className="relative w-full h-full rounded-2xl overflow-hidden">
+                        <Image
+                            src="/resources/top-3.png"
+                            alt=""
+                            fill
+                            className="object-cover"
+                        />
                     </div>
                 </motion.div>
 
-                {/* Top Right - Small Square */}
+                {/* Top Right - Small Rectangle */}
                 <motion.div
-                    initial={{ opacity: 0, scale: 0.8 }}
+                    initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.8, delay: 0.5 }}
-                    className="absolute top-20 right-8 md:right-16 lg:right-32 w-28 h-28 md:w-32 md:h-32 lg:w-40 lg:h-40"
+                    className="absolute top-[185px] right-[113px] w-[262px] h-[175px] hidden lg:block"
                 >
-                    <div className="w-full h-full bg-muted rounded-2xl flex items-center justify-center border border-border">
-                        <span className="text-xs text-muted-foreground">
-                            Hero Image
-                        </span>
+                    <div className="relative w-full h-full rounded-2xl overflow-hidden">
+                        <Image
+                            src="/resources/top-2.png"
+                            alt=""
+                            fill
+                            className="object-cover"
+                        />
                     </div>
                 </motion.div>
 
-                {/* Middle Left - Vertical Rectangle */}
+                {/* Bottom Right - Rectangle rotated */}
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.8, delay: 0.7 }}
+                    className="absolute bottom-[130px] right-[119px] w-[301px] h-[201px] hidden lg:block"
+                    style={{ transform: "rotate(180deg) scaleY(-1)" }}
+                >
+                    <div className="relative w-full h-full rounded-2xl overflow-hidden">
+                        <Image
+                            src="/resources/top-4.png"
+                            alt=""
+                            fill
+                            className="object-cover"
+                        />
+                    </div>
+                </motion.div>
+
+                {/* Top Left - Vertical Rectangle */}
                 <motion.div
                     initial={{ opacity: 0, x: -30 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.8, delay: 0.7 }}
-                    className="absolute top-1/2 -translate-y-1/2 left-4 md:left-8 lg:left-16 w-24 h-40 md:w-32 md:h-52 lg:w-36 lg:h-56"
-                >
-                    <div className="w-full h-full bg-muted rounded-2xl flex items-center justify-center border border-border">
-                        <span className="text-xs text-muted-foreground">
-                            Hero Image
-                        </span>
-                    </div>
-                </motion.div>
-
-                {/* Bottom Right - Vertical Rectangle */}
-                <motion.div
-                    initial={{ opacity: 0, x: 30 }}
-                    animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.8, delay: 0.9 }}
-                    className="absolute bottom-32 md:bottom-24 right-4 md:right-8 lg:right-16 w-24 h-40 md:w-32 md:h-48 lg:w-36 lg:h-52"
+                    className="absolute top-[172px] left-[154px] w-[166px] h-[201px] hidden lg:block"
                 >
-                    <div className="w-full h-full bg-muted rounded-2xl flex items-center justify-center border border-border">
-                        <span className="text-xs text-muted-foreground">
-                            Hero Image
-                        </span>
+                    <div className="relative w-full h-full rounded-2xl overflow-hidden">
+                        <Image
+                            src="/resources/top-1.png"
+                            alt=""
+                            fill
+                            className="object-cover"
+                        />
                     </div>
                 </motion.div>
             </div>

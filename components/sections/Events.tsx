@@ -6,37 +6,33 @@ import { Button } from "@/components/ui/button";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import { useCallback } from "react";
+import Image from "next/image";
 
 const events = [
     {
         id: 1,
         title: "Pickleball Fridays",
-        image: "Image of Event",
+        image: "/resources/carousell-1.png",
     },
     {
         id: 2,
-        title: "Metal Jewellery Workshop",
-        image: "Image",
+        title: "Snorkeling Class at Bali",
+        image: "/resources/carousell-2.png",
     },
     {
         id: 3,
-        title: "Coffee Runs",
-        image: "Image",
+        title: "CBD Coffee Runs",
+        image: "/resources/carousell-3.png",
     },
     {
         id: 4,
-        title: "Trip to Bali",
-        image: "Image",
+        title: "Golden Hour Run Club",
+        image: "/resources/carousell-4.png",
     },
     {
         id: 5,
-        title: "Book Club Meetup",
-        image: "Image",
-    },
-    {
-        id: 6,
-        title: "Hiking Adventure",
-        image: "Image",
+        title: "Beginner Golf Course",
+        image: "/resources/carousell-5.png",
     },
 ];
 
@@ -55,22 +51,22 @@ export function Events() {
     }, [emblaApi]);
 
     return (
-        <section className="py-24 px-6">
-            <div className="container mx-auto max-w-6xl">
+        <section className="relative py-32 px-6 lg:px-32 bg-[#8c4121] overflow-hidden min-h-[1033px]">
+            <div className="container mx-auto max-w-7xl">
                 {/* Section Header */}
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-100px" }}
                     transition={{ duration: 0.6 }}
-                    className="text-center mb-12"
+                    className="text-center mb-16"
                 >
-                    <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
+                    <h2 className="text-4xl md:text-5xl lg:text-[56px] font-normal leading-tight lg:leading-[64px] text-white">
                         Who said networking has to be boring?
                     </h2>
-                    <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-                        Kobae makes it easy for you to have genuine connections
-                        with like-minded individuals.
+                    <p className="mt-6 text-2xl font-normal leading-9 text-white">
+                        From casual coffee runs to creative workshops, Kobae
+                        helps you find people to show up with.
                     </p>
                 </motion.div>
 
@@ -83,20 +79,23 @@ export function Events() {
                     className="relative"
                 >
                     <div className="overflow-hidden" ref={emblaRef}>
-                        <div className="flex -ml-6">
+                        <div className="flex gap-14">
                             {events.map((event) => (
                                 <div
                                     key={event.id}
-                                    className="flex-[0_0_auto] min-w-0 pl-6"
-                                    style={{ flexBasis: "280px" }}
+                                    className="flex-[0_0_auto] min-w-0"
+                                    style={{ flexBasis: "300px" }}
                                 >
                                     <div className="group cursor-pointer">
-                                        <div className="aspect-[3/4] bg-muted rounded-2xl flex items-center justify-center border border-border group-hover:border-primary/50 transition-colors overflow-hidden">
-                                            <span className="text-muted-foreground">
-                                                {event.image}
-                                            </span>
+                                        <div className="relative w-[300px] h-[400px] rounded-2xl overflow-hidden">
+                                            <Image
+                                                src={event.image}
+                                                alt={event.title}
+                                                fill
+                                                className="object-cover"
+                                            />
                                         </div>
-                                        <h3 className="mt-4 font-medium text-center">
+                                        <h3 className="mt-3 text-white font-semibold text-base leading-6">
                                             {event.title}
                                         </h3>
                                     </div>
@@ -106,23 +105,21 @@ export function Events() {
                     </div>
 
                     {/* Navigation Arrows */}
-                    <div className="flex items-center justify-center gap-4 mt-8">
-                        <Button
-                            variant="outline"
-                            size="icon"
-                            className="rounded-full"
+                    <div className="flex items-center justify-end gap-6 mt-12 pr-8">
+                        <button
+                            className="w-14 h-14 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
                             onClick={scrollPrev}
+                            aria-label="Previous"
                         >
-                            <ChevronLeft className="w-5 h-5" />
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="icon"
-                            className="rounded-full"
+                            <ChevronLeft className="w-6 h-6 text-white" />
+                        </button>
+                        <button
+                            className="w-14 h-14 rounded-full bg-white hover:bg-white/90 flex items-center justify-center transition-colors"
                             onClick={scrollNext}
+                            aria-label="Next"
                         >
-                            <ChevronRight className="w-5 h-5" />
-                        </Button>
+                            <ChevronRight className="w-6 h-6 text-[#8c4121]" />
+                        </button>
                     </div>
                 </motion.div>
             </div>

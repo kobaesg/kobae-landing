@@ -4,8 +4,8 @@ import { motion } from "framer-motion";
 
 export function About() {
     return (
-        <section id="our-story" className="py-24 px-6 bg-muted/30">
-            <div className="container mx-auto max-w-4xl">
+        <section id="about" className="py-32 px-6 lg:px-64 bg-background">
+            <div className="container mx-auto max-w-5xl">
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -13,14 +13,12 @@ export function About() {
                     transition={{ duration: 0.6 }}
                     className="text-center"
                 >
-                    <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
-                        Statement about Kobae and why it&apos;s revolutionary
+                    <h2 className="text-4xl md:text-5xl lg:text-[56px] font-normal leading-tight lg:leading-[64px] tracking-tight">
+                        Connection shouldn't feel transactional.
                     </h2>
-                    <p className="mt-6 text-lg text-muted-foreground max-w-2xl mx-auto">
-                        We believe that meaningful connections shouldn&apos;t be
-                        left to chance. Kobae brings together like-minded
-                        individuals who share your passions, interests, and
-                        goals.
+                    <p className="mt-5 text-2xl font-normal leading-9 text-[#453933] max-w-xl mx-auto">
+                        We believe meaningful connections happen naturally, when
+                        there's shared context and a reason to show up.
                     </p>
                 </motion.div>
             </div>
