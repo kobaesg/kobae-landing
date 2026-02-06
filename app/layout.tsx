@@ -16,6 +16,9 @@ export const metadata: Metadata = {
     title: "Kobae - Where Your Circles Meet",
     description:
         "Meet people through mutual friends and shared interests, and show up to real-world experiences together.",
+    icons: {
+        icon: "/resources/thumbnail.png",
+    },
 };
 
 export default function RootLayout({

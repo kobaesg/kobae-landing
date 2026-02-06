@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import Xarrow from "react-xarrows";
 
 const steps = [
     {
@@ -26,30 +27,12 @@ export function HowItWorks() {
     return (
         <section
             id="how-it-works"
-            className="relative overflow-hidden bg-[#f8f7f6] py-32 px-6 lg:px-64"
+            className="relative bg-[#f8f7f6] py-32 px-6 lg:px-64"
         >
-            {/* Red String Background SVG */}
-            <div className="pointer-events-none absolute left-0 top-0 h-full w-full opacity-80">
-                <svg
-                    viewBox="0 0 1530 2472"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="absolute left-[-80px] top-[-199px] h-[2472px] w-[1530px]"
-                    preserveAspectRatio="xMidYMid meet"
-                >
-                    <path
-                        d="M 100 300 Q 400 400, 700 500 T 1200 800 Q 900 1000, 600 1200 T 300 1500 Q 600 1700, 900 1900"
-                        stroke="#e74c3c"
-                        strokeWidth="3"
-                        fill="none"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        opacity="0.6"
-                    />
-                </svg>
-            </div>
+            {/* Invisible anchor point at top-left of section */}
+            <div id="section-top" className="absolute left-1 top-0" />
 
-            <div className="container relative z-10 mx-auto max-w-6xl">
+            <div className="container relative mx-auto max-w-6xl">
                 {/* Section Title */}
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
@@ -64,16 +47,19 @@ export function HowItWorks() {
                 </motion.div>
 
                 {/* Steps */}
-                <div className="mx-auto flex max-w-5xl flex-col gap-32">
+                <div className="relative mx-auto flex max-w-5xl flex-col gap-32">
                     {/* Step 1 */}
                     <motion.div
                         initial={{ opacity: 0, x: -50 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true, margin: "-50px" }}
                         transition={{ duration: 0.6 }}
-                        className="flex flex-col items-center gap-14 md:flex-row"
+                        className="relative z-10 flex flex-col items-center gap-14 md:flex-row"
                     >
-                        <div className="relative h-[316px] w-full flex-shrink-0 overflow-hidden rounded-2xl md:w-[316px]">
+                        <div
+                            id="step1-image"
+                            className="relative h-[316px] w-full flex-shrink-0 overflow-hidden rounded-2xl md:w-[316px]"
+                        >
                             <Image
                                 src={steps[0].image}
                                 alt={steps[0].title}
@@ -98,9 +84,12 @@ export function HowItWorks() {
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true, margin: "-50px" }}
                         transition={{ duration: 0.6 }}
-                        className="flex flex-col items-center gap-14 md:flex-row-reverse"
+                        className="relative z-10 flex flex-col items-center gap-14 md:flex-row-reverse"
                     >
-                        <div className="relative h-[316px] w-full flex-shrink-0 overflow-hidden rounded-2xl md:w-[316px]">
+                        <div
+                            id="step2-image"
+                            className="relative h-[316px] w-full flex-shrink-0 overflow-hidden rounded-2xl md:w-[316px]"
+                        >
                             <Image
                                 src={steps[1].image}
                                 alt={steps[1].title}
@@ -125,9 +114,12 @@ export function HowItWorks() {
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true, margin: "-50px" }}
                         transition={{ duration: 0.6 }}
-                        className="flex flex-col items-center gap-14 md:flex-row"
+                        className="relative z-10 flex flex-col items-center gap-14 md:flex-row"
                     >
-                        <div className="relative h-[316px] w-full flex-shrink-0 overflow-hidden rounded-2xl md:w-[316px]">
+                        <div
+                            id="step3-image"
+                            className="relative h-[316px] w-full flex-shrink-0 overflow-hidden rounded-2xl md:w-[316px]"
+                        >
                             <Image
                                 src={steps[2].image}
                                 alt={steps[2].title}
@@ -145,6 +137,46 @@ export function HowItWorks() {
                             </p>
                         </div>
                     </motion.div>
+
+                    {/* Arrows connecting the images - only visible on desktop */}
+                    <div className="hidden lg:block">
+                        {/* Arrow from top-left of section to left middle of first image */}
+                        <Xarrow
+                            start="section-top"
+                            end="step1-image"
+                            color="#D71212"
+                            strokeWidth={3}
+                            curveness={0.8}
+                            startAnchor="right"
+                            endAnchor="left"
+                            path="smooth"
+                            showHead={false}
+                        />
+                        {/* Arrow from first to second image */}
+                        <Xarrow
+                            start="step1-image"
+                            end="step2-image"
+                            color="#D71212"
+                            strokeWidth={3}
+                            curveness={0.8}
+                            startAnchor="bottom"
+                            endAnchor="top"
+                            path="smooth"
+                            showHead={false}
+                        />
+                        {/* Arrow from second to third image */}
+                        <Xarrow
+                            start="step2-image"
+                            end="step3-image"
+                            color="#D71212"
+                            strokeWidth={3}
+                            curveness={0.8}
+                            startAnchor="bottom"
+                            endAnchor="top"
+                            path="smooth"
+                            showHead={false}
+                        />
+                    </div>
                 </div>
             </div>
         </section>

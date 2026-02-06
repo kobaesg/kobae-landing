@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import Xarrow from "react-xarrows";
 
 export function Testimonial() {
     return (
@@ -14,7 +15,7 @@ export function Testimonial() {
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true, margin: "-100px" }}
                         transition={{ duration: 0.6 }}
-                        className="relative text-right"
+                        className="relative text-right pr-12"
                     >
                         <blockquote className="text-3xl lg:text-[35px] font-normal leading-tight lg:leading-[44px]">
                             &ldquo;Kobae{" "}
@@ -38,33 +39,43 @@ export function Testimonial() {
                         whileInView={{ opacity: 1, rotate: 16.48 }}
                         viewport={{ once: true, margin: "-100px" }}
                         transition={{ duration: 0.8, delay: 0.2 }}
-                        className="relative flex justify-center items-center"
+                        className="relative flex justify-end items-center h-full pr-8"
                     >
-                        <div className="relative w-[416px] h-[661px]">
+                        <div
+                            id="testimonial-image"
+                            className="relative w-full aspect-[416/661] max-w-[600px]"
+                        >
                             {/* Polaroid frame */}
                             <div className="absolute inset-0 bg-white rounded-lg shadow-2xl p-6 pb-24">
-                                <div className="relative w-full h-full rounded overflow-hidden">
+                                <div className="relative w-full h-full">
                                     <Image
                                         src="/resources/middle-4.png"
                                         alt="Si Min & Her Friends"
                                         fill
-                                        className="object-cover"
+                                        className="object-cover object-center -rotate-16"
                                     />
                                 </div>
                             </div>
-                            {/* Handwritten text */}
-                            <div
-                                className="absolute -bottom-8 right-0 transform rotate-[15deg]"
-                                style={{
-                                    fontFamily: "'Homemade Apple', cursive",
-                                }}
-                            >
-                                <p className="text-2xl leading-9 text-[#453933] whitespace-nowrap">
-                                    Si Min & Her Friends
-                                </p>
-                            </div>
                         </div>
                     </motion.div>
+                </div>
+
+                {/* Arrow from step 3 to testimonial - only visible on desktop */}
+                <div className="hidden lg:block">
+                    <Xarrow
+                        start="step3-image"
+                        end="testimonial-image"
+                        color="#D71212"
+                        strokeWidth={3}
+                        curveness={0.6}
+                        startAnchor="bottom"
+                        endAnchor={{
+                            position: "top",
+                            offset: { x: -100, y: 0 },
+                        }}
+                        path="smooth"
+                        showHead={false}
+                    />
                 </div>
             </div>
         </section>

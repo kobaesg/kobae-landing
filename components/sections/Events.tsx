@@ -38,7 +38,12 @@ const events = [
 
 export function Events() {
     const [emblaRef, emblaApi] = useEmblaCarousel(
-        { loop: true, align: "start", slidesToScroll: 1 },
+        {
+            loop: true,
+            align: "start",
+            slidesToScroll: 1,
+            containScroll: "trimSnaps",
+        },
         [Autoplay({ delay: 4000, stopOnInteraction: false })],
     );
 
@@ -79,15 +84,14 @@ export function Events() {
                     className="relative"
                 >
                     <div className="overflow-hidden" ref={emblaRef}>
-                        <div className="flex gap-14">
+                        <div className="flex gap-11">
                             {events.map((event) => (
                                 <div
                                     key={event.id}
-                                    className="flex-[0_0_auto] min-w-0"
-                                    style={{ flexBasis: "300px" }}
+                                    className="flex-[0_0_auto] min-w-0 w-[300px]"
                                 >
                                     <div className="group cursor-pointer">
-                                        <div className="relative w-[300px] h-[400px] rounded-2xl overflow-hidden">
+                                        <div className="relative w-full h-[400px] rounded-2xl overflow-hidden">
                                             <Image
                                                 src={event.image}
                                                 alt={event.title}
