@@ -53,14 +53,14 @@ export function Footer() {
                             Privacy Policy
                         </a>
                     </nav>
-
+         
                     {/* Auth Buttons */}
     
-
+            
                 {/* Social Links */}
                 <div className="flex items-center justify-end gap-3 pt-4">
                     <a
-                        href="https://instagram.com"
+                        href="https://instagram.com/kobaeapp"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-foreground hover:text-primary transition-colors"
@@ -69,7 +69,7 @@ export function Footer() {
                         <Instagram className="w-6 h-6" />
                     </a>
                     <a
-                        href="https://linkedin.com"
+                        href="https://linkedin.com/company/kobae/"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-foreground hover:text-primary transition-colors"
@@ -79,6 +79,7 @@ export function Footer() {
                     </a>
                 </div>
             </div>
+        </div>
         </footer>
     );
 }
