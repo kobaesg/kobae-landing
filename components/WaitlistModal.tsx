@@ -1,15 +1,6 @@
 "use client";
 import { useState } from "react";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 interface WaitlistModalProps {
     open: boolean;
@@ -27,7 +18,6 @@ export function WaitlistModal({ open, onOpenChange }: WaitlistModalProps) {
         setIsSubmitting(true);
 
         try {
-            // Send to your API endpoint
             const response = await fetch("/api/waitlist", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -50,47 +40,68 @@ export function WaitlistModal({ open, onOpenChange }: WaitlistModalProps) {
         }
     };
 
+    if (!open) return null;
+
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-md">
-                <DialogHeader>
-                    <DialogTitle className="text-2xl font-serif">Join the Waitlist</DialogTitle>
-                    <DialogDescription>
-                        Be the first to know when Kobae launches. We'll keep you updated!
-                    </DialogDescription>
-                </DialogHeader>
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+            {/* Backdrop */}
+            <div 
+                className="absolute inset-0 bg-black/50"
+                onClick={() => onOpenChange(false)}
+            />
+            
+            {/* Modal */}
+            <div className="relative bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4 z-10">
+                {/* Close button */}
+                <button
+                    onClick={() => onOpenChange(false)}
+                    className="absolute right-4 top-4 text-gray-400 hover:text-gray-600"
+                >
+                    ✕
+                </button>
+
+                <h2 className="text-2xl font-serif mb-2">Join the Waitlist</h2>
+                <p className="text-sm text-gray-600 mb-6">
+                    Be the first to know when Kobae launches. We'll keep you updated!
+                </p>
 
                 {isSuccess ? (
                     <div className="py-8 text-center">
                         <p className="text-lg font-semibold text-primary">
                             🎉 You're on the list!
                         </p>
-                        <p className="text-sm text-muted-foreground mt-2">
+                        <p className="text-sm text-gray-600 mt-2">
                             We'll be in touch soon.
                         </p>
                     </div>
                 ) : (
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
-                            <Label htmlFor="name">Name</Label>
-                            <Input
+                            <label htmlFor="name" className="block text-sm font-medium mb-1">
+                                Name
+                            </label>
+                            <input
                                 id="name"
                                 type="text"
                                 placeholder="Your name"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                                 required
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                             />
                         </div>
                         <div>
-                            <Label htmlFor="email">Email</Label>
-                            <Input
+                            <label htmlFor="email" className="block text-sm font-medium mb-1">
+                                Email
+                            </label>
+                            <input
                                 id="email"
                                 type="email"
                                 placeholder="you@example.com"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                             />
                         </div>
                         <Button
@@ -102,7 +113,7 @@ export function WaitlistModal({ open, onOpenChange }: WaitlistModalProps) {
                         </Button>
                     </form>
                 )}
-            </DialogContent>
-        </Dialog>
+            </div>
+        </div>
     );
 }
