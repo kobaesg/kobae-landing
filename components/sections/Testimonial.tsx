@@ -22,14 +22,14 @@ export function Testimonial() {
                             <span className="font-semibold">
                                 transformed my weekends.
                             </span>{" "}
-                            Through this app, I finally{" "}
+                            Through Kobae, I finally{" "}
                             <span className="font-semibold">
-                                found my people!
+                                really enjoyed the people I met!
                             </span>
                             &rdquo;
                         </blockquote>
                         <div className="mt-5 text-2xl font-normal leading-9 text-[#453933]">
-                            <p>Si Min, member since 2026.</p>
+                            <p>D, one of our first members.</p>
                         </div>
                     </motion.div>
 
