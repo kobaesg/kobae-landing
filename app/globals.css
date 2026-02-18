@@ -147,7 +147,7 @@
     
     @media (max-width: 768px) {
         html {
-            font-size: 14px; /* Smaller for mobile */
+            font-size: 12px; /* Smaller for mobile */
         }
     }
     
