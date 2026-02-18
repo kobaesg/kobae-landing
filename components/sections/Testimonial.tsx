@@ -18,7 +18,7 @@ export function Testimonial() {
                     >
                         <blockquote className="text-3xl lg:text-[35px] font-normal leading-tight lg:leading-[44px]">
                             &ldquo;
-                            Through Kobae, I finally{" "}
+                            Through Kobae, I actually{" "}
                             <span className="font-semibold">
                                 really enjoyed the people I met!
                             </span>
@@ -43,7 +43,7 @@ export function Testimonial() {
                             style={{ aspectRatio: '3/4' }}
                         >
                             {/* Polaroid frame */}
-                            <div className="absolute inset-0 bg-white rounded-lg shadow-2xl p-16 pb-36">
+                            <div className="absolute inset-0 bg-white rounded-lg shadow-2xl p-12 pb-32">
                                 <div className="relative w-full h-full">
                                     <Image
                                         src="/resources/middle-5.jpg"
@@ -52,6 +52,11 @@ export function Testimonial() {
                                         className="object-cover object-center"
                                         style={{ borderRadius: '4px' }}
                                     />
+                            </div>
+                                <div className="absolute bottom-4 left-0 right-0 text-center">
+                                    <p className="text-sm font-handwriting text-gray-600">
+                                        Night out of fellow Kobae people
+                                    </p>
                                 </div>
                             </div>
                         </div>
