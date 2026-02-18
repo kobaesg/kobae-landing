@@ -31,9 +31,8 @@ export function CTA() {
                     </motion.div>
                 </div>
             </section>
-
-            {/* ADD THIS - the modal */}
+            
             <WaitlistModal open={modalOpen} onOpenChange={setModalOpen} />
-        </>  {/* ADD THIS - closing fragment */}
+        </> 
     );
 }
