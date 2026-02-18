@@ -8,15 +8,12 @@ const steps = [
     {
         image: "/resources/middle-1.png",
         title: "People you should meet",
-        description: "Recommendations curated based on not just commonalities but
-                      natural social disposition",
+        description: "Recommendations curated based on not just commonalities but natural social disposition",
     },
     {
         image: "/resources/middle-2.png",
         title: "Conversations you would enjoy",
-        description:
-            "Skip the small talk and dive into conversation with ease 
-             through shared mutuals, interests or industry.",
+        description: "Skip the small talk and dive into conversation with ease through shared mutuals, interests or industry.",
     },
     {
         image: "/resources/middle-3.png",
