@@ -49,8 +49,8 @@ export function Testimonial() {
                             <div className="absolute inset-0 bg-white rounded-lg shadow-2xl p-6 pb-24">
                                 <div className="relative w-full h-full">
                                     <Image
-                                        src="/resources/middle-4.png"
-                                        alt="Si Min & Her Friends"
+                                        src="/resources/middle-5.jpg"
+                                        alt="Night Out of fellow Kobae People"
                                         fill
                                         className="object-cover object-center -rotate-16"
                                     />
