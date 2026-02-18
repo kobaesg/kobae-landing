@@ -33,32 +33,33 @@ export function Testimonial() {
                         </div>
                     </motion.div>
 
-                    {/* Polaroid Image */}
-                    <motion.div
-                        initial={{ opacity: 0, rotate: 0 }}
-                        whileInView={{ opacity: 1, rotate: 16.48 }}
-                        viewport={{ once: true, margin: "-100px" }}
-                        transition={{ duration: 0.8, delay: 0.2 }}
-                        className="relative flex justify-end items-center h-full pr-8"
-                    >
-                        <div
-                            id="testimonial-image"
-                            className="relative w-full aspect-[416/661] max-w-[600px]"
-                        >
-                            {/* Polaroid frame */}
-                            <div className="absolute inset-0 bg-white rounded-lg shadow-2xl p-6 pb-24">
-                                <div className="relative w-full h-full">
-                                    <Image
-                                        src="/resources/middle-5.jpg"
-                                        alt="Night Out of fellow Kobae People"
-                                        fill
-                                        className="object-cover object-center -rotate-16"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </motion.div>
-                </div>
+          {/* Polaroid Image */}
+            <motion.div
+            initial={{ opacity: 0, rotate: 0 }}
+            whileInView={{ opacity: 1, rotate: 6 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="relative flex justify-end items-center h-full pr-8"
+        >
+            <div
+                id="testimonial-image"
+                className="relative w-full max-w-[400px]"
+                style={{ aspectRatio: '3/4' }}
+            >
+                {/* Polaroid frame */}
+                <div className="absolute inset-0 bg-white rounded-lg shadow-2xl p-4 pb-16">
+                    <div className="relative w-full h-full">
+                        <Image
+                            src="/resources/middle-5.jpg"
+                            alt="Night Out of fellow Kobae People"
+                            fill
+                            className="object-cover object-center"
+                            style={{ borderRadius: '4px' }}
+                />
+            </div>
+        </div>
+    </div>
+</motion.div>
 
                 {/* Arrow from step 3 to testimonial - only visible on desktop */}
                 <div className="hidden lg:block">
