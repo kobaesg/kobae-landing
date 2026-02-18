@@ -7,19 +7,21 @@ import Xarrow from "react-xarrows";
 const steps = [
     {
         image: "/resources/middle-1.png",
-        title: "Curated daily connections",
-        description: "Receive a thoughtful match based on shared interests.",
+        title: "People you should meet",
+        description: "Recommendations curated based on not just commonalities but
+                      natural social disposition",
     },
     {
         image: "/resources/middle-2.png",
-        title: "Chat about your interests",
+        title: "Conversations you would enjoy",
         description:
-            "Skip the small talk and start conversations with real substance.",
+            "Skip the small talk and dive into conversation with ease 
+             through shared mutuals, interests or industry.",
     },
     {
         image: "/resources/middle-3.png",
-        title: "Make it real",
-        description: "Turn online connection into shared experiences.",
+        title: "Build up genuine connections",
+        description: "Go offline and hang out with your new people",
     },
 ];
 
