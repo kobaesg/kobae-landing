@@ -42,7 +42,7 @@ export function Testimonial() {
                     >
                         <div
                             id="testimonial-image"
-                            className="relative w-full max-w-[400px]"
+                            className="relative w-full max-w-[280px]"
                             style={{ aspectRatio: '3/4' }}
                         >
                             {/* Polaroid frame */}
