@@ -29,9 +29,9 @@ export function Hero() {
                         transition={{ duration: 0.6, delay: 0.4 }}
                         className="mt-6 text-2xl font-normal leading-9 text-[#453933] max-w-2xl"
                     >
-                        Find your people 
-                        through interests & industries 
-                        existing but hidden in your circles
+                        Find your people and bring people together
+                        through shared interests & industries,
+                        hidden within your circles
                     </motion.p>
 
                     {/* CTA Button */}
