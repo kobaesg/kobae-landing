@@ -8,7 +8,7 @@ const steps = [
     {
         image: "/resources/middle-1.png",
         title: "People you should meet",
-        description: "Recommendations curated based on not just commonalities but natural social disposition",
+        description: "Recommendations curated based on not just commonalities but your natural social disposition",
     },
     {
         image: "/resources/middle-2.png",
@@ -18,7 +18,7 @@ const steps = [
     {
         image: "/resources/middle-3.png",
         title: "Build up genuine connections",
-        description: "Go offline and hang out with your new people",
+        description: "Go offline and simply hang out with your new people",
     },
 ];
 
@@ -41,7 +41,7 @@ export function HowItWorks() {
                     className="mb-24 text-center"
                 >
                     <h2 className="text-4xl font-normal italic leading-tight md:text-5xl lg:text-[56px] lg:leading-[64px]">
-                        3 Steps to Meaningful Connections
+                        Meaningful Connections as easy as 1 2 3
                     </h2>
                 </motion.div>
 
