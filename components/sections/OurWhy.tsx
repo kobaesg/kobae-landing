@@ -2,9 +2,9 @@
 
 import { motion } from "framer-motion";
 
-export function About() {
+export function OurWhy () {
     return (
-        <section id="about" className="py-32 px-6 lg:px-64 bg-background">
+        <section id="OurWhy" className="py-32 px-6 lg:px-64 bg-background">
             <div className="container mx-auto max-w-5xl">
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
