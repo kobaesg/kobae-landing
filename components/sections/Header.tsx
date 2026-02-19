@@ -24,11 +24,11 @@ export function Header() {
                     <a href="#" className="text-base font-semibold text-foreground hover:text-primary transition-colors">
                         Home
                     </a>
-                    <a href="#our-why" className="text-base font-semibold text-foreground hover:text-primary transition-colors">
-                        Our Why
-                    </a>
                      <a href="#how-it-works" className="text-base font-semibold text-foreground hover:text-primary transition-colors">
                         How It Works
+                    </a>
+                     <a href="#our-why" className="text-base font-semibold text-foreground hover:text-primary transition-colors">
+                        Our Why
                     </a>
                 </nav>
             </div>
