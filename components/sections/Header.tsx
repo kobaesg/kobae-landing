@@ -21,14 +21,14 @@ export function Header() {
                     />
                 </div>
                 <nav className="hidden md:flex items-center gap-12 absolute left-1/2 -translate-x-1/2">
-                    <a href="#about" className="text-base font-semibold text-foreground hover:text-primary transition-colors">
-                        About Us
+                    <a href="#" className="text-base font-semibold text-foreground hover:text-primary transition-colors">
+                        Home
                     </a>
                     <a href="#how-it-works" className="text-base font-semibold text-foreground hover:text-primary transition-colors">
                         How It Works
                     </a>
-                    <a href="#contact" className="text-base font-semibold text-foreground hover:text-primary transition-colors">
-                        Contact Us
+                    <a href="#our-why" className="text-base font-semibold text-foreground hover:text-primary transition-colors">
+                        Our Why
                     </a>
                 </nav>
             </div>
