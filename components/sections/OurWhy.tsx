@@ -20,6 +20,7 @@ export function OurWhy () {
                         Kobae's origin lies in our belief that connection 
                         should be neither performative nor transactional. 
                         </br>
+                        </br>
                         The right people are hidden within our circles,
                         and through mutuals and data, find your people
                         that you should have uncovered, long ago. 
