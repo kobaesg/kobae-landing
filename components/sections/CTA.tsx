@@ -9,7 +9,7 @@ export function CTA() {
 
     return (
         <>  {/* ADD THIS - opening fragment */}
-            <section className="py-32 px-6 lg:px-64 bg-background">
+            <section className="py-32 px-6 lg:px-64 bg-white">
                 <div className="container mx-auto max-w-5xl">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
