@@ -29,10 +29,10 @@ export function Footer() {
                     {/* Navigation Links */}
                     <nav className="flex flex-col gap-1 text-base text-foreground">
                         <a
-                            href="#about"
+                            href="#"
                             className="hover:text-primary transition-colors leading-6"
                         >
-                            About Us
+                            Home
                         </a>
                         <a
                             href="#how-it-works"
@@ -41,10 +41,10 @@ export function Footer() {
                             How It Works
                         </a>
                         <a
-                            href="#contact"
+                            href="#our-why"
                             className="hover:text-primary transition-colors leading-6"
                         >
-                            Contact Us
+                            Our Why
                         </a>
                         <a
                             href="#privacy"
