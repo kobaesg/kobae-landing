@@ -6,20 +6,19 @@ import Xarrow from "react-xarrows";
 
 const steps = [
     {
-        image: "/resources/middle-1.png",
-        title: "Curated daily connections",
-        description: "Receive a thoughtful match based on shared interests.",
+        image: "/resources/middle-1.jpg",
+        title: "People you should meet",
+        description: "Recommendations curated based on not just commonalities but your natural social disposition",
     },
     {
         image: "/resources/middle-2.png",
-        title: "Chat about your interests",
-        description:
-            "Skip the small talk and start conversations with real substance.",
+        title: "Conversations you would enjoy",
+        description: "Skip the small talk and dive into conversation with ease through shared mutuals, interests or industry.",
     },
     {
         image: "/resources/middle-3.png",
-        title: "Make it real",
-        description: "Turn online connection into shared experiences.",
+        title: "Build up genuine connections",
+        description: "Go offline and simply hang out with your new people",
     },
 ];
 
@@ -42,7 +41,7 @@ export function HowItWorks() {
                     className="mb-24 text-center"
                 >
                     <h2 className="text-4xl font-normal italic leading-tight md:text-5xl lg:text-[56px] lg:leading-[64px]">
-                        3 Steps to Meaningful Connections
+                        Meaningful Connections as easy as 1 2 3
                     </h2>
                 </motion.div>
 

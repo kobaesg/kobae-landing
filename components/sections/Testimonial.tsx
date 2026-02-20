@@ -1,5 +1,4 @@
 "use client";
-
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Xarrow from "react-xarrows";
@@ -18,47 +17,51 @@ export function Testimonial() {
                         className="relative text-right pr-12"
                     >
                         <blockquote className="text-3xl lg:text-[35px] font-normal leading-tight lg:leading-[44px]">
-                            &ldquo;Kobae{" "}
+                            &ldquo;
+                            Through Kobae, I actually{" "}
                             <span className="font-semibold">
-                                transformed my weekends.
-                            </span>{" "}
-                            Through this app, I finally{" "}
-                            <span className="font-semibold">
-                                found my people!
+                                really enjoyed the people I met!
                             </span>
                             &rdquo;
                         </blockquote>
                         <div className="mt-5 text-2xl font-normal leading-9 text-[#453933]">
-                            <p>Si Min, member since 2026.</p>
+                            <p>D, one of our first members.</p>
                         </div>
                     </motion.div>
 
                     {/* Polaroid Image */}
                     <motion.div
                         initial={{ opacity: 0, rotate: 0 }}
-                        whileInView={{ opacity: 1, rotate: 16.48 }}
+                        whileInView={{ opacity: 1, rotate: 6 }}
                         viewport={{ once: true, margin: "-100px" }}
                         transition={{ duration: 0.8, delay: 0.2 }}
                         className="relative flex justify-end items-center h-full pr-8"
                     >
                         <div
                             id="testimonial-image"
-                            className="relative w-full aspect-[416/661] max-w-[600px]"
+                            className="relative w-full max-w-[400px]"
+                            style={{ aspectRatio: '3/4' }}
                         >
                             {/* Polaroid frame */}
-                            <div className="absolute inset-0 bg-white rounded-lg shadow-2xl p-6 pb-24">
+                            <div className="absolute inset-0 bg-white rounded-lg shadow-2xl p-12 pb-32">
                                 <div className="relative w-full h-full">
                                     <Image
-                                        src="/resources/middle-4.png"
-                                        alt="Si Min & Her Friends"
+                                        src="/resources/middle-5.jpg"
+                                        alt="Night Out of fellow Kobae People"
                                         fill
-                                        className="object-cover object-center -rotate-16"
+                                        className="object-cover object-center"
+                                        style={{ borderRadius: '4px' }}
                                     />
+                            </div>
+                                <div className="absolute bottom-4 left-0 right-0 text-center">
+                                    <p className="text-sm font-handwriting text-gray-600">
+                                        Night out of fellow Kobae people
+                                    </p>
                                 </div>
                             </div>
                         </div>
                     </motion.div>
-                </div>
+                </div> {/* ADD THIS - closes the grid */}
 
                 {/* Arrow from step 3 to testimonial - only visible on desktop */}
                 <div className="hidden lg:block">

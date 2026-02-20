@@ -138,9 +138,25 @@
     * {
         @apply border-border outline-ring/50;
     }
+    
+    html {
+        font-size: 14px; /* Desktop default */
+        overflow-x: hidden;  
+        max-width: 100vw;    
+    }
+    
+    @media (max-width: 768px) {
+        html {
+            font-size: 12px; /* Smaller for mobile */
+        }
+    }
+    
     body {
         @apply bg-background text-foreground font-sans;
+        overflow-x: hidden; 
+        max-width: 100vw;   
     }
+    
     h1,
     h2,
     h3,
@@ -150,3 +166,4 @@
         @apply font-serif;
     }
 }
+
