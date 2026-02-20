@@ -6,7 +6,7 @@ import Xarrow from "react-xarrows";
 
 const steps = [
     {
-        image: "/resources/middle-1.png",
+        image: "/resources/middle-1.jpg",
         title: "People you should meet",
         description: "Recommendations curated based on not just commonalities but your natural social disposition",
     },
