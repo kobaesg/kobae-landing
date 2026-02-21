@@ -11,22 +11,22 @@ import Image from "next/image";
 const events = [
     {
         id: 1,
-        title: "Pickleball Challenges",
+        title: "Pickleball at Tanglin",
         image: "/resources/pickle-ball.jpg",
     },
     {
         id: 2,
-        title: "Snorkeling Class at Bali",
-        image: "/resources/carousell-2.png",
+        title: "Scuba Diving in Nusa Penida",
+        image: "/resources/scuba.jpg",
     },
     {
         id: 3,
-        title: "Curious Coffee Chats",
-        image: "/resources/carousell-3.png",
+        title: "Caffeine Discovery in HK",
+        image: "/resources/coffee-chat.jpg",
     },
     {
         id: 4,
-        title: "CBD Runs",
+        title: "SG CBD Runs",
         image: "/resources/cbd-run.jpg",
     },
     {
