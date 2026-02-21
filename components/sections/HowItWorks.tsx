@@ -16,7 +16,7 @@ const steps = [
         description: "Skip the small talk and dive into conversation with ease through shared mutuals, interests or industry.",
     },
     {
-        image: "/resources/middle-3.png",
+        image: "/resources/genuine-connection.JPG",
         title: "Build up genuine connections",
         description: "Go offline and simply hang out with your new people",
     },
