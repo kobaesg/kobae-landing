@@ -18,14 +18,14 @@ export function Testimonial() {
                     >
                         <blockquote className="text-3xl lg:text-[35px] font-normal leading-tight lg:leading-[44px]">
                             &ldquo;
-                            Through Kobae, I actually{" "}
+                            I enjoyed ... the people curation,{" "}
                             <span className="font-semibold">
-                                really enjoyed the people I met!
+                                it unexpectedly worked out really well!
                             </span>
                             &rdquo;
                         </blockquote>
                         <div className="mt-5 text-2xl font-normal leading-9 text-[#453933]">
-                            <p>D, one of our first members.</p>
+                            <p>N, one of our first members.</p>
                         </div>
                     </motion.div>
 
