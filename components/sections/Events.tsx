@@ -11,8 +11,8 @@ import Image from "next/image";
 const events = [
     {
         id: 1,
-        title: "Pickleball Fridays",
-        image: "/resources/carousell-1.png",
+        title: "Pickleball Challenges",
+        image: "/resources/pickle-ball.jpg",
     },
     {
         id: 2,
@@ -21,13 +21,13 @@ const events = [
     },
     {
         id: 3,
-        title: "CBD Coffee Runs",
+        title: "Curious Coffee Chats",
         image: "/resources/carousell-3.png",
     },
     {
         id: 4,
-        title: "Golden Hour Run Club",
-        image: "/resources/carousell-4.png",
+        title: "CBD Runs",
+        image: "/resources/cbd-run.jpg",
     },
     {
         id: 5,
