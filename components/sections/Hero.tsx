@@ -1,14 +1,10 @@
 "use client";
-import { useState } from "react";
-import { WaitlistModal } from "@/components/WaitlistModal";
-import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 
 export function Hero() {
-     const [modalOpen, setModalOpen] = useState(false);
     return (
-         <>
         <section className="relative min-h-[calc(100vh-6rem)] lg:min-h-[1046px] flex items-center justify-center px-6 pt-24 md:pt-32 pb-16 overflow-hidden bg-background">
             <div className="container mx-auto max-w-4xl relative z-10">
                 <div className="flex flex-col items-center text-center">
@@ -33,20 +29,25 @@ export function Hero() {
                         built on identity, interests and industries.
                     </motion.p>
 
-                    {/* CTA Button */}
+                    {/* CTA Buttons */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 0.6 }}
-                        className="mt-8"
+                        className="mt-8 flex items-center gap-4"
                     >
-                        <Button
-                            size="lg"
-                            onClick={() => setModalOpen(true)} 
-                            className="bg-primary hover:bg-primary/90 text-white font-semibold text-lg rounded-[32px] h-16 px-8 shadow-[0px_0px_10px_0px_rgba(255,144,97,0.8)]"
+                        <Link
+                            href="/signup"
+                            className="bg-[var(--primary)] hover:bg-[var(--primary-400)] text-white font-semibold text-lg rounded-[32px] h-16 px-8 shadow-[0px_0px_10px_0px_rgba(255,144,97,0.8)] flex items-center justify-center transition-colors"
                         >
-                            Waitlist
-                        </Button>
+                            Sign Up
+                        </Link>
+                        <Link
+                            href="/login"
+                            className="border-2 border-[var(--primary-400)] text-[var(--primary-400)] hover:bg-[var(--primary)]/5 font-semibold text-lg rounded-[32px] h-16 px-8 flex items-center justify-center transition-colors"
+                        >
+                            Log In
+                        </Link>
                     </motion.div>
                 </div>
             </div>
@@ -123,8 +124,6 @@ export function Hero() {
                 </motion.div>
             </div>
         </section>
-         <WaitlistModal open={modalOpen} onOpenChange={setModalOpen} />
-              </>
     );
 }
 
