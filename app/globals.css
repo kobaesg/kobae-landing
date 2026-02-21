@@ -56,15 +56,23 @@
     /* Text colors */
     --foreground: #181412; /* colors/text/500 */
     --text-400: #453933; /* colors/text/400 */
+    --text-300: #715e55; /* colors/text/300 */
+    --text-200: #9b8479; /* colors/text/200 */
+    --text-100: #bcada6; /* colors/text/100 placeholder */
 
     /* Primary colors - Orange */
     --primary: #d8602e; /* colors/primary/300 */
     --primary-400: #b4532a; /* colors/primary/400 */
     --primary-500: #8c4121; /* colors/primary/500 */
     --primary-foreground: #ffffff; /* white */
+    --primary-alpha-50: rgba(180, 83, 42, 0.5); /* Disabled state */
+
+    /* Secondary */
+    --secondary-100: #c7b7ab; /* Scrollbar, subtle */
 
     /* Neutral */
     --neutral-100: #ffffff;
+    --neutral-200: #e8e8e8; /* Disabled text */
 
     /* Secondary, muted, accent - keeping minimal */
     --card: #ffffff;
