@@ -27,7 +27,7 @@ const events = [
     {
         id: 4,
         title: "SG CBD Runs",
-        image: "/resources/cbd-run.jpg",
+        image: "/resources/cbd-run.JPG",
     },
     {
         id: 5,
