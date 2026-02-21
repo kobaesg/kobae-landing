@@ -12,12 +12,12 @@ const events = [
     {
         id: 1,
         title: "Pickleball at Tanglin",
-        image: "/resources/pickle-ball.jpg",
+        image: "/resources/pickle-ball.JPG",
     },
     {
         id: 2,
         title: "Scuba Diving in Nusa Penida",
-        image: "/resources/scuba.jpg",
+        image: "/resources/scuba.JPG",
     },
     {
         id: 3,
@@ -31,8 +31,8 @@ const events = [
     },
     {
         id: 5,
-        title: "Beginner Golf Course",
-        image: "/resources/carousell-5.png",
+        title: "Cocktail Appreciation",
+        image: "/resources/cocktail.jpg",
     },
 ];
 
