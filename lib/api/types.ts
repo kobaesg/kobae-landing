@@ -48,6 +48,7 @@ export interface SignupRequest {
 
 export interface LoginRequest {
     identifier: string;
+    password: string;
 }
 
 export interface VerifyOTPRequest {
