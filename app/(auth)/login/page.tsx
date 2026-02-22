@@ -16,6 +16,9 @@ const loginSchema = z.object({
     identifier: z
         .string()
         .min(1, "Please enter your email or phone number"),
+    password: z
+        .string()
+        .min(8, "Password must be at least 8 characters"),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
@@ -40,6 +43,7 @@ export default function LoginPage() {
         try {
             const response = await login.mutateAsync({
                 identifier: data.identifier,
+                password: data.password,
             });
             // Login returns auth tokens directly
             const { access_token, refresh_token, user } = response.data;
@@ -48,13 +52,6 @@ export default function LoginPage() {
         } catch (err) {
             const axiosError = err as AxiosError<ApiError>;
             const errorMsg = axiosError.response?.data?.error?.message || "";
-            // If the backend sends an OTP (phone-based login), redirect to verify
-            if (errorMsg.includes("OTP") || axiosError.response?.status === 200) {
-                router.push(
-                    `/verify?phone=${encodeURIComponent(data.identifier)}&mode=login`
-                );
-                return;
-            }
             setServerError(errorMsg || "Something went wrong. Please try again.");
         }
     };
@@ -81,6 +78,15 @@ export default function LoginPage() {
                     autoComplete="username"
                     error={errors.identifier?.message}
                     {...register("identifier")}
+                />
+
+                <InputField
+                    label="Password"
+                    type="password"
+                    placeholder="Enter your password"
+                    autoComplete="current-password"
+                    error={errors.password?.message}
+                    {...register("password")}
                 />
 
                 {serverError && (
