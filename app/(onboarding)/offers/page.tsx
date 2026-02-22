@@ -6,6 +6,7 @@ import { OnboardingLayout, BottomButton } from "@/components/onboarding";
 import { useOnboardingGuard } from "@/lib/onboarding/guard";
 import { useUpdateOffers } from "@/lib/api/hooks";
 import { X, Plus } from "lucide-react";
+import { useOnboardingDraft } from "@/lib/onboarding/store";
 
 interface OfferEntry {
     title: string;
@@ -16,18 +17,23 @@ export default function OffersPage() {
     const router = useRouter();
     const { isReady } = useOnboardingGuard("intent_set");
     const updateOffers = useUpdateOffers();
+    const draft = useOnboardingDraft((s) => s.offers);
+    const setDraft = useOnboardingDraft((s) => s.setOffers);
+    const clearDraft = useOnboardingDraft((s) => s.clearOffers);
 
-    const [offers, setOffers] = useState<OfferEntry[]>([
-        { title: "", description: "" },
-    ]);
+    const [offers, setOffers] = useState<OfferEntry[]>(draft.offers);
 
     const handleAddOffer = () => {
         if (offers.length >= 5) return;
-        setOffers([...offers, { title: "", description: "" }]);
+        const next = [...offers, { title: "", description: "" }];
+        setOffers(next);
+        setDraft({ offers: next });
     };
 
     const handleRemoveOffer = (index: number) => {
-        setOffers(offers.filter((_, i) => i !== index));
+        const next = offers.filter((_, i) => i !== index);
+        setOffers(next);
+        setDraft({ offers: next });
     };
 
     const handleUpdateOffer = (
@@ -38,6 +44,7 @@ export default function OffersPage() {
         const updated = [...offers];
         updated[index] = { ...updated[index], [field]: value };
         setOffers(updated);
+        setDraft({ offers: updated });
     };
 
     const validOffers = offers.filter((o) => o.title.trim() !== "");
@@ -50,6 +57,7 @@ export default function OffersPage() {
                     description: o.description.trim(),
                 })),
             });
+            clearDraft();
             router.push("/bio");
         } catch {
             // Error handling

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
     OnboardingLayout,
     BottomButton,
@@ -9,6 +9,7 @@ import {
 } from "@/components/onboarding";
 import { useOnboardingGuard } from "@/lib/onboarding/guard";
 import { usePrompts, useUpdatePrompts, useUpdateBio } from "@/lib/api/hooks";
+import { useOnboardingDraft } from "@/lib/onboarding/store";
 
 const AVAILABLE_PROMPTS = [
     { id: 1, text: "Me in 5 Words..." },
@@ -25,29 +26,47 @@ export default function BioPage() {
     const { data: existingPrompts } = usePrompts();
     const updatePrompts = useUpdatePrompts();
     const updateBio = useUpdateBio();
+    const draft = useOnboardingDraft((s) => s.bio);
+    const setDraft = useOnboardingDraft((s) => s.setBio);
+    const clearDraft = useOnboardingDraft((s) => s.clearBio);
 
     const [selectedPrompts, setSelectedPrompts] = useState<Set<number>>(
-        new Set()
+        new Set(draft.selectedPrompts)
     );
-    const [answers, setAnswers] = useState<Record<number, string>>({});
-    const [bio, setBio] = useState("");
+    const [answers, setAnswers] = useState<Record<number, string>>(draft.answers);
+    const [bio, setBio] = useState(draft.bio);
+    const serverDataApplied = useRef(false);
 
-    // Pre-fill from existing data
+    // Pre-fill from existing server data (takes priority over draft)
     useEffect(() => {
-        if (existingPrompts) {
+        if (existingPrompts && !serverDataApplied.current) {
+            serverDataApplied.current = true;
             const sel = new Set<number>();
             const ans: Record<number, string> = {};
+            let hasServerData = false;
             for (const p of existingPrompts) {
                 // Only mark a prompt as selected if the user has already answered it
                 if (p.answer?.trim()) {
                     sel.add(p.prompt_id);
                     ans[p.prompt_id] = p.answer;
+                    hasServerData = true;
                 }
             }
-            setSelectedPrompts(sel);
-            setAnswers(ans);
+            if (hasServerData) {
+                setSelectedPrompts(sel);
+                setAnswers(ans);
+            }
         }
     }, [existingPrompts]);
+
+    // Sync local state changes to draft store
+    useEffect(() => {
+        setDraft({
+            bio,
+            selectedPrompts: Array.from(selectedPrompts),
+            answers,
+        });
+    }, [bio, selectedPrompts, answers, setDraft]);
 
     const handleTogglePrompt = (promptId: number) => {
         const newSelected = new Set(selectedPrompts);
@@ -94,6 +113,7 @@ export default function BioPage() {
                 await updateBio.mutateAsync({ bio: bio.trim() });
             }
 
+            clearDraft();
             router.push("/questionnaire");
         } catch {
             // Error handling

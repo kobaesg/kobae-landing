@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
     OnboardingLayout,
     InputField,
@@ -15,6 +15,7 @@ import { useOnboardingGuard } from "@/lib/onboarding/guard";
 import { useCreateProfile, useUploadPhoto } from "@/lib/api/hooks";
 import { AxiosError } from "axios";
 import { ApiError } from "@/lib/api/types";
+import { useOnboardingDraft } from "@/lib/onboarding/store";
 
 const profileSchema = z.object({
     first_name: z.string().min(1, "First name is required"),
@@ -42,15 +43,38 @@ export default function ProfilePage() {
     const uploadPhoto = useUploadPhoto();
     const [photoFile, setPhotoFile] = useState<File | null>(null);
     const [serverError, setServerError] = useState("");
+    const draft = useOnboardingDraft((s) => s.profile);
+    const setDraft = useOnboardingDraft((s) => s.setProfile);
+    const clearDraft = useOnboardingDraft((s) => s.clearProfile);
 
     const {
         register,
         handleSubmit,
+        watch,
         formState: { errors, isValid },
     } = useForm<ProfileFormData>({
         resolver: zodResolver(profileSchema),
         mode: "onChange",
+        defaultValues: {
+            first_name: draft.first_name,
+            last_name: draft.last_name,
+            username: draft.username,
+            headline: draft.headline,
+        },
     });
+
+    // Sync form changes to draft store
+    useEffect(() => {
+        const subscription = watch((values) => {
+            setDraft({
+                first_name: values.first_name || "",
+                last_name: values.last_name || "",
+                username: values.username || "",
+                headline: values.headline || "",
+            });
+        });
+        return () => subscription.unsubscribe();
+    }, [watch, setDraft]);
 
     const onSubmit = async (data: ProfileFormData) => {
         setServerError("");
@@ -71,6 +95,7 @@ export default function ProfilePage() {
                 }
             }
 
+            clearDraft();
             router.push("/hobbies");
         } catch (err) {
             const axiosError = err as AxiosError<ApiError>;

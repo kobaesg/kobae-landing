@@ -9,6 +9,7 @@ import {
 } from "@/components/onboarding";
 import { useOnboardingGuard } from "@/lib/onboarding/guard";
 import { useUpdateIntent } from "@/lib/api/hooks";
+import { useOnboardingDraft } from "@/lib/onboarding/store";
 
 const INTENT_OPTIONS = [
     { label: "Up-and-Comers", value: "up_and_comers" },
@@ -22,20 +23,26 @@ export default function IntentPage() {
     const router = useRouter();
     const { isReady } = useOnboardingGuard("skills_set");
     const updateIntent = useUpdateIntent();
+    const draft = useOnboardingDraft((s) => s.intent);
+    const setDraft = useOnboardingDraft((s) => s.setIntent);
+    const clearDraft = useOnboardingDraft((s) => s.clearIntent);
 
-    const [selected, setSelected] = useState<string[]>([]);
+    const [selected, setSelected] = useState<string[]>(draft.selectedIntents);
 
     const handleToggle = (value: string) => {
-        setSelected((prev) =>
-            prev.includes(value)
+        setSelected((prev) => {
+            const next = prev.includes(value)
                 ? prev.filter((v) => v !== value)
-                : [...prev, value]
-        );
+                : [...prev, value];
+            setDraft({ selectedIntents: next });
+            return next;
+        });
     };
 
     const handleSubmit = async () => {
         try {
             await updateIntent.mutateAsync({ intents: selected });
+            clearDraft();
             router.push("/offers");
         } catch {
             // Error handling

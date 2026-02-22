@@ -10,10 +10,11 @@ import { InputField } from "@/components/onboarding";
 import { BottomButton } from "@/components/onboarding";
 import { PhoneInput } from "@/components/onboarding/PhoneInput";
 import { useSignup } from "@/lib/api/hooks";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { AxiosError } from "axios";
 import { ApiError } from "@/lib/api/types";
+import { useOnboardingDraft } from "@/lib/onboarding/store";
 
 const signupSchema = z.object({
     email: z.string().email("Please enter a valid email address"),
@@ -32,16 +33,37 @@ export default function SignupPage() {
     const router = useRouter();
     const signup = useSignup();
     const [serverError, setServerError] = useState("");
+    const draft = useOnboardingDraft((s) => s.signup);
+    const setDraft = useOnboardingDraft((s) => s.setSignup);
+    const clearDraft = useOnboardingDraft((s) => s.clearSignup);
 
     const {
         register,
         handleSubmit,
         control,
+        watch,
         formState: { errors, isValid },
     } = useForm<SignupFormData>({
         resolver: zodResolver(signupSchema),
         mode: "onChange",
+        defaultValues: {
+            email: draft.email,
+            phone: draft.phone,
+            password: draft.password,
+        },
     });
+
+    // Sync form changes to draft store
+    useEffect(() => {
+        const subscription = watch((values) => {
+            setDraft({
+                email: values.email || "",
+                phone: values.phone || "",
+                password: values.password || "",
+            });
+        });
+        return () => subscription.unsubscribe();
+    }, [watch, setDraft]);
 
     const onSubmit = async (data: SignupFormData) => {
         setServerError("");
@@ -52,6 +74,7 @@ export default function SignupPage() {
                 password: data.password,
                 terms_accepted: true,
             });
+            clearDraft();
             router.push(`/verify?phone=${encodeURIComponent(data.phone)}`);
         } catch (err) {
             const axiosError = err as AxiosError<ApiError>;
