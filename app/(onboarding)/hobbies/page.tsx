@@ -10,6 +10,7 @@ import {
 } from "@/components/onboarding";
 import { useOnboardingGuard } from "@/lib/onboarding/guard";
 import { useUpdateHobbies } from "@/lib/api/hooks";
+import { useOnboardingDraft } from "@/lib/onboarding/store";
 
 const HOBBY_CATEGORIES = [
     {
@@ -57,13 +58,27 @@ export default function HobbiesPage() {
     const router = useRouter();
     const { isReady } = useOnboardingGuard("profile_filled");
     const updateHobbies = useUpdateHobbies();
+    const draft = useOnboardingDraft((s) => s.hobbies);
+    const setDraft = useOnboardingDraft((s) => s.setHobbies);
+    const clearDraft = useOnboardingDraft((s) => s.clearHobbies);
 
-    const [showIntro, setShowIntro] = useState(true);
-    const [selected, setSelected] = useState<string[]>([]);
+    const [showIntro, setShowIntro] = useState(!draft.introSeen);
+    const [selected, setSelected] = useState<string[]>(draft.selectedTags);
+
+    const handleSetSelected = (tags: string[]) => {
+        setSelected(tags);
+        setDraft({ selectedTags: tags });
+    };
+
+    const handleDismissIntro = () => {
+        setShowIntro(false);
+        setDraft({ introSeen: true });
+    };
 
     const handleSubmit = async () => {
         try {
             await updateHobbies.mutateAsync({ tags: selected });
+            clearDraft();
             router.push("/skills");
         } catch {
             // Error handling via toast or inline
@@ -85,7 +100,7 @@ export default function HobbiesPage() {
                     title="Help us fine tune your matches."
                     subtitle="Share some details to make your matches even better."
                     buttonText="Proceed"
-                    onProceed={() => setShowIntro(false)}
+                    onProceed={() => handleDismissIntro()}
                 />
             </OnboardingLayout>
         );
@@ -110,7 +125,7 @@ export default function HobbiesPage() {
                 <TagSelector
                     categories={HOBBY_CATEGORIES}
                     selected={selected}
-                    onChange={setSelected}
+                    onChange={handleSetSelected}
                     min={3}
                     max={5}
                 />

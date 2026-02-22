@@ -3,10 +3,12 @@
 import { useRouter } from "next/navigation";
 import { OnboardingLayout, BottomButton } from "@/components/onboarding";
 import { useOnboardingGuard } from "@/lib/onboarding/guard";
+import { useOnboardingDraft } from "@/lib/onboarding/store";
 
 export default function CompletePage() {
     const router = useRouter();
     const { isReady } = useOnboardingGuard("kode_calculated");
+    const clearAll = useOnboardingDraft((s) => s.clearAll);
 
     if (!isReady) {
         return (
@@ -36,7 +38,10 @@ export default function CompletePage() {
                     discover the person you should have met long ago...
                 </p>
 
-                <BottomButton onClick={() => router.push("/")}>
+                <BottomButton onClick={() => {
+                    clearAll();
+                    router.push("/");
+                }}>
                     Discover Now
                 </BottomButton>
             </div>

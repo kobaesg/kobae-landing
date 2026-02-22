@@ -9,6 +9,7 @@ import {
 } from "@/components/onboarding";
 import { useOnboardingGuard } from "@/lib/onboarding/guard";
 import { useUpdateSkills } from "@/lib/api/hooks";
+import { useOnboardingDraft } from "@/lib/onboarding/store";
 
 const SKILL_CATEGORIES = [
     {
@@ -63,12 +64,21 @@ export default function SkillsPage() {
     const router = useRouter();
     const { isReady } = useOnboardingGuard("hobbies_set");
     const updateSkills = useUpdateSkills();
+    const draft = useOnboardingDraft((s) => s.skills);
+    const setDraft = useOnboardingDraft((s) => s.setSkills);
+    const clearDraft = useOnboardingDraft((s) => s.clearSkills);
 
-    const [selected, setSelected] = useState<string[]>([]);
+    const [selected, setSelected] = useState<string[]>(draft.selectedTags);
+
+    const handleSetSelected = (tags: string[]) => {
+        setSelected(tags);
+        setDraft({ selectedTags: tags });
+    };
 
     const handleSubmit = async () => {
         try {
             await updateSkills.mutateAsync({ tags: selected });
+            clearDraft();
             router.push("/intent");
         } catch {
             // Error handling
@@ -101,7 +111,7 @@ export default function SkillsPage() {
                 <TagSelector
                     categories={SKILL_CATEGORIES}
                     selected={selected}
-                    onChange={setSelected}
+                    onChange={handleSetSelected}
                     min={3}
                     max={5}
                 />

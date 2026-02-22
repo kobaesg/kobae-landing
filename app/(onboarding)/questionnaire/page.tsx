@@ -16,6 +16,7 @@ import {
     useCalculateKode,
 } from "@/lib/api/hooks";
 import type { Question } from "@/lib/api/types";
+import { useOnboardingDraft } from "@/lib/onboarding/store";
 
 // Group questions into sections for pagination
 interface QuestionSection {
@@ -59,10 +60,13 @@ export default function QuestionnairePage() {
     const { data: questions, isLoading: questionsLoading } = useQuestions();
     const submitAnswers = useBulkSubmitAnswers();
     const calculateKode = useCalculateKode();
+    const draft = useOnboardingDraft((s) => s.questionnaire);
+    const setDraft = useOnboardingDraft((s) => s.setQuestionnaire);
+    const clearDraft = useOnboardingDraft((s) => s.clearQuestionnaire);
 
-    const [showIntro, setShowIntro] = useState(true);
-    const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
-    const [answers, setAnswers] = useState<Record<number, string>>({});
+    const [showIntro, setShowIntro] = useState(!draft.introSeen);
+    const [currentSectionIndex, setCurrentSectionIndex] = useState(draft.currentSectionIndex);
+    const [answers, setAnswers] = useState<Record<number, string>>(draft.answers);
 
     const sections = useMemo(
         () => (questions ? groupQuestions(questions) : []),
@@ -77,16 +81,26 @@ export default function QuestionnairePage() {
     );
 
     const handleMCQAnswer = (questionId: number, answer: string) => {
-        setAnswers((prev) => ({ ...prev, [questionId]: answer }));
+        setAnswers((prev) => {
+            const next = { ...prev, [questionId]: answer };
+            setDraft({ answers: next });
+            return next;
+        });
     };
 
     const handleSliderAnswer = (questionId: number, value: number) => {
-        setAnswers((prev) => ({ ...prev, [questionId]: String(value) }));
+        setAnswers((prev) => {
+            const next = { ...prev, [questionId]: String(value) };
+            setDraft({ answers: next });
+            return next;
+        });
     };
 
     const handleNext = async () => {
         if (!isLastSection) {
-            setCurrentSectionIndex((prev) => prev + 1);
+            const nextIndex = currentSectionIndex + 1;
+            setCurrentSectionIndex(nextIndex);
+            setDraft({ currentSectionIndex: nextIndex });
             window.scrollTo(0, 0);
             return;
         }
@@ -102,6 +116,7 @@ export default function QuestionnairePage() {
 
             await submitAnswers.mutateAsync({ answers: answerPayload });
             await calculateKode.mutateAsync();
+            clearDraft();
             router.push("/result");
         } catch {
             // Error handling
@@ -123,7 +138,10 @@ export default function QuestionnairePage() {
                     title="Let's find your Social Kōde."
                     subtitle="Fill up this short questionnaire to find out where you stand."
                     buttonText="Next"
-                    onProceed={() => setShowIntro(false)}
+                    onProceed={() => {
+                        setShowIntro(false);
+                        setDraft({ introSeen: true });
+                    }}
                 />
             </OnboardingLayout>
         );
