@@ -1,5 +1,7 @@
 "use client";
 
+import { motion } from "framer-motion";
+
 interface DiscreteSliderProps {
     label: string;
     leftLabel: string;
@@ -34,22 +36,29 @@ export function DiscreteSlider({
 
                 <div className="flex-1 flex items-center justify-between px-2">
                     {positions.map((pos) => (
-                        <button
+                        <motion.button
                             key={pos}
                             type="button"
                             onClick={() => onChange(pos)}
+                            whileTap={{ scale: 0.85 }}
+                            animate={
+                                value === pos
+                                    ? { scale: 1.1 }
+                                    : { scale: 1 }
+                            }
+                            transition={{ type: "spring", stiffness: 500, damping: 25 }}
                             className={`
                                 w-8 h-8 rounded-full flex items-center justify-center
-                                transition-all duration-200
+                                transition-colors duration-200
                                 ${
                                     value === pos
-                                        ? "bg-[var(--primary)] text-white scale-110 shadow-md"
+                                        ? "bg-[var(--primary)] text-white shadow-md"
                                         : "bg-white border border-[var(--secondary-100)] text-[var(--text-300)] hover:border-[var(--primary)]"
                                 }
                             `}
                         >
                             <span className="text-xs font-sans">{pos}</span>
-                        </button>
+                        </motion.button>
                     ))}
                 </div>
 

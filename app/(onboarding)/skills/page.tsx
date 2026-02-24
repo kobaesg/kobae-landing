@@ -10,6 +10,7 @@ import {
 import { useOnboardingGuard } from "@/lib/onboarding/guard";
 import { useUpdateSkills } from "@/lib/api/hooks";
 import { useOnboardingDraft } from "@/lib/onboarding/store";
+import { FadeIn } from "@/components/onboarding/animations";
 
 const SKILL_CATEGORIES = [
     {
@@ -96,25 +97,29 @@ export default function SkillsPage() {
     return (
         <OnboardingLayout currentStep={2} showBack={true} showLogo={true}>
             <div className="pt-6 space-y-6">
-                <div className="space-y-2">
-                    <h1 className="text-2xl font-serif font-bold text-[var(--foreground)]">
-                        I&apos;m{" "}
-                        <span className="text-[var(--primary)]">confident</span>{" "}
-                        in my...
-                    </h1>
-                    <p className="text-sm text-[var(--text-300)] font-sans">
-                        Pick a few strengths you&apos;d like others to know
-                        about.
-                    </p>
-                </div>
+                <FadeIn>
+                    <div className="space-y-2">
+                        <h1 className="text-2xl font-serif font-bold text-[var(--foreground)]">
+                            I&apos;m{" "}
+                            <span className="text-[var(--primary)]">confident</span>{" "}
+                            in my...
+                        </h1>
+                        <p className="text-sm text-[var(--text-300)] font-sans">
+                            Pick a few strengths you&apos;d like others to know
+                            about.
+                        </p>
+                    </div>
+                </FadeIn>
 
-                <TagSelector
-                    categories={SKILL_CATEGORIES}
-                    selected={selected}
-                    onChange={handleSetSelected}
-                    min={3}
-                    max={5}
-                />
+                <FadeIn delay={0.1}>
+                    <TagSelector
+                        categories={SKILL_CATEGORIES}
+                        selected={selected}
+                        onChange={handleSetSelected}
+                        min={3}
+                        max={5}
+                    />
+                </FadeIn>
 
                 <button
                     onClick={() => router.push("/intent")}

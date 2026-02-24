@@ -10,6 +10,7 @@ import {
 import { useOnboardingGuard } from "@/lib/onboarding/guard";
 import { usePrompts, useUpdatePrompts, useUpdateBio } from "@/lib/api/hooks";
 import { useOnboardingDraft } from "@/lib/onboarding/store";
+import { StaggerContainer, StaggerItem } from "@/components/onboarding/animations";
 
 const AVAILABLE_PROMPTS = [
     { id: 1, text: "Me in 5 Words..." },
@@ -131,44 +132,50 @@ export default function BioPage() {
     return (
         <OnboardingLayout currentStep={4} showBack={true} showLogo={true}>
             <div className="pt-6 space-y-6">
-                <div className="space-y-2">
-                    <h1 className="text-2xl font-serif font-bold text-[var(--foreground)]">
-                        Add a little personality
-                    </h1>
-                    <p className="text-sm text-[var(--text-300)] font-sans">
-                        Authenticity helps build trust. Tell us what makes you,
-                        you.
-                    </p>
-                </div>
+                <StaggerContainer staggerDelay={0.08} delayChildren={0.05}>
+                    <StaggerItem>
+                        <div className="space-y-2">
+                            <h1 className="text-2xl font-serif font-bold text-[var(--foreground)]">
+                                Add a little personality
+                            </h1>
+                            <p className="text-sm text-[var(--text-300)] font-sans">
+                                Authenticity helps build trust. Tell us what makes you,
+                                you.
+                            </p>
+                        </div>
+                    </StaggerItem>
 
-                {/* Bio field */}
-                <div className="space-y-2">
-                    <label className="text-sm font-medium text-[var(--text-400)] font-sans">
-                        Bio
-                    </label>
-                    <textarea
-                        value={bio}
-                        onChange={(e) => setBio(e.target.value)}
-                        placeholder="Tell us about yourself..."
-                        maxLength={500}
-                        rows={3}
-                        className="w-full px-4 py-3.5 rounded-xl bg-white text-sm font-sans text-[var(--foreground)] placeholder:text-[var(--text-100)] shadow-[0_0_2px_rgba(0,0,0,0.25)] outline-none resize-none focus:ring-2 focus:ring-[var(--primary)]/30 transition-all"
-                    />
-                    <p className="text-xs text-[var(--text-200)] text-right font-sans">
-                        {bio.length}/500
-                    </p>
-                </div>
+                    {/* Bio field */}
+                    <StaggerItem className="pt-4">
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-[var(--text-400)] font-sans">
+                                Bio
+                            </label>
+                            <textarea
+                                value={bio}
+                                onChange={(e) => setBio(e.target.value)}
+                                placeholder="Tell us about yourself..."
+                                maxLength={500}
+                                rows={3}
+                                className="w-full px-4 py-3.5 rounded-xl bg-white text-sm font-sans text-[var(--foreground)] placeholder:text-[var(--text-100)] shadow-[0_0_2px_rgba(0,0,0,0.25)] outline-none resize-none focus:ring-2 focus:ring-[var(--primary)]/30 transition-all"
+                            />
+                            <p className="text-xs text-[var(--text-200)] text-right font-sans">
+                                {bio.length}/500
+                            </p>
+                        </div>
+                    </StaggerItem>
 
-                {/* Prompts */}
-                <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                        <h2 className="text-sm font-semibold text-[var(--text-400)] font-sans">
-                            Choose Up to {MAX_PROMPTS} Prompts
-                        </h2>
-                        <span className="text-xs px-3 py-1 rounded-full bg-[var(--primary)]/10 text-[var(--primary)] font-sans font-medium">
-                            {visibleSelectedCount}/{MAX_PROMPTS} Selected
-                        </span>
-                    </div>
+                    {/* Prompts */}
+                    <StaggerItem className="pt-2">
+                        <div className="space-y-3">
+                            <div className="flex items-center justify-between">
+                                <h2 className="text-sm font-semibold text-[var(--text-400)] font-sans">
+                                    Choose Up to {MAX_PROMPTS} Prompts
+                                </h2>
+                                <span className="text-xs px-3 py-1 rounded-full bg-[var(--primary)]/10 text-[var(--primary)] font-sans font-medium">
+                                    {visibleSelectedCount}/{MAX_PROMPTS} Selected
+                                </span>
+                            </div>
 
                     <div className="space-y-3">
                         {AVAILABLE_PROMPTS.map((prompt) => (
@@ -190,7 +197,9 @@ export default function BioPage() {
                             />
                         ))}
                     </div>
-                </div>
+                        </div>
+                    </StaggerItem>
+                </StaggerContainer>
 
                 <BottomButton
                     onClick={handleSubmit}

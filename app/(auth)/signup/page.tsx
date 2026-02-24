@@ -15,6 +15,7 @@ import Link from "next/link";
 import { AxiosError } from "axios";
 import { ApiError } from "@/lib/api/types";
 import { useOnboardingDraft } from "@/lib/onboarding/store";
+import { StaggerContainer, StaggerItem } from "@/components/onboarding/animations";
 
 const signupSchema = z.object({
     email: z.string().email("Please enter a valid email address"),
@@ -90,65 +91,75 @@ export default function SignupPage() {
                 onSubmit={handleSubmit(onSubmit)}
                 className="pt-6 space-y-6"
             >
-                <div className="space-y-2">
-                    <h1 className="text-2xl font-serif font-bold text-[var(--foreground)]">
-                        Create your account
-                    </h1>
-                    <p className="text-sm text-[var(--text-300)] font-sans">
-                        Enter your details to get started.
-                    </p>
-                </div>
+                <StaggerContainer staggerDelay={0.07} delayChildren={0.05}>
+                    <StaggerItem>
+                        <div className="space-y-2">
+                            <h1 className="text-2xl font-serif font-bold text-[var(--foreground)]">
+                                Create your account
+                            </h1>
+                            <p className="text-sm text-[var(--text-300)] font-sans">
+                                Enter your details to get started.
+                            </p>
+                        </div>
+                    </StaggerItem>
 
-                <div className="space-y-4">
-                    <InputField
-                        label="Email"
-                        type="email"
-                        placeholder="you@example.com"
-                        autoComplete="email"
-                        error={errors.email?.message}
-                        {...register("email")}
-                    />
-
-                    <Controller
-                        name="phone"
-                        control={control}
-                        defaultValue=""
-                        render={({ field }) => (
-                            <PhoneInput
-                                label="Phone Number"
-                                value={field.value}
-                                onChange={field.onChange}
-                                error={errors.phone?.message}
-                                defaultCountry="SG"
+                    <StaggerItem className="pt-6">
+                        <div className="space-y-4">
+                            <InputField
+                                label="Email"
+                                type="email"
+                                placeholder="you@example.com"
+                                autoComplete="email"
+                                error={errors.email?.message}
+                                {...register("email")}
                             />
-                        )}
-                    />
 
-                    <InputField
-                        label="Password"
-                        type="password"
-                        placeholder="Minimum 8 characters"
-                        autoComplete="new-password"
-                        error={errors.password?.message}
-                        {...register("password")}
-                    />
-                </div>
+                            <Controller
+                                name="phone"
+                                control={control}
+                                defaultValue=""
+                                render={({ field }) => (
+                                    <PhoneInput
+                                        label="Phone Number"
+                                        value={field.value}
+                                        onChange={field.onChange}
+                                        error={errors.phone?.message}
+                                        defaultCountry="SG"
+                                    />
+                                )}
+                            />
 
-                {serverError && (
-                    <p className="text-sm text-red-500 font-sans text-center">
-                        {serverError}
-                    </p>
-                )}
+                            <InputField
+                                label="Password"
+                                type="password"
+                                placeholder="Minimum 8 characters"
+                                autoComplete="new-password"
+                                error={errors.password?.message}
+                                {...register("password")}
+                            />
+                        </div>
+                    </StaggerItem>
 
-                <p className="text-xs text-[var(--text-200)] text-center font-sans">
-                    Already have an account?{" "}
-                    <Link
-                        href="/login"
-                        className="text-[var(--primary)] font-medium"
-                    >
-                        Log In
-                    </Link>
-                </p>
+                    {serverError && (
+                        <StaggerItem>
+                            <p className="text-sm text-red-500 font-sans text-center">
+                                {serverError}
+                            </p>
+                        </StaggerItem>
+                    )}
+
+                    <StaggerItem className="pt-2">
+                        <p className="text-xs text-[var(--text-200)] text-center font-sans">
+                            Already have an account?{" "}
+                            <Link
+                                href="/login"
+                                className="text-[var(--primary)] font-medium"
+                            >
+                                Log In
+                            </Link>
+                        </p>
+                    </StaggerItem>
+                </StaggerContainer>
 
                 <BottomButton
                     type="submit"

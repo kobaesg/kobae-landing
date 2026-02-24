@@ -10,6 +10,7 @@ import {
 import { useOnboardingGuard } from "@/lib/onboarding/guard";
 import { useKodeResult } from "@/lib/api/hooks";
 import { Share2 } from "lucide-react";
+import { FadeIn } from "@/components/onboarding/animations";
 
 export default function ResultPage() {
     const router = useRouter();
@@ -84,11 +85,13 @@ export default function ResultPage() {
     return (
         <OnboardingLayout showBack={false} showLogo={true}>
             <div className="pt-6 space-y-6">
-                <div className="text-center">
-                    <h1 className="text-2xl font-serif font-bold text-[var(--foreground)]">
-                        Your Social Kōde
-                    </h1>
-                </div>
+                <FadeIn>
+                    <div className="text-center">
+                        <h1 className="text-2xl font-serif font-bold text-[var(--foreground)]">
+                            Your Social Kōde
+                        </h1>
+                    </div>
+                </FadeIn>
 
                 <KodeResultCard
                     archetype={kode.archetype}

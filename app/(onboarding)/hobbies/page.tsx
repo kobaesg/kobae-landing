@@ -11,6 +11,7 @@ import {
 import { useOnboardingGuard } from "@/lib/onboarding/guard";
 import { useUpdateHobbies } from "@/lib/api/hooks";
 import { useOnboardingDraft } from "@/lib/onboarding/store";
+import { FadeIn } from "@/components/onboarding/animations";
 
 const HOBBY_CATEGORIES = [
     {
@@ -109,26 +110,30 @@ export default function HobbiesPage() {
     return (
         <OnboardingLayout currentStep={2} showBack={true} showLogo={true}>
             <div className="pt-6 space-y-6">
-                <div className="space-y-2">
-                    <h1 className="text-2xl font-serif font-bold text-[var(--foreground)]">
-                        During my{" "}
-                        <span className="text-[var(--primary)]">
-                            free time
-                        </span>
-                        , I enjoy...
-                    </h1>
-                    <p className="text-sm text-[var(--text-300)] font-sans">
-                        Choose at least 3 — you can always change this later.
-                    </p>
-                </div>
+                <FadeIn>
+                    <div className="space-y-2">
+                        <h1 className="text-2xl font-serif font-bold text-[var(--foreground)]">
+                            During my{" "}
+                            <span className="text-[var(--primary)]">
+                                free time
+                            </span>
+                            , I enjoy...
+                        </h1>
+                        <p className="text-sm text-[var(--text-300)] font-sans">
+                            Choose at least 3 — you can always change this later.
+                        </p>
+                    </div>
+                </FadeIn>
 
-                <TagSelector
-                    categories={HOBBY_CATEGORIES}
-                    selected={selected}
-                    onChange={handleSetSelected}
-                    min={3}
-                    max={5}
-                />
+                <FadeIn delay={0.1}>
+                    <TagSelector
+                        categories={HOBBY_CATEGORIES}
+                        selected={selected}
+                        onChange={handleSetSelected}
+                        min={3}
+                        max={5}
+                    />
+                </FadeIn>
 
                 <button
                     onClick={() => router.push("/skills")}

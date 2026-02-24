@@ -1,5 +1,7 @@
 "use client";
 
+import { motion } from "framer-motion";
+
 interface MCQOptionProps {
     optionKey: string;
     text: string;
@@ -14,9 +16,12 @@ export function MCQOption({
     onClick,
 }: MCQOptionProps) {
     return (
-        <button
+        <motion.button
             type="button"
             onClick={onClick}
+            whileTap={{ scale: 0.97, transition: { type: "spring", stiffness: 400, damping: 25 } }}
+            animate={selected ? { scale: [1, 1.03, 1] } : { scale: 1 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
             className={`
                 w-full flex items-start gap-3 px-4 py-3.5 rounded-xl
                 text-left font-sans text-sm transition-all duration-200
@@ -27,7 +32,13 @@ export function MCQOption({
                 }
             `}
         >
-            <span
+            <motion.span
+                animate={
+                    selected
+                        ? { backgroundColor: "var(--primary)", color: "#fff" }
+                        : {}
+                }
+                transition={{ duration: 0.2 }}
                 className={`
                     flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center
                     text-xs font-semibold mt-0.5
@@ -39,8 +50,8 @@ export function MCQOption({
                 `}
             >
                 {optionKey}
-            </span>
+            </motion.span>
             <span className="flex-1">{text}</span>
-        </button>
+        </motion.button>
     );
 }

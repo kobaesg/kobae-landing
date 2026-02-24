@@ -7,6 +7,7 @@ import { useOnboardingGuard } from "@/lib/onboarding/guard";
 import { useUpdateOffers } from "@/lib/api/hooks";
 import { X, Plus } from "lucide-react";
 import { useOnboardingDraft } from "@/lib/onboarding/store";
+import { FadeIn } from "@/components/onboarding/animations";
 
 interface OfferEntry {
     title: string;
@@ -75,17 +76,20 @@ export default function OffersPage() {
     return (
         <OnboardingLayout currentStep={3} showBack={true} showLogo={true}>
             <div className="pt-6 space-y-6">
-                <div className="space-y-2">
-                    <h1 className="text-2xl font-serif font-bold text-[var(--foreground)]">
-                        What can you help with?
-                    </h1>
-                    <p className="text-sm text-[var(--text-300)] font-sans">
-                        Kobae is built on mutual support. Share a way you can
-                        help others.
-                    </p>
-                </div>
+                <FadeIn>
+                    <div className="space-y-2">
+                        <h1 className="text-2xl font-serif font-bold text-[var(--foreground)]">
+                            What can you help with?
+                        </h1>
+                        <p className="text-sm text-[var(--text-300)] font-sans">
+                            Kobae is built on mutual support. Share a way you can
+                            help others.
+                        </p>
+                    </div>
+                </FadeIn>
 
-                <div className="space-y-4">
+                <FadeIn delay={0.1}>
+                    <div className="space-y-4">
                     {offers.map((offer, index) => (
                         <div
                             key={index}
@@ -142,7 +146,8 @@ export default function OffersPage() {
                             Add another offer
                         </button>
                     )}
-                </div>
+                    </div>
+                </FadeIn>
 
                 <button
                     onClick={() => router.push("/bio")}

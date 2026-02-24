@@ -1,5 +1,7 @@
 "use client";
 
+import { motion } from "framer-motion";
+
 interface OnboardingProgressProps {
     currentStep: number;
     totalSteps?: number;
@@ -17,10 +19,12 @@ export function OnboardingProgress({
                 const isCompleted = step < currentStep;
 
                 return (
-                    <div
+                    <motion.div
                         key={step}
+                        layout
+                        transition={{ type: "spring", stiffness: 500, damping: 35 }}
                         className={`
-                            rounded-full transition-all duration-300
+                            rounded-full
                             ${
                                 isActive
                                     ? "w-8 h-2.5 bg-[var(--primary)]"

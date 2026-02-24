@@ -11,6 +11,7 @@ import Link from "next/link";
 import { AxiosError } from "axios";
 import { ApiError } from "@/lib/api/types";
 import { useAuth } from "@/lib/auth/context";
+import { StaggerContainer, StaggerItem } from "@/components/onboarding/animations";
 
 const loginSchema = z.object({
     identifier: z
@@ -62,48 +63,60 @@ export default function LoginPage() {
                 onSubmit={handleSubmit(onSubmit)}
                 className="pt-6 space-y-6"
             >
-                <div className="space-y-2">
-                    <h1 className="text-2xl font-serif font-bold text-[var(--foreground)]">
-                        Welcome back
-                    </h1>
-                    <p className="text-sm text-[var(--text-300)] font-sans">
-                        Enter your email or phone number to log in.
-                    </p>
-                </div>
+                <StaggerContainer staggerDelay={0.07} delayChildren={0.05}>
+                    <StaggerItem>
+                        <div className="space-y-2">
+                            <h1 className="text-2xl font-serif font-bold text-[var(--foreground)]">
+                                Welcome back
+                            </h1>
+                            <p className="text-sm text-[var(--text-300)] font-sans">
+                                Enter your email or phone number to log in.
+                            </p>
+                        </div>
+                    </StaggerItem>
 
-                <InputField
-                    label="Email or Phone Number"
-                    type="text"
-                    placeholder="you@example.com or +65 8123 4567"
-                    autoComplete="username"
-                    error={errors.identifier?.message}
-                    {...register("identifier")}
-                />
+                    <StaggerItem className="pt-6">
+                        <InputField
+                            label="Email or Phone Number"
+                            type="text"
+                            placeholder="you@example.com or +65 8123 4567"
+                            autoComplete="username"
+                            error={errors.identifier?.message}
+                            {...register("identifier")}
+                        />
+                    </StaggerItem>
 
-                <InputField
-                    label="Password"
-                    type="password"
-                    placeholder="Enter your password"
-                    autoComplete="current-password"
-                    error={errors.password?.message}
-                    {...register("password")}
-                />
+                    <StaggerItem className="pt-4">
+                        <InputField
+                            label="Password"
+                            type="password"
+                            placeholder="Enter your password"
+                            autoComplete="current-password"
+                            error={errors.password?.message}
+                            {...register("password")}
+                        />
+                    </StaggerItem>
 
-                {serverError && (
-                    <p className="text-sm text-red-500 font-sans text-center">
-                        {serverError}
-                    </p>
-                )}
+                    {serverError && (
+                        <StaggerItem>
+                            <p className="text-sm text-red-500 font-sans text-center">
+                                {serverError}
+                            </p>
+                        </StaggerItem>
+                    )}
 
-                <p className="text-xs text-[var(--text-200)] text-center font-sans">
-                    Don&apos;t have an account?{" "}
-                    <Link
-                        href="/signup"
-                        className="text-[var(--primary)] font-medium"
-                    >
-                        Sign Up
-                    </Link>
-                </p>
+                    <StaggerItem className="pt-2">
+                        <p className="text-xs text-[var(--text-200)] text-center font-sans">
+                            Don&apos;t have an account?{" "}
+                            <Link
+                                href="/signup"
+                                className="text-[var(--primary)] font-medium"
+                            >
+                                Sign Up
+                            </Link>
+                        </p>
+                    </StaggerItem>
+                </StaggerContainer>
 
                 <BottomButton
                     type="submit"

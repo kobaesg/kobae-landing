@@ -50,35 +50,37 @@ export function PhotoUpload({
 
     return (
         <div className="flex justify-center">
-            <button
-                type="button"
-                onClick={handleClick}
-                disabled={loading}
-                className="relative w-28 h-28 rounded-full overflow-hidden bg-white shadow-[0_0_7px_rgba(0,0,0,0.15)] transition-all hover:shadow-[0_0_12px_rgba(0,0,0,0.2)] disabled:opacity-60"
-            >
-                {displayUrl ? (
-                    <img
-                        src={displayUrl}
-                        alt="Profile photo"
-                        className="w-full h-full object-cover"
-                    />
-                ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-[var(--background)]">
-                        <Camera className="w-8 h-8 text-[var(--text-200)]" />
-                    </div>
-                )}
+            <div className="relative w-28 h-28">
+                <button
+                    type="button"
+                    onClick={handleClick}
+                    disabled={loading}
+                    className="w-full h-full rounded-full overflow-hidden bg-white shadow-[0_0_7px_rgba(0,0,0,0.15)] transition-all hover:shadow-[0_0_12px_rgba(0,0,0,0.2)] disabled:opacity-60"
+                >
+                    {displayUrl ? (
+                        <img
+                            src={displayUrl}
+                            alt="Profile photo"
+                            className="w-full h-full object-cover"
+                        />
+                    ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-[var(--background)]">
+                            <Camera className="w-8 h-8 text-[var(--text-200)]" />
+                        </div>
+                    )}
 
-                {/* Plus badge */}
-                <div className="absolute bottom-1 right-1 w-7 h-7 rounded-full bg-[var(--primary)] flex items-center justify-center shadow-sm">
+                    {loading && (
+                        <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                            <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        </div>
+                    )}
+                </button>
+
+                {/* Plus badge — outside overflow-hidden so it isn't clipped */}
+                <div className="absolute bottom-1 right-1 w-7 h-7 rounded-full bg-[var(--primary)] flex items-center justify-center shadow-sm pointer-events-none">
                     <Plus className="w-4 h-4 text-white" />
                 </div>
-
-                {loading && (
-                    <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                        <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    </div>
-                )}
-            </button>
+            </div>
 
             <input
                 ref={fileInputRef}
