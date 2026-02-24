@@ -16,6 +16,7 @@ import { useCreateProfile, useUploadPhoto } from "@/lib/api/hooks";
 import { AxiosError } from "axios";
 import { ApiError } from "@/lib/api/types";
 import { useOnboardingDraft } from "@/lib/onboarding/store";
+import { StaggerContainer, StaggerItem } from "@/components/onboarding/animations";
 
 const profileSchema = z.object({
     first_name: z.string().min(1, "First name is required"),
@@ -120,52 +121,60 @@ export default function ProfilePage() {
                 onSubmit={handleSubmit(onSubmit)}
                 className="pt-6 space-y-6"
             >
-                <div className="text-center space-y-2">
-                    <h1 className="text-2xl font-serif font-bold text-[var(--foreground)]">
-                        Let&apos;s start with the basics
-                    </h1>
-                    <p className="text-sm text-[var(--text-300)] font-sans">
-                        Add a photo and tell us who you are.
-                    </p>
-                </div>
+                <StaggerContainer staggerDelay={0.06} delayChildren={0.05}>
+                    <StaggerItem>
+                        <div className="text-center space-y-2">
+                            <h1 className="text-2xl font-serif font-bold text-[var(--foreground)]">
+                                Let&apos;s start with the basics
+                            </h1>
+                            <p className="text-sm text-[var(--text-300)] font-sans">
+                                Add a photo and tell us who you are.
+                            </p>
+                        </div>
+                    </StaggerItem>
 
-                <PhotoUpload
-                    onUpload={(file) => setPhotoFile(file)}
-                    loading={uploadPhoto.isPending}
-                />
+                    <StaggerItem className="pt-6">
+                        <PhotoUpload
+                            onUpload={(file) => setPhotoFile(file)}
+                            loading={uploadPhoto.isPending}
+                        />
+                    </StaggerItem>
 
-                <div className="space-y-4">
-                    <InputField
-                        label="First Name"
-                        placeholder="John"
-                        autoComplete="given-name"
-                        error={errors.first_name?.message}
-                        {...register("first_name")}
-                    />
+                    <StaggerItem className="pt-4">
+                        <div className="space-y-4">
+                            <InputField
+                                label="First Name"
+                                placeholder="John"
+                                autoComplete="given-name"
+                                error={errors.first_name?.message}
+                                {...register("first_name")}
+                            />
 
-                    <InputField
-                        label="Surname"
-                        placeholder="Doe"
-                        autoComplete="family-name"
-                        error={errors.last_name?.message}
-                        {...register("last_name")}
-                    />
+                            <InputField
+                                label="Surname"
+                                placeholder="Doe"
+                                autoComplete="family-name"
+                                error={errors.last_name?.message}
+                                {...register("last_name")}
+                            />
 
-                    <InputField
-                        label="Username"
-                        placeholder="johndoe_123"
-                        autoComplete="username"
-                        error={errors.username?.message}
-                        {...register("username")}
-                    />
+                            <InputField
+                                label="Username"
+                                placeholder="johndoe_123"
+                                autoComplete="username"
+                                error={errors.username?.message}
+                                {...register("username")}
+                            />
 
-                    <InputField
-                        label="Headline"
-                        placeholder="Describe yourself in 5 words"
-                        error={errors.headline?.message}
-                        {...register("headline")}
-                    />
-                </div>
+                            <InputField
+                                label="Headline"
+                                placeholder="Describe yourself in 5 words"
+                                error={errors.headline?.message}
+                                {...register("headline")}
+                            />
+                        </div>
+                    </StaggerItem>
+                </StaggerContainer>
 
                 {serverError && (
                     <p className="text-sm text-red-500 font-sans text-center">

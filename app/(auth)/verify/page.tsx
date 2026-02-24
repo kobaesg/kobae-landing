@@ -7,6 +7,7 @@ import { useVerifyOTP, useResendOTP } from "@/lib/api/hooks";
 import { useAuth } from "@/lib/auth/context";
 import { AxiosError } from "axios";
 import { ApiError } from "@/lib/api/types";
+import { StaggerContainer, StaggerItem } from "@/components/onboarding/animations";
 
 function VerifyContent() {
     const router = useRouter();
@@ -83,49 +84,59 @@ function VerifyContent() {
     return (
         <OnboardingLayout showBack={true} showLogo={true}>
             <div className="pt-10 space-y-8">
-                <div className="text-center space-y-2">
-                    <h1 className="text-2xl font-serif font-bold text-[var(--foreground)]">
-                        Verification
-                    </h1>
-                    <p className="text-sm text-[var(--text-300)] font-sans">
-                        Please enter the 6-digit verification code sent to{" "}
-                        <span className="font-semibold text-[var(--text-400)]">
-                            {phone}
-                        </span>
-                    </p>
-                </div>
+                <StaggerContainer staggerDelay={0.08} delayChildren={0.05}>
+                    <StaggerItem>
+                        <div className="text-center space-y-2">
+                            <h1 className="text-2xl font-serif font-bold text-[var(--foreground)]">
+                                Verification
+                            </h1>
+                            <p className="text-sm text-[var(--text-300)] font-sans">
+                                Please enter the 6-digit verification code sent to{" "}
+                                <span className="font-semibold text-[var(--text-400)]">
+                                    {phone}
+                                </span>
+                            </p>
+                        </div>
+                    </StaggerItem>
 
-                <OTPInput
-                    value={otp}
-                    onChange={setOtp}
-                    error={error}
-                    disabled={verifyOTP.isPending}
-                />
+                    <StaggerItem className="pt-6">
+                        <OTPInput
+                            value={otp}
+                            onChange={setOtp}
+                            error={error}
+                            disabled={verifyOTP.isPending}
+                        />
+                    </StaggerItem>
 
-                {resendMessage && (
-                    <p className="text-sm text-green-600 font-sans text-center">
-                        {resendMessage}
-                    </p>
-                )}
-
-                <div className="text-center">
-                    {resendTimer > 0 ? (
-                        <p className="text-sm text-[var(--text-200)] font-sans">
-                            Resend code in{" "}
-                            <span className="font-medium">
-                                {formatTimer(resendTimer)}
-                            </span>
-                        </p>
-                    ) : (
-                        <button
-                            onClick={handleResend}
-                            disabled={resendOTP.isPending}
-                            className="text-sm text-[var(--primary)] font-sans font-medium hover:underline disabled:opacity-50"
-                        >
-                            Resend code
-                        </button>
+                    {resendMessage && (
+                        <StaggerItem>
+                            <p className="text-sm text-green-600 font-sans text-center">
+                                {resendMessage}
+                            </p>
+                        </StaggerItem>
                     )}
-                </div>
+
+                    <StaggerItem className="pt-2">
+                        <div className="text-center">
+                            {resendTimer > 0 ? (
+                                <p className="text-sm text-[var(--text-200)] font-sans">
+                                    Resend code in{" "}
+                                    <span className="font-medium">
+                                        {formatTimer(resendTimer)}
+                                    </span>
+                                </p>
+                            ) : (
+                                <button
+                                    onClick={handleResend}
+                                    disabled={resendOTP.isPending}
+                                    className="text-sm text-[var(--primary)] font-sans font-medium hover:underline disabled:opacity-50"
+                                >
+                                    Resend code
+                                </button>
+                            )}
+                        </div>
+                    </StaggerItem>
+                </StaggerContainer>
 
                 <BottomButton
                     onClick={handleVerify}

@@ -12,3 +12,11 @@ export { MCQOption } from "./MCQOption";
 export { DiscreteSlider } from "./DiscreteSlider";
 export { ReinforcementScreen } from "./ReinforcementScreen";
 export { KodeResultCard } from "./KodeResultCard";
+export {
+    PageTransition,
+    FadeIn,
+    StaggerContainer,
+    StaggerItem,
+    ScaleOnTap,
+    PopIn,
+} from "./animations";

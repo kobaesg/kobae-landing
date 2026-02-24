@@ -1,5 +1,7 @@
 "use client";
 
+import { motion } from "framer-motion";
+
 interface TagChipProps {
     label: string;
     selected: boolean;
@@ -14,10 +16,13 @@ export function TagChip({
     disabled = false,
 }: TagChipProps) {
     return (
-        <button
+        <motion.button
             type="button"
             onClick={onClick}
             disabled={disabled}
+            whileTap={disabled && !selected ? {} : { scale: 0.93, transition: { type: "spring", stiffness: 400, damping: 25 } }}
+            animate={selected ? { scale: [1, 1.06, 1] } : { scale: 1 }}
+            transition={{ duration: 0.25, ease: "easeInOut" }}
             className={`
                 px-4 py-2 rounded-lg text-sm font-sans font-medium
                 transition-all duration-200 whitespace-nowrap
@@ -30,6 +35,6 @@ export function TagChip({
             `}
         >
             {label}
-        </button>
+        </motion.button>
     );
 }

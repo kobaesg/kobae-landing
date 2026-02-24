@@ -17,6 +17,7 @@ import {
 } from "@/lib/api/hooks";
 import type { Question } from "@/lib/api/types";
 import { useOnboardingDraft } from "@/lib/onboarding/store";
+import { PageTransition, FadeIn } from "@/components/onboarding/animations";
 
 // Group questions into sections for pagination
 interface QuestionSection {
@@ -81,19 +82,15 @@ export default function QuestionnairePage() {
     );
 
     const handleMCQAnswer = (questionId: number, answer: string) => {
-        setAnswers((prev) => {
-            const next = { ...prev, [questionId]: answer };
-            setDraft({ answers: next });
-            return next;
-        });
+        const next = { ...answers, [questionId]: answer };
+        setAnswers(next);
+        setDraft({ answers: next });
     };
 
     const handleSliderAnswer = (questionId: number, value: number) => {
-        setAnswers((prev) => {
-            const next = { ...prev, [questionId]: String(value) };
-            setDraft({ answers: next });
-            return next;
-        });
+        const next = { ...answers, [questionId]: String(value) };
+        setAnswers(next);
+        setDraft({ answers: next });
     };
 
     const handleNext = async () => {
@@ -157,56 +154,60 @@ export default function QuestionnairePage() {
 
     return (
         <OnboardingLayout currentStep={5} showBack={true} showLogo={true}>
-            <div className="pt-6 space-y-6">
-                {/* Section header */}
-                <div className="text-center space-y-1">
-                    <h2 className="text-lg font-serif font-bold text-[var(--foreground)]">
-                        {isSliderSection
-                            ? "Social Sliders"
-                            : currentSection.title}
-                    </h2>
-                    <p className="text-xs text-[var(--text-200)] font-sans">
-                        {currentSection.label}
-                    </p>
-                </div>
+            <PageTransition pageKey={`section-${currentSectionIndex}`}>
+                <div className="pt-6 space-y-6">
+                    {/* Section header */}
+                    <FadeIn>
+                        <div className="text-center space-y-1">
+                            <h2 className="text-lg font-serif font-bold text-[var(--foreground)]">
+                                {isSliderSection
+                                    ? "Social Sliders"
+                                    : currentSection.title}
+                            </h2>
+                            <p className="text-xs text-[var(--text-200)] font-sans">
+                                {currentSection.label}
+                            </p>
+                        </div>
+                    </FadeIn>
 
-                {/* Questions */}
-                <div className="space-y-8">
-                    {currentSection.questions.map((question) => (
-                        <div key={question.id} className="space-y-4">
-                            {question.type === "single_choice" ? (
-                                <>
-                                    <div className="space-y-1">
-                                        <p className="text-xs text-[var(--text-200)] font-sans">
-                                            Question {question.order_num} of 18
-                                        </p>
-                                        <p
-                                            className="text-base font-serif font-medium text-[var(--foreground)] leading-snug"
-                                            dangerouslySetInnerHTML={{
-                                                __html: highlightKeywords(
-                                                    question.text
-                                                ),
-                                            }}
-                                        />
-                                    </div>
-                                    <div className="space-y-2.5">
-                                        {question.options?.map((option) => (
-                                            <MCQOption
-                                                key={option.key}
-                                                optionKey={option.key}
-                                                text={option.text}
-                                                selected={
-                                                    answers[question.id] ===
-                                                    option.key
-                                                }
-                                                onClick={() =>
-                                                    handleMCQAnswer(
-                                                        question.id,
-                                                        option.key
-                                                    )
-                                                }
-                                            />
-                                        ))}
+                    {/* Questions */}
+                    <div className="space-y-8">
+                        {currentSection.questions.map((question) => (
+                            <FadeIn key={question.id} delay={0.1}>
+                                <div className="space-y-4">
+                                    {question.type === "single_choice" ? (
+                                        <>
+                                            <div className="space-y-1">
+                                                <p className="text-xs text-[var(--text-200)] font-sans">
+                                                    Question {question.order_num} of 18
+                                                </p>
+                                                <p
+                                                    className="text-base font-serif font-medium text-[var(--foreground)] leading-snug"
+                                                    dangerouslySetInnerHTML={{
+                                                        __html: highlightKeywords(
+                                                            question.text
+                                                        ),
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className="space-y-2.5">
+                                                {question.options?.map((option) => (
+                                                    <MCQOption
+                                                        key={option.key}
+                                                        optionKey={option.key}
+                                                        text={option.text}
+                                                        selected={
+                                                            answers[question.id] ===
+                                                            option.key
+                                                        }
+                                                        onClick={() =>
+                                                            handleMCQAnswer(
+                                                                question.id,
+                                                                option.key
+                                                            )
+                                                        }
+                                                    />
+                                                ))}
                                     </div>
                                 </>
                             ) : (
@@ -233,36 +234,38 @@ export default function QuestionnairePage() {
                                     max={question.slider_max || 7}
                                 />
                             )}
-                        </div>
-                    ))}
-                </div>
+                                </div>
+                            </FadeIn>
+                        ))}
+                    </div>
 
-                {/* Progress indicator */}
-                <div className="flex justify-center gap-1.5 pt-2">
-                    {sections.map((_, i) => (
-                        <div
-                            key={i}
-                            className={`w-2 h-2 rounded-full transition-all ${
-                                i === currentSectionIndex
-                                    ? "bg-[var(--primary)] w-5"
-                                    : i < currentSectionIndex
-                                      ? "bg-[var(--primary)]"
-                                      : "bg-[var(--secondary-100)]"
-                            }`}
-                        />
-                    ))}
-                </div>
+                    {/* Progress indicator */}
+                    <div className="flex justify-center gap-1.5 pt-2">
+                        {sections.map((_, i) => (
+                            <div
+                                key={i}
+                                className={`w-2 h-2 rounded-full transition-all ${
+                                    i === currentSectionIndex
+                                        ? "bg-[var(--primary)] w-5"
+                                        : i < currentSectionIndex
+                                          ? "bg-[var(--primary)]"
+                                          : "bg-[var(--secondary-100)]"
+                                }`}
+                            />
+                        ))}
+                    </div>
 
-                <BottomButton
-                    onClick={handleNext}
-                    disabled={!allCurrentAnswered}
-                    loading={
-                        submitAnswers.isPending || calculateKode.isPending
-                    }
-                >
-                    {isLastSection ? "Submit" : "Next"}
-                </BottomButton>
-            </div>
+                    <BottomButton
+                        onClick={handleNext}
+                        disabled={!allCurrentAnswered}
+                        loading={
+                            submitAnswers.isPending || calculateKode.isPending
+                        }
+                    >
+                        {isLastSection ? "Submit" : "Next"}
+                    </BottomButton>
+                </div>
+            </PageTransition>
         </OnboardingLayout>
     );
 }

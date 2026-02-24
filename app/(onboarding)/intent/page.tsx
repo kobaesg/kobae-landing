@@ -10,6 +10,7 @@ import {
 import { useOnboardingGuard } from "@/lib/onboarding/guard";
 import { useUpdateIntent } from "@/lib/api/hooks";
 import { useOnboardingDraft } from "@/lib/onboarding/store";
+import { FadeIn } from "@/components/onboarding/animations";
 
 const INTENT_OPTIONS = [
     { label: "Up-and-Comers", value: "up_and_comers" },
@@ -30,13 +31,11 @@ export default function IntentPage() {
     const [selected, setSelected] = useState<string[]>(draft.selectedIntents);
 
     const handleToggle = (value: string) => {
-        setSelected((prev) => {
-            const next = prev.includes(value)
-                ? prev.filter((v) => v !== value)
-                : [...prev, value];
-            setDraft({ selectedIntents: next });
-            return next;
-        });
+        const next = selected.includes(value)
+            ? selected.filter((v) => v !== value)
+            : [...selected, value];
+        setSelected(next);
+        setDraft({ selectedIntents: next });
     };
 
     const handleSubmit = async () => {
@@ -60,26 +59,30 @@ export default function IntentPage() {
     return (
         <OnboardingLayout currentStep={3} showBack={true} showLogo={true}>
             <div className="pt-6 space-y-6">
-                <div className="space-y-2">
-                    <h1 className="text-2xl font-serif font-bold text-[var(--foreground)]">
-                        Who are you hoping to connect with?
-                    </h1>
-                    <p className="text-sm text-[var(--text-300)] font-sans">
-                        Select all that apply. We&apos;ll curate matches that
-                        match your intent.
-                    </p>
-                </div>
+                <FadeIn>
+                    <div className="space-y-2">
+                        <h1 className="text-2xl font-serif font-bold text-[var(--foreground)]">
+                            Who are you hoping to connect with?
+                        </h1>
+                        <p className="text-sm text-[var(--text-300)] font-sans">
+                            Select all that apply. We&apos;ll curate matches that
+                            match your intent.
+                        </p>
+                    </div>
+                </FadeIn>
 
-                <div className="flex flex-wrap gap-3">
-                    {INTENT_OPTIONS.map((option) => (
-                        <TagChip
-                            key={option.value}
-                            label={option.label}
-                            selected={selected.includes(option.value)}
-                            onClick={() => handleToggle(option.value)}
-                        />
-                    ))}
-                </div>
+                <FadeIn delay={0.1}>
+                    <div className="flex flex-wrap gap-3">
+                        {INTENT_OPTIONS.map((option) => (
+                            <TagChip
+                                key={option.value}
+                                label={option.label}
+                                selected={selected.includes(option.value)}
+                                onClick={() => handleToggle(option.value)}
+                            />
+                        ))}
+                    </div>
+                </FadeIn>
 
                 <BottomButton
                     onClick={handleSubmit}

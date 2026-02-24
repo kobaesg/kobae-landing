@@ -1,6 +1,7 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface BottomButtonProps {
     children: React.ReactNode;
@@ -38,15 +39,17 @@ export function BottomButton({
     return (
         <div className="fixed bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-[var(--background)] via-[var(--background)] to-transparent">
             <div className="mx-auto max-w-lg">
-                <button
+                <motion.button
                     type={type}
                     onClick={onClick}
                     disabled={isDisabled}
+                    whileTap={isDisabled ? {} : { scale: 0.97 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 25 }}
                     className={`${baseStyles} ${variantStyles[variant]} ${className}`}
                 >
                     {loading && <Loader2 className="w-5 h-5 animate-spin" />}
                     {children}
-                </button>
+                </motion.button>
             </div>
         </div>
     );

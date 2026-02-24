@@ -177,11 +177,9 @@ export interface QuestionnaireResultResponse {
 
 export interface AttributeProfile {
     STB: number;
-    ATT: number;
-    RCH: number;
-    DRV: number;
-    DEP: number;
-    SPK: number;
+    RLN: number;
+    MTM: number;
+    REF: number;
 }
 
 export interface KodeResponse {
