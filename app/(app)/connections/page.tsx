@@ -2,14 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import { Users, ArrowLeft } from "lucide-react";
-import { BottomNav } from "@/components/app/BottomNav";
 
 export default function ConnectionsPage() {
     const router = useRouter();
 
     return (
-        <div className="min-h-dvh bg-[#f8f7f6] flex flex-col items-center">
-            <div className="w-full max-w-[390px] mx-auto flex flex-col min-h-dvh relative">
+        <div className="flex flex-col min-h-dvh relative">
                 {/* Header */}
                 <div className="flex items-center px-6 pt-safe pt-4 pb-3">
                     <button
@@ -40,8 +38,6 @@ export default function ConnectionsPage() {
                     </div>
                 </div>
 
-                <BottomNav />
             </div>
-        </div>
     );
 }

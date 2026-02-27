@@ -58,7 +58,7 @@ export default function LoginPage() {
     };
 
     return (
-        <OnboardingLayout showBack={true} showLogo={true}>
+        <OnboardingLayout showBack={true} showLogo={true} onBack={() => router.push("/")}>
             <form
                 onSubmit={handleSubmit(onSubmit)}
                 className="pt-6 space-y-6"

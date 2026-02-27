@@ -15,7 +15,7 @@ export function BottomNav() {
     const router = useRouter();
 
     return (
-        <div className="fixed bottom-0 left-0 right-0 z-50 bg-white h-16 flex items-center justify-between px-12 py-3 max-w-[390px] mx-auto shadow-[0_-1px_4px_0_rgba(0,0,0,0.08)]">
+        <div className="fixed bottom-0 left-1/2 -translate-x-1/2 z-50 bg-white h-16 w-full max-w-[390px] flex items-center justify-between px-12 py-3 shadow-[0_-1px_4px_0_rgba(0,0,0,0.08)]">
             {tabs.map(({ label, icon: Icon, href }) => {
                 const isActive = pathname === href;
                 return (
