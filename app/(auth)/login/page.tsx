@@ -49,7 +49,7 @@ export default function LoginPage() {
             // Login returns auth tokens directly
             const { access_token, refresh_token, user } = response.data;
             setAuth(access_token, refresh_token, user);
-            router.push("/profile");
+            router.push("/me");
         } catch (err) {
             const axiosError = err as AxiosError<ApiError>;
             const errorMsg = axiosError.response?.data?.error?.message || "";

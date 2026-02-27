@@ -31,9 +31,9 @@ export default function CompletePage() {
                     className="mb-8"
                 >
                     <img
-                        src="/resources/thumbnail.png"
-                        alt="Kobae"
-                        className="w-32 h-32 mx-auto mb-4"
+                        src="/resources/all-set.png"
+                        alt="We're all set"
+                        className="w-64 h-64 mx-auto object-contain"
                     />
                 </motion.div>
 
@@ -58,9 +58,9 @@ export default function CompletePage() {
 
                 <BottomButton onClick={() => {
                     clearAll();
-                    router.push("/");
+                    router.push("/me");
                 }}>
-                    Discover Now
+                    Go to My Profile
                 </BottomButton>
             </div>
         </OnboardingLayout>

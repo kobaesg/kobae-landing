@@ -17,7 +17,7 @@ export function CTA() {
                         Kobae, the place for shared circles.
                     </h2>
                     <Link
-                        href="/signup"
+                        href="/welcome"
                         className="bg-white hover:bg-white/90 text-[var(--primary)] font-semibold text-lg rounded-[32px] h-16 px-8 shadow-[0px_0px_10px_0px_rgba(255,144,97,0.8)] flex items-center justify-center transition-colors"
                     >
                         Sign Up
