@@ -15,13 +15,14 @@ export function Header() {
                 {/* Logo */}
                 <div className="flex items-center gap-3 w-72">
                     <a href="#top">
-                    <Image
+                        <Image
                         src="/resources/main-logo.png"
                         alt="Kobae Logo"
                         width={144}
                         height={38}
                         priority
-                    />
+                        />
+                    </a>
                 </div>
 
                 {/* Nav Links */}
