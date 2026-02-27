@@ -12,27 +12,27 @@ const events = [
     {
         id: 1,
         title: "Pickleball Fridays",
-        image: "/resources/carousell-1.png",
+        image: "/resources/pickle-ball.JPG",
     },
     {
         id: 2,
-        title: "Snorkeling Class at Bali",
-        image: "/resources/carousell-2.png",
+        title: "Scuba Diving Class at Nusa Penida",
+        image: "/resources/scuba.JPG",
     },
     {
         id: 3,
-        title: "CBD Coffee Runs",
-        image: "/resources/carousell-3.png",
+        title: "Coffee Chats in HK",
+        image: "/resources/coffee-chat.jpg",
     },
     {
         id: 4,
-        title: "Golden Hour Run Club",
-        image: "/resources/carousell-4.png",
+        title: "Golden Hour Run Club in SG",
+        image: "/resources/cbd-run.jpg",
     },
     {
         id: 5,
-        title: "Beginner Golf Course",
-        image: "/resources/carousell-5.png",
+        title: "Cocktail Appreciation in HK",
+        image: "/resources/cocktail.jpg",
     },
 ];
 
