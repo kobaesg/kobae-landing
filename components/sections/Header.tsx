@@ -14,6 +14,7 @@ export function Header() {
             <div className="container mx-auto px-6 lg:px-20 h-16 flex items-center justify-between">
                 {/* Logo */}
                 <div className="flex items-center gap-3 w-72">
+                    <a href="#top">
                     <Image
                         src="/resources/main-logo.png"
                         alt="Kobae Logo"
