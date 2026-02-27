@@ -51,7 +51,7 @@ export function Header() {
                         Log In
                     </Link>
                     <Link
-                        href="/signup"
+                        href="/welcome"
                         className="flex items-center justify-center h-8 px-5 rounded-3xl bg-[var(--primary)] text-xs font-semibold text-white hover:bg-[var(--primary-400)] transition-colors"
                     >
                         Sign Up

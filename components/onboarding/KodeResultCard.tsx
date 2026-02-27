@@ -5,17 +5,9 @@ import { motion } from "framer-motion";
 interface KodeResultCardProps {
     archetype: string;
     description: string;
-    topAttributes: [string, string];
+    topAttributes?: [string, string];
     illustrationUrl?: string;
 }
-
-// Map top attribute codes to human-readable names
-const ATTRIBUTE_NAMES: Record<string, string> = {
-    STB: "Stability",
-    RLN: "Relational",
-    MTM: "Momentum",
-    REF: "Reflection",
-};
 
 // Map archetypes to subtitles
 const ARCHETYPE_SUBTITLES: Record<string, string> = {
@@ -27,25 +19,106 @@ const ARCHETYPE_SUBTITLES: Record<string, string> = {
     Tortoise: "The Anchor",
 };
 
+// Archetype-specific "Feels like" traits
+const ARCHETYPE_FEELS_LIKE: Record<string, string> = {
+    Sparrow: "Visible · Adaptive · Socially fluent",
+    Rhino: "Decisive · Forceful · Outcome-oriented",
+    Tortoise: "Dependable · Grounding · Loyal",
+    "Whale Shark": "Thoughtful · Inward-weighted · Insightful",
+    Firefly: "Catalytic · Emotional · Bright",
+    Chameleon: "Perceptive · Flexible · Translating",
+};
+
+// Archetype-specific "Watch-out" warnings
+const ARCHETYPE_WATCH_OUT: Record<string, string> = {
+    Sparrow: "Spreading yourself too thin",
+    Rhino: "Overrunning nuance or people's pace",
+    Tortoise: "Carrying too much for others",
+    "Whale Shark": "Being overlooked or under-seen",
+    Firefly: "Sustaining presence and follow-through",
+    Chameleon: "Losing your own stance by over-adapting",
+};
+
+// Local illustration images per archetype
+const ARCHETYPE_IMAGES: Record<string, string> = {
+    Sparrow: "/resources/sparrow.png",
+    Rhino: "/resources/rhino.png",
+    Tortoise: "/resources/tortoise.png",
+    "Whale Shark": "/resources/whale shark.png",
+    Firefly: "/resources/firefly.png",
+    Chameleon: "/resources/chameleon.png",
+};
+
 const EASE = [0.25, 0.1, 0.25, 1] as const;
+
+// Simple inline SVG icons matching Figma
+function StarIcon() {
+    return (
+        <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="shrink-0"
+        >
+            <path
+                d="M8 1.5L9.854 5.753L14.5 6.427L11.25 9.597L12.09 14.25L8 12L3.91 14.25L4.75 9.597L1.5 6.427L6.146 5.753L8 1.5Z"
+                stroke="#9b8479"
+                strokeWidth="1.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+        </svg>
+    );
+}
+
+function SquareWarningIcon() {
+    return (
+        <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="shrink-0"
+        >
+            <rect
+                x="2"
+                y="2"
+                width="12"
+                height="12"
+                rx="2"
+                stroke="#9b8479"
+                strokeWidth="1.2"
+            />
+            <path
+                d="M8 5.5V8.5"
+                stroke="#9b8479"
+                strokeWidth="1.2"
+                strokeLinecap="round"
+            />
+            <circle cx="8" cy="10.5" r="0.6" fill="#9b8479" />
+        </svg>
+    );
+}
 
 export function KodeResultCard({
     archetype,
     description,
-    topAttributes,
     illustrationUrl,
 }: KodeResultCardProps) {
     const subtitle = ARCHETYPE_SUBTITLES[archetype] || "Your Archetype";
-    const attributeLabels = topAttributes.map(
-        (attr) => ATTRIBUTE_NAMES[attr] || attr
-    );
+    const feelsLike = ARCHETYPE_FEELS_LIKE[archetype];
+    const watchOut = ARCHETYPE_WATCH_OUT[archetype];
+    const imageSrc = illustrationUrl || ARCHETYPE_IMAGES[archetype];
 
     return (
         <motion.div
             initial={{ opacity: 0, scale: 0.92, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
-            className="bg-white rounded-2xl shadow-[0_0_7px_rgba(0,0,0,0.15)] p-6 space-y-5"
+            className="bg-white rounded-3xl shadow-[0px_0px_7px_0px_rgba(0,0,0,0.15)] px-5 py-8 flex flex-col gap-5 items-center w-full"
         >
             {/* Illustration */}
             <motion.div
@@ -54,14 +127,14 @@ export function KodeResultCard({
                 transition={{ duration: 0.5, delay: 0.2, ease: EASE }}
                 className="flex justify-center"
             >
-                {illustrationUrl ? (
+                {imageSrc ? (
                     <img
-                        src={illustrationUrl}
+                        src={imageSrc}
                         alt={archetype}
-                        className="w-40 h-40 object-contain"
+                        className="w-[220px] h-[140px] object-contain"
                     />
                 ) : (
-                    <div className="w-40 h-40 rounded-full bg-[var(--background)] flex items-center justify-center">
+                    <div className="w-[220px] h-[140px] rounded-xl bg-[var(--background)] flex items-center justify-center">
                         <img
                             src="/resources/thumbnail.png"
                             alt="Kobae"
@@ -71,17 +144,23 @@ export function KodeResultCard({
                 )}
             </motion.div>
 
-            {/* Archetype name */}
+            {/* Name + subtitle */}
             <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.35, ease: EASE }}
-                className="text-center space-y-1"
+                transition={{ duration: 0.4, delay: 0.3, ease: EASE }}
+                className="flex flex-col gap-2 items-center w-full"
             >
-                <h2 className="text-3xl font-serif font-bold italic text-[var(--primary)]">
-                    {archetype}
-                </h2>
-                <p className="text-sm text-[var(--text-300)] font-sans">
+                {/* Archetype name with peach highlight */}
+                <div className="relative h-9 w-full flex items-center justify-center">
+                    <span className="absolute w-[106px] h-[15px] top-[15px] left-1/2 -translate-x-1/2 bg-[#ffefe5]" />
+                    <h2 className="relative text-[28px] font-serif font-semibold italic text-[var(--primary)] leading-[36px] text-center">
+                        {archetype}
+                    </h2>
+                </div>
+
+                {/* Subtitle */}
+                <p className="text-sm font-sans font-semibold text-[var(--text-200)] text-center leading-[21px]">
                     {subtitle}
                 </p>
             </motion.div>
@@ -90,26 +169,51 @@ export function KodeResultCard({
             <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 0.4, delay: 0.45, ease: EASE }}
-                className="text-sm text-[var(--text-400)] font-sans text-center leading-relaxed"
+                transition={{ duration: 0.4, delay: 0.4, ease: EASE }}
+                className="text-base font-sans font-normal text-[var(--text-400)] text-center leading-6 w-full"
             >
                 {description}
             </motion.p>
 
             {/* Feels like */}
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.4, delay: 0.55, ease: EASE }}
-                className="text-center"
-            >
-                <p className="text-xs text-[var(--text-200)] font-sans mb-1">
-                    Feels like
-                </p>
-                <p className="text-sm text-[var(--text-400)] font-sans font-medium">
-                    {attributeLabels.join(" · ")}
-                </p>
-            </motion.div>
+            {feelsLike && (
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.4, delay: 0.5, ease: EASE }}
+                    className="flex flex-col gap-2 items-start w-full"
+                >
+                    <div className="flex items-center gap-1 h-6">
+                        <StarIcon />
+                        <span className="text-sm font-sans font-semibold text-[var(--text-200)] leading-[21px]">
+                            Feels like
+                        </span>
+                    </div>
+                    <p className="text-base font-sans font-semibold text-[var(--primary)] leading-6">
+                        {feelsLike}
+                    </p>
+                </motion.div>
+            )}
+
+            {/* Watch-out */}
+            {watchOut && (
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.4, delay: 0.6, ease: EASE }}
+                    className="flex flex-col gap-2 items-start w-full"
+                >
+                    <div className="flex items-center gap-1 h-6">
+                        <SquareWarningIcon />
+                        <span className="text-sm font-sans font-semibold text-[var(--text-200)] leading-[21px]">
+                            Watch‑out
+                        </span>
+                    </div>
+                    <p className="text-base font-sans font-semibold text-[var(--primary)] leading-6">
+                        {watchOut}
+                    </p>
+                </motion.div>
+            )}
         </motion.div>
     );
 }

@@ -96,22 +96,21 @@ export default function ResultPage() {
                 <KodeResultCard
                     archetype={kode.archetype}
                     description={kode.description}
-                    topAttributes={kode.top_attributes}
                 />
 
-                <div className="space-y-3">
+                <div className="flex flex-col gap-[10px] w-full">
                     <BottomButton onClick={() => router.push("/complete")}>
                         Cool!
                     </BottomButton>
-                </div>
 
-                <button
-                    onClick={handleShare}
-                    className="flex items-center justify-center gap-2 w-full py-3 text-sm text-[var(--primary-400)] font-sans font-medium hover:underline"
-                >
-                    <Share2 className="w-4 h-4" />
-                    Share Result
-                </button>
+                    <button
+                        onClick={handleShare}
+                        className="flex items-center justify-center gap-2 w-full h-12 px-3 rounded-full border border-[var(--primary-400)] text-base font-sans font-semibold text-[var(--primary-400)] bg-transparent"
+                    >
+                        Share Result
+                        <Share2 className="w-[18px] h-[18px]" />
+                    </button>
+                </div>
             </div>
         </OnboardingLayout>
     );
