@@ -26,23 +26,18 @@ export function Header() {
                 {/* Nav Links */}
                 <nav className="hidden md:flex items-center gap-12">
                     <a
-                        href="#about"
-                        className="text-base font-semibold text-foreground hover:text-primary transition-colors"
-                    >
-                        About Us
-                    </a>
-                    <a
                         href="#how-it-works"
                         className="text-base font-semibold text-foreground hover:text-primary transition-colors"
                     >
                         How It Works
                     </a>
                     <a
-                        href="#contact"
+                        href="#our-why"
                         className="text-base font-semibold text-foreground hover:text-primary transition-colors"
                     >
-                        Contact Us
+                        Our Why
                     </a>
+                  
                 </nav>
 
                 {/* Auth Buttons */}
