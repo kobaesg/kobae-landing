@@ -11,12 +11,12 @@ const steps = [
         description: "Recommendations curated based on not just commonalities but your natural social disposition",
     },
     {
-        image: "/resources/middle-2.png",
+        image: "/resources/conversations-pic.jpg",
         title: "Conversations you would enjoy",
         description: "Skip the small talk and dive into conversation with ease through shared mutuals, interests or industry.",
     },
     {
-        image: "/resources/middle-3.png",
+        image: "/resources/genuine-connection.JPG",
         title: "Build up genuine connections",
         description: "Go offline and simply hang out with your new people",
     },
