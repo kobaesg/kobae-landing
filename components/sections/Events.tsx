@@ -83,12 +83,12 @@ export function Events() {
                     transition={{ duration: 0.6, delay: 0.2 }}
                     className="relative"
                 >
-                    <div className="overflow-hidden" ref={emblaRef}>
-                        <div className="flex gap-11">
+                   <div className="overflow-hidden" ref={emblaRef}>
+                        <div className="flex ml-[-44px]">
                             {events.map((event) => (
                                 <div
                                     key={event.id}
-                                    className="flex-[0_0_auto] min-w-0 w-[300px]"
+                                    className="flex-[0_0_auto] min-w-0 w-[300px] pl-11"
                                 >
                                     <div className="group cursor-pointer">
                                         <div className="relative w-full h-[400px] rounded-2xl overflow-hidden">
