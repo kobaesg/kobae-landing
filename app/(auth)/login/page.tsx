@@ -49,6 +49,8 @@ export default function LoginPage() {
             // Login returns auth tokens directly
             const { access_token, refresh_token, user } = response.data;
             setAuth(access_token, refresh_token, user);
+            // /me handles onboarding redirect — verified users who never finished
+            // onboarding will be bounced to the correct step from there
             router.push("/me");
         } catch (err) {
             const axiosError = err as AxiosError<ApiError>;

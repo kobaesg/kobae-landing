@@ -13,7 +13,14 @@ function VerifyContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const phone = searchParams.get("phone") || "";
-    const { login } = useAuth();
+    const { login, isAuthenticated, isLoading: authLoading } = useAuth();
+
+    // Already authenticated — skip OTP and resume wherever they left off
+    useEffect(() => {
+        if (!authLoading && isAuthenticated) {
+            router.replace("/me");
+        }
+    }, [authLoading, isAuthenticated, router]);
 
     const [otp, setOtp] = useState("");
     const [error, setError] = useState("");

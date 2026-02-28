@@ -16,6 +16,7 @@ import { AxiosError } from "axios";
 import { ApiError } from "@/lib/api/types";
 import { useOnboardingDraft } from "@/lib/onboarding/store";
 import { StaggerContainer, StaggerItem } from "@/components/onboarding/animations";
+import { useAuth } from "@/lib/auth/context";
 
 const signupSchema = z.object({
     email: z.string().email("Please enter a valid email address"),
@@ -34,9 +35,18 @@ export default function SignupPage() {
     const router = useRouter();
     const signup = useSignup();
     const [serverError, setServerError] = useState("");
+    const [accountExists, setAccountExists] = useState(false);
+    const { isAuthenticated, isLoading: authLoading } = useAuth();
     const draft = useOnboardingDraft((s) => s.signup);
     const setDraft = useOnboardingDraft((s) => s.setSignup);
     const clearDraft = useOnboardingDraft((s) => s.clearSignup);
+
+    // Already logged in — skip signup entirely and resume wherever they left off
+    useEffect(() => {
+        if (!authLoading && isAuthenticated) {
+            router.replace("/me");
+        }
+    }, [authLoading, isAuthenticated, router]);
 
     const {
         register,
@@ -68,6 +78,7 @@ export default function SignupPage() {
 
     const onSubmit = async (data: SignupFormData) => {
         setServerError("");
+        setAccountExists(false);
         try {
             await signup.mutateAsync({
                 email: data.email,
@@ -79,9 +90,14 @@ export default function SignupPage() {
             router.push(`/verify?phone=${encodeURIComponent(data.phone)}`);
         } catch (err) {
             const axiosError = err as AxiosError<ApiError>;
-            setServerError(
-                axiosError.response?.data?.error?.message || "Something went wrong. Please try again."
-            );
+            if (axiosError.response?.status === 409) {
+                // Verified account already exists — direct them to log in and resume onboarding
+                setAccountExists(true);
+            } else {
+                setServerError(
+                    axiosError.response?.data?.error?.message || "Something went wrong. Please try again."
+                );
+            }
         }
     };
 
@@ -139,6 +155,25 @@ export default function SignupPage() {
                             />
                         </div>
                     </StaggerItem>
+
+                    {accountExists && (
+                        <StaggerItem>
+                            <div className="rounded-xl bg-[var(--primary)]/10 border border-[var(--primary)]/20 px-4 py-3 text-center space-y-2">
+                                <p className="text-sm font-sans text-[var(--foreground)] font-medium">
+                                    You already have an account.
+                                </p>
+                                <p className="text-xs font-sans text-[var(--text-300)]">
+                                    Log in to pick up where you left off.
+                                </p>
+                                <Link
+                                    href="/login"
+                                    className="inline-block mt-1 text-sm font-semibold text-[var(--primary)] underline underline-offset-2"
+                                >
+                                    Log in &rarr;
+                                </Link>
+                            </div>
+                        </StaggerItem>
+                    )}
 
                     {serverError && (
                         <StaggerItem>

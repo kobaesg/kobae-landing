@@ -70,7 +70,12 @@ export default function MyProfilePage() {
     useEffect(() => {
         if (profileLoading) return;
         const step = profileData?.profile?.onboard_step;
-        if (step && !DONE_STEPS.includes(step)) {
+        // No profile at all (user abandoned onboarding before step 1) — send to start
+        if (!step) {
+            router.replace("/profile");
+            return;
+        }
+        if (!DONE_STEPS.includes(step)) {
             router.replace(STEP_ROUTE_MAP[step] || "/profile");
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -85,7 +90,8 @@ export default function MyProfilePage() {
     }
 
     const onboardStep = profileData?.profile?.onboard_step;
-    if (onboardStep && !DONE_STEPS.includes(onboardStep)) {
+    // No profile yet or onboarding not done — show spinner while redirect fires
+    if (!onboardStep || !DONE_STEPS.includes(onboardStep)) {
         return (
             <div className="min-h-dvh bg-[#f8f7f6] flex items-center justify-center">
                 <div className="w-8 h-8 border-2 border-[#d8602e] border-t-transparent rounded-full animate-spin" />
