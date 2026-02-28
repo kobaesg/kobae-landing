@@ -157,7 +157,7 @@ export default function SignupPage() {
                     </StaggerItem>
 
                     {accountExists && (
-                        <StaggerItem>
+                        <StaggerItem className="pt-4">
                             <div className="rounded-xl bg-[var(--primary)]/10 border border-[var(--primary)]/20 px-4 py-3 text-center space-y-2">
                                 <p className="text-sm font-sans text-[var(--foreground)] font-medium">
                                     You already have an account.

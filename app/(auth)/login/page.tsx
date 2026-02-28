@@ -29,6 +29,7 @@ export default function LoginPage() {
     const login = useLogin();
     const { login: setAuth } = useAuth();
     const [serverError, setServerError] = useState("");
+    const [errorType, setErrorType] = useState<"credentials" | "unverified" | "generic" | null>(null);
 
     const {
         register,
@@ -41,6 +42,7 @@ export default function LoginPage() {
 
     const onSubmit = async (data: LoginFormData) => {
         setServerError("");
+        setErrorType(null);
         try {
             const response = await login.mutateAsync({
                 identifier: data.identifier,
@@ -54,8 +56,19 @@ export default function LoginPage() {
             router.push("/me");
         } catch (err) {
             const axiosError = err as AxiosError<ApiError>;
-            const errorMsg = axiosError.response?.data?.error?.message || "";
-            setServerError(errorMsg || "Something went wrong. Please try again.");
+            const status = axiosError.response?.status;
+            const msg = axiosError.response?.data?.error?.message || "";
+            if (status === 401) {
+                if (msg.toLowerCase().includes("verified")) {
+                    setErrorType("unverified");
+                } else {
+                    setErrorType("credentials");
+                }
+                setServerError("");
+            } else {
+                setErrorType("generic");
+                setServerError(msg || "Something went wrong. Please try again.");
+            }
         }
     };
 
@@ -99,8 +112,34 @@ export default function LoginPage() {
                         />
                     </StaggerItem>
 
-                    {serverError && (
-                        <StaggerItem>
+                    {errorType === "credentials" && (
+                        <StaggerItem className="pt-2">
+                            <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-center space-y-1">
+                                <p className="text-sm font-semibold font-sans text-red-700">
+                                    Incorrect email, phone, or password.
+                                </p>
+                                <p className="text-xs font-sans text-red-500">
+                                    Double-check your details and try again.
+                                </p>
+                            </div>
+                        </StaggerItem>
+                    )}
+
+                    {errorType === "unverified" && (
+                        <StaggerItem className="pt-2">
+                            <div className="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-center space-y-1">
+                                <p className="text-sm font-semibold font-sans text-amber-800">
+                                    Account not verified yet.
+                                </p>
+                                <p className="text-xs font-sans text-amber-600">
+                                    Please complete signup first.
+                                </p>
+                            </div>
+                        </StaggerItem>
+                    )}
+
+                    {errorType === "generic" && serverError && (
+                        <StaggerItem className="pt-2">
                             <p className="text-sm text-red-500 font-sans text-center">
                                 {serverError}
                             </p>
