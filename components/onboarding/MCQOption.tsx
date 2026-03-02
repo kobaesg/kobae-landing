@@ -36,7 +36,7 @@ export function MCQOption({
                 animate={
                     selected
                         ? { backgroundColor: "var(--primary)", color: "#fff" }
-                        : {}
+                        : { backgroundColor: "var(--background)", color: "var(--text-300)" }
                 }
                 transition={{ duration: 0.2 }}
                 className={`
