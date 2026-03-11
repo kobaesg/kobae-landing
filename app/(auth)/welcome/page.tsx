@@ -49,7 +49,7 @@ export default function WelcomePage() {
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: 0.28, ease: EASE }}
-                    className="flex flex-col gap-4 items-start w-full"
+                    className="flex flex-col gap-4 items-start w-full max-w-lg mx-auto"
                 >
                     <motion.div whileTap={{ scale: 0.97 }} className="w-full">
                         <Link
