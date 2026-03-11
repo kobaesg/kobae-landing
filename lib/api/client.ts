@@ -48,7 +48,9 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 api.interceptors.response.use(
     (response) => response,
     (error: AxiosError) => {
-        if (error.response?.status === 401) {
+        const url = error.config?.url ?? "";
+        const isAuthEndpoint = url.includes("/auth/");
+        if (error.response?.status === 401 && !isAuthEndpoint) {
             clearTokens();
             if (typeof window !== "undefined") {
                 window.location.href = "/login";
