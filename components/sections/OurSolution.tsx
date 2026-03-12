@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 
-export function OurSolution () {
+export function OurSolution() {
     return (
         <section id="our-solution" className="py-32 px-6 lg:px-64 bg-background">
             <div className="container mx-auto max-w-5xl">
@@ -14,14 +14,16 @@ export function OurSolution () {
                     className="text-center"
                 >
                     <h2 className="text-4xl md:text-5xl lg:text-[56px] font-normal leading-tight lg:leading-[64px] tracking-tight">
-                        The solution is in fact simple. 
+                        The solution is in fact simple.
                     </h2>
                     <p className="mt-5 text-2xl font-normal leading-9 text-[#453933] max-w-xl mx-auto">
                         We believe that the way relationship building should be done
                         is through mutuals for trust,
                         with professional and personal considerations to be holistic
-                        and with consideration of the type of person you are. 
-                        <br />
-                        <br />
+                        and with consideration of the type of person you are.
                     </p>
                 </motion.div>
+            </div>
+        </section>
+    );
+}
