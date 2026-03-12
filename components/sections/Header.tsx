@@ -27,19 +27,25 @@ export function Header() {
 
                 {/* Nav Links */}
                 <nav className="hidden md:flex items-center gap-12">
-                    <a
-                        href="#how-it-works"
-                        className="text-base font-semibold text-foreground hover:text-primary transition-colors"
-                    >
-                        How It Works
-                    </a>
+                    
                     <a
                         href="#our-why"
                         className="text-base font-semibold text-foreground hover:text-primary transition-colors"
                     >
                         Our Why
                     </a>
-                  
+                     <a
+                        href="#our-solution"
+                        className="text-base font-semibold text-foreground hover:text-primary transition-colors"
+                    >
+                        Our Why
+                    </a>
+                     <a
+                        href="#how-it-works"
+                        className="text-base font-semibold text-foreground hover:text-primary transition-colors"
+                    >
+                        How It Works
+                    </a>
                 </nav>
 
                 {/* Auth Buttons */}
