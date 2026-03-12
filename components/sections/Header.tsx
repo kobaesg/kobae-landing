@@ -38,7 +38,7 @@ export function Header() {
                         href="#our-solution"
                         className="text-base font-semibold text-foreground hover:text-primary transition-colors"
                     >
-                        Our Why
+                        Our Solution
                     </a>
                      <a
                         href="#how-it-works"
