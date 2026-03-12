@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 export function OurSolution() {
     return (
-        <section id="our-solution" className="py-32 px-6 lg:px-64 bg-background">
+        <section id="our-solution" className="py-32 px-6 lg:px-64 bg-[#f8f7f6]">
             <div className="container mx-auto max-w-5xl">
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
