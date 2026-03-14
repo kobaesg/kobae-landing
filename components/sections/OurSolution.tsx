@@ -2,9 +2,9 @@
 
 import { motion } from "framer-motion";
 
-export function OurWhy () {
+export function OurSolution() {
     return (
-        <section id="our-why" className="py-32 px-6 lg:px-64 bg-[#f8f7f6]">
+        <section id="our-solution" className="py-32 px-6 lg:px-64 bg-background">
             <div className="container mx-auto max-w-5xl">
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
@@ -14,16 +14,13 @@ export function OurWhy () {
                     className="text-center"
                 >
                     <h2 className="text-4xl md:text-5xl lg:text-[56px] font-normal leading-tight lg:leading-[64px] tracking-tight">
-                        Connection shouldn't be a chore.
+                        The solution is in fact simple.
                     </h2>
                     <p className="mt-5 text-2xl font-normal leading-9 text-[#453933] max-w-xl mx-auto">
-                        Kobae's origin lies in our belief that connection 
-                        should be neither performative nor transactional. 
-                        <br />
-                        <br />
-                        The right people are hidden within our circles,
-                        and through mutuals and data, find your people
-                        that you should have uncovered, long ago. 
+                        We believe that the way relationship building should be done
+                        is through mutuals for trust,
+                        with professional and personal considerations to be holistic
+                        and with consideration of the type of person you are.
                     </p>
                 </motion.div>
             </div>

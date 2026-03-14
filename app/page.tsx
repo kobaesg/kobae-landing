@@ -6,6 +6,7 @@ import { Events } from "@/components/sections/Events";
 import { OurWhy } from "@/components/sections/OurWhy";
 import { CTA } from "@/components/sections/CTA";
 import { Footer } from "@/components/sections/Footer";
+import { OurSolution } from "@/components/sections/OurSolution";
 
 export default function Home() {
     return (
@@ -13,10 +14,11 @@ export default function Home() {
             <Header />
             <main>
                 <Hero />
-                <HowItWorks />
+                <OurWhy />
+                <OurSolution />
+                <HowItWorks/>
                 <Testimonial />
                 <Events />
-                <OurWhy />
                 <CTA />
             </main>
             <Footer />

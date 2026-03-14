@@ -36,6 +36,7 @@ export default function SignupPage() {
     const signup = useSignup();
     const [serverError, setServerError] = useState("");
     const [accountExists, setAccountExists] = useState(false);
+    const [conflictMessage, setConflictMessage] = useState<string>("");
     const { isAuthenticated, isLoading: authLoading } = useAuth();
     const draft = useOnboardingDraft((s) => s.signup);
     const setDraft = useOnboardingDraft((s) => s.setSignup);
@@ -79,6 +80,7 @@ export default function SignupPage() {
     const onSubmit = async (data: SignupFormData) => {
         setServerError("");
         setAccountExists(false);
+        setConflictMessage("");
         try {
             await signup.mutateAsync({
                 email: data.email,
@@ -93,6 +95,7 @@ export default function SignupPage() {
             if (axiosError.response?.status === 409) {
                 // Verified account already exists — direct them to log in and resume onboarding
                 setAccountExists(true);
+                setConflictMessage(axiosError.response?.data?.error?.message || "");
             } else {
                 setServerError(
                     axiosError.response?.data?.error?.message || "Something went wrong. Please try again."
@@ -160,7 +163,7 @@ export default function SignupPage() {
                         <StaggerItem className="pt-4">
                             <div className="rounded-xl bg-[var(--primary)]/10 border border-[var(--primary)]/20 px-4 py-3 text-center space-y-2">
                                 <p className="text-sm font-sans text-[var(--foreground)] font-medium">
-                                    You already have an account.
+                                    {conflictMessage || "You already have an account."}
                                 </p>
                                 <p className="text-xs font-sans text-[var(--text-300)]">
                                     Log in to pick up where you left off.
