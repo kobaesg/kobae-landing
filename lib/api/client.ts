@@ -177,3 +177,66 @@ export const offersApi = {
     update: (data: import("./types").UpdateOffersRequest) =>
         api.put("/profile/offers", data),
 };
+
+// ── Discovery API ─────────────────────────────────────────
+
+export const discoveryApi = {
+    getRecommendation: () =>
+        api.get<import("./types").DiscoveryResponse>(
+            "/discovery/recommendation"
+        ),
+
+    skipProfile: (data: { skipped_user_id: string }) =>
+        api.post("/discovery/skip", data),
+};
+
+// ── Connections API ───────────────────────────────────────
+
+export const connectionsApi = {
+    sendRequest: (data: import("./types").SendConnectionRequest) =>
+        api.post("/connections/request", data),
+
+    acceptRequest: (data: import("./types").RespondConnectionRequest) =>
+        api.post("/connections/accept", data),
+
+    declineRequest: (data: import("./types").RespondConnectionRequest) =>
+        api.post("/connections/decline", data),
+
+    getPendingRequests: () =>
+        api.get<{ requests: import("./types").ConnectionRequestItem[] }>(
+            "/connections/requests"
+        ),
+};
+
+// ── Users / Public Profile API ────────────────────────────
+
+export const usersApi = {
+    getPublicProfile: (userId: string) =>
+        api.get<import("./types").FullPublicProfile>(
+            `/users/${userId}/profile`
+        ),
+
+    getMutualConnections: (userId: string) =>
+        api.get<{
+            mutual_connections: import("./types").MutualConnection[];
+        }>(`/users/${userId}/mutual-connections`),
+};
+
+// ── Notifications API ─────────────────────────────────────
+
+export const notificationsApi = {
+    getAll: (params?: { limit?: number; offset?: number }) =>
+        api.get<{ notifications: import("./types").NotificationItem[] }>(
+            "/notifications",
+            { params }
+        ),
+
+    getUnreadCount: () =>
+        api.get<{ count: number }>("/notifications/unread-count"),
+
+    markRead: (id: string) =>
+        api.post(`/notifications/${id}/read`),
+
+    markAllRead: () =>
+        api.post("/notifications/read-all"),
+};

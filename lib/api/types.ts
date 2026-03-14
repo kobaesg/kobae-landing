@@ -225,6 +225,110 @@ export interface UpdateOffersRequest {
     offers: { title: string; description: string }[];
 }
 
+// ── Discovery ─────────────────────────────────────────────
+
+export interface ProfileCard {
+    user_id: string;
+    first_name: string;
+    last_name: string;
+    username: string;
+    photo_url?: string;
+    headline?: string;
+    occupation?: string;
+    bio?: string;
+    archetype?: string;
+}
+
+export interface RecommendationResponse {
+    profile: ProfileCard;
+    compat_score: number;
+    shared_interests: string[];
+    why_connect: string;
+    common_traits: string[];
+    mutual_connection_count: number;
+    connection_status: string;
+    next_refresh_at?: string;
+}
+
+export interface CountdownResponse {
+    next_refresh_at: string;
+    message: string;
+}
+
+export interface DiscoveryResponse {
+    status: "ready" | "countdown";
+    recommendation?: RecommendationResponse;
+    countdown?: CountdownResponse;
+}
+
+// ── Connections ────────────────────────────────────────────
+
+export interface SendConnectionRequest {
+    receiver_user_id: string;
+}
+
+export interface RespondConnectionRequest {
+    request_id: string;
+}
+
+export interface ConnectionRequestItem {
+    id: string;
+    sender: ProfileCard;
+    status: string;
+    created_at: string;
+}
+
+// ── Public Profile ────────────────────────────────────────
+
+export interface MutualConnection {
+    user_id: string;
+    first_name: string;
+    last_name: string;
+    photo_url?: string;
+    headline?: string;
+}
+
+export interface PublicKodeInfo {
+    archetype: string;
+    description: string;
+}
+
+export interface FullPublicProfile {
+    user_id: string;
+    first_name: string;
+    last_name: string;
+    username: string;
+    photo_url?: string;
+    headline?: string;
+    bio?: string;
+    occupation?: string;
+    kode?: PublicKodeInfo;
+    prompts: UserPromptResponse[];
+    hobbies: string[];
+    skills: string[];
+    intents: string[];
+    offers: OfferResponse[];
+    common_traits: string[];
+    connection_status: string;
+    mutual_connections: MutualConnection[];
+}
+
+// ── Notifications ─────────────────────────────────────────
+
+export interface NotificationItem {
+    id: string;
+    type: string;
+    title: string;
+    body: string;
+    data: Record<string, unknown>;
+    read: boolean;
+    created_at: string;
+}
+
+export interface UnreadCountResponse {
+    count: number;
+}
+
 // ── API Error ─────────────────────────────────────────────
 
 export interface ApiError {

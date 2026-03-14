@@ -6,3 +6,7 @@ export * from "./use-prompts";
 export * from "./use-questionnaire";
 export * from "./use-kode";
 export * from "./use-offers";
+export * from "./use-discovery";
+export * from "./use-connections";
+export * from "./use-public-profile";
+export * from "./use-notifications";
