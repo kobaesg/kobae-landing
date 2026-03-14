@@ -1,5 +1,4 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
-import Cookies from "js-cookie";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
@@ -35,8 +34,46 @@ export function clearTokens() {
     localStorage.removeItem(REFRESH_TOKEN_KEY);
 }
 
+const REFRESH_BYPASS_HEADER = "x-skip-auth-refresh";
+let refreshPromise: Promise<string> | null = null;
+
+function shouldSkipAuthRefresh(config?: InternalAxiosRequestConfig): boolean {
+    return config?.headers?.[REFRESH_BYPASS_HEADER] === "true";
+}
+
+function redirectToLogin() {
+    if (typeof window !== "undefined" && window.location.pathname !== "/login") {
+        window.location.href = "/login";
+    }
+}
+
+async function refreshAccessToken(): Promise<string> {
+    const refreshToken = getRefreshToken();
+    if (!refreshToken) {
+        throw new Error("No refresh token available");
+    }
+
+    const response = await api.post<import("./types").AuthResponse>(
+        "/auth/refresh",
+        { refresh_token: refreshToken },
+        {
+            headers: {
+                [REFRESH_BYPASS_HEADER]: "true",
+            },
+        }
+    );
+
+    const { access_token, refresh_token } = response.data;
+    setTokens(access_token, refresh_token);
+    return access_token;
+}
+
 // Request interceptor: inject Bearer token
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+    if (shouldSkipAuthRefresh(config)) {
+        return config;
+    }
+
     const token = getAccessToken();
     if (token && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;
@@ -47,13 +84,43 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 // Response interceptor: handle 401 → redirect to login
 api.interceptors.response.use(
     (response) => response,
-    (error: AxiosError) => {
-        if (error.response?.status === 401) {
-            clearTokens();
-            if (typeof window !== "undefined") {
-                window.location.href = "/login";
+    async (error: AxiosError) => {
+        const originalRequest = error.config as (InternalAxiosRequestConfig & {
+            _retry?: boolean;
+        }) | undefined;
+
+        if (
+            error.response?.status === 401 &&
+            originalRequest &&
+            !originalRequest._retry &&
+            !shouldSkipAuthRefresh(originalRequest)
+        ) {
+            originalRequest._retry = true;
+
+            try {
+                if (!refreshPromise) {
+                    refreshPromise = refreshAccessToken().finally(() => {
+                        refreshPromise = null;
+                    });
+                }
+
+                const newAccessToken = await refreshPromise;
+                if (originalRequest.headers) {
+                    originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+                }
+
+                return api(originalRequest);
+            } catch {
+                clearTokens();
+                redirectToLogin();
             }
         }
+
+        if (error.response?.status === 401) {
+            clearTokens();
+            redirectToLogin();
+        }
+
         return Promise.reject(error);
     }
 );
@@ -66,6 +133,20 @@ export const authApi = {
 
     login: (data: import("./types").LoginRequest) =>
         api.post<import("./types").AuthResponse>("/auth/login", data),
+
+    refresh: (data: import("./types").RefreshTokenRequest) =>
+        api.post<import("./types").AuthResponse>("/auth/refresh", data, {
+            headers: {
+                [REFRESH_BYPASS_HEADER]: "true",
+            },
+        }),
+
+    logout: (data: import("./types").LogoutRequest) =>
+        api.post<{ message: string }>("/auth/logout", data, {
+            headers: {
+                [REFRESH_BYPASS_HEADER]: "true",
+            },
+        }),
 
     verifyOTP: (data: import("./types").VerifyOTPRequest) =>
         api.post<import("./types").AuthResponse>("/auth/verify-otp", data),

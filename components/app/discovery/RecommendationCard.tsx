@@ -1,8 +1,9 @@
 "use client";
 import { motion } from "framer-motion";
-import { X } from "lucide-react";
+import { X, ChevronRight, Sun, Pencil } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type { RecommendationResponse } from "@/lib/api/types";
+import { formatDisplayText } from "@/lib/utils";
 import { ArchetypeBadge } from "./ArchetypeBadge";
 import { MutualConnectionsRow } from "./MutualConnectionsRow";
 
@@ -16,7 +17,9 @@ interface Props {
 
 export function RecommendationCard({ recommendation, onSendRequest, onDismiss, onViewMutuals, isSending }: Props) {
     const router = useRouter();
-    const { profile, compat_score, why_connect, common_traits, mutual_connection_count } = recommendation;
+    const { profile, shared_interests, common_traits, mutual_connection_count } = recommendation;
+
+    const hasNotableConnections = (shared_interests && shared_interests.length > 0) || (common_traits && common_traits.length > 0);
 
     return (
         <motion.div
@@ -32,65 +35,78 @@ export function RecommendationCard({ recommendation, onSendRequest, onDismiss, o
                 <X size={16} className="text-[#453933]" />
             </button>
 
-            {/* Profile photo */}
-            <div className="w-full aspect-[4/3] bg-gradient-to-br from-[#ffefe5] to-[#e8d5c8] relative">
-                {profile.photo_url && (
-                    <img src={profile.photo_url} alt={profile.first_name} className="w-full h-full object-cover" />
-                )}
-                {/* Compat score badge */}
-                <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur rounded-full px-3 py-1 flex items-center gap-1.5">
-                    <span className="text-[12px] font-sans font-bold text-[#d8602e]">
-                        {Math.round(compat_score)}% match
-                    </span>
+            {/* Top: horizontal layout — small photo left, info right */}
+            <div className="flex gap-3 p-4 pb-3">
+                {/* Small thumbnail */}
+                <div className="w-[100px] h-[100px] rounded-2xl bg-gradient-to-br from-[#ffefe5] to-[#e8d5c8] flex-shrink-0 overflow-hidden">
+                    {profile.photo_url && (
+                        <img src={profile.photo_url} alt={profile.first_name} className="w-full h-full object-cover" />
+                    )}
+                </div>
+
+                {/* Name + badge + headline */}
+                <div className="flex-1 min-w-0 pt-1 pr-8">
+                    <h2 className="font-serif font-semibold text-[20px] text-[#181412] leading-snug">
+                        {profile.first_name} {profile.last_name}
+                    </h2>
+                    <div className="mt-1 mb-2">
+                        <ArchetypeBadge archetype={profile.archetype || ""} variant="purple" />
+                    </div>
+                    {profile.headline && (
+                        <p className="text-[13px] font-sans text-[#715e55] leading-snug line-clamp-2">{profile.headline}</p>
+                    )}
                 </div>
             </div>
 
             {/* Content */}
-            <div className="p-5">
-                {/* Name + Archetype */}
-                <div className="flex items-center gap-2 mb-1">
-                    <h2 className="font-serif font-semibold text-[22px] text-[#181412]">
-                        {profile.first_name} {profile.last_name}
-                    </h2>
-                    <ArchetypeBadge archetype={profile.archetype || ""} />
-                </div>
-
-                {/* Headline */}
-                {profile.headline && (
-                    <p className="text-[14px] font-sans text-[#715e55] mb-3">{profile.headline}</p>
-                )}
-
-                {/* Why connect */}
-                <p className="text-[14px] font-sans text-[#453933] mb-3 leading-relaxed">{why_connect}</p>
-
-                {/* Common traits */}
-                {common_traits && common_traits.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 mb-3">
-                        {common_traits.slice(0, 5).map((trait) => (
-                            <span key={trait} className="px-2.5 py-1 rounded-full text-[12px] font-sans font-medium bg-[#f5ede6] text-[#453933]">
-                                {trait}
-                            </span>
-                        ))}
+            <div className="px-4 pb-4">
+                {/* Notable Connections */}
+                {hasNotableConnections && (
+                    <div className="bg-white rounded-xl shadow-[0px_0px_2px_rgba(0,0,0,0.25)] p-3.5 mb-3">
+                        <p className="text-[11px] font-sans font-semibold text-[#9b8479] uppercase tracking-wider mb-2.5">
+                            Notable Connections
+                        </p>
+                        <div className="flex flex-col gap-2">
+                            {shared_interests?.slice(0, 2).map((interest) => (
+                                <div key={interest} className="flex items-start gap-2">
+                                    <Sun size={14} className="text-[#d8602e] mt-0.5 flex-shrink-0" />
+                                    <p className="text-[13px] font-sans text-[#453933]">
+                                        You and {profile.first_name} both enjoy <span className="font-semibold">{formatDisplayText(interest)}</span>
+                                    </p>
+                                </div>
+                            ))}
+                            {common_traits?.slice(0, 2).map((trait) => (
+                                <div key={trait} className="flex items-start gap-2">
+                                    <Pencil size={14} className="text-[#d8602e] mt-0.5 flex-shrink-0" />
+                                    <p className="text-[13px] font-sans text-[#453933]">
+                                        You're both skilled in <span className="font-semibold">{formatDisplayText(trait)}</span>
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 )}
 
                 {/* Mutual connections */}
-                <MutualConnectionsRow count={mutual_connection_count} onViewAll={onViewMutuals} />
+                <div className="mb-3">
+                    <MutualConnectionsRow count={mutual_connection_count} onViewAll={onViewMutuals} />
+                </div>
 
                 {/* Actions */}
-                <div className="flex flex-col gap-2 mt-4">
+                <div className="flex flex-col gap-2">
                     <button
                         onClick={onSendRequest}
                         disabled={isSending}
-                        className="w-full py-3.5 rounded-2xl bg-[#d8602e] text-white font-semibold font-sans text-[15px] active:scale-[0.98] transition-transform disabled:opacity-50"
+                        className="w-full py-3.5 rounded-2xl bg-[#d8602e] text-white font-semibold font-sans text-[15px] active:scale-[0.98] transition-transform disabled:opacity-50 shadow-[0px_0px_10px_rgba(255,144,97,0.8)]"
                     >
                         {isSending ? "Sending..." : "Send Request"}
                     </button>
                     <button
                         onClick={() => router.push(`/discover/${profile.user_id}`)}
-                        className="w-full py-3 rounded-2xl text-[#d8602e] font-semibold font-sans text-[14px] hover:bg-[#ffefe5] transition-colors"
+                        className="w-full py-3 rounded-2xl text-[#d8602e] font-semibold font-sans text-[14px] hover:bg-[#ffefe5] transition-colors flex items-center justify-center gap-1"
                     >
                         View Full Profile
+                        <ChevronRight size={16} className="text-[#d8602e]" />
                     </button>
                 </div>
             </div>

@@ -10,8 +10,9 @@ export function DiscoveryHeader({ title = "Today's Connection" }: Props) {
     const { data: unreadCount } = useUnreadCount();
 
     return (
-        <div className="flex items-center justify-between px-5 pt-6 pb-4">
-            <h1 className="font-serif font-semibold text-[24px] text-[#181412]">{title}</h1>
+        <div className="flex items-center px-5 pt-6 pb-4 relative">
+            <div className="w-10" />
+            <h1 className="flex-1 text-center font-serif font-semibold text-[24px] text-[#181412]">{title}</h1>
             <button
                 onClick={() => router.push("/notifications")}
                 className="relative p-2 rounded-full hover:bg-[#f5ede6] transition-colors"

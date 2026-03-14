@@ -79,7 +79,6 @@ export default function DiscoverPage() {
             {countdown && (
                 <CountdownView
                     nextRefreshAt={countdown.next_refresh_at}
-                    message={countdown.message}
                 />
             )}
 

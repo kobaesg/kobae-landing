@@ -14,7 +14,15 @@ const tabs = [
 export function AppNav() {
     const pathname = usePathname();
     const router = useRouter();
-    const { logout } = useAuth();
+    const { isAuthenticated, logout } = useAuth();
+
+    const handleTabClick = (href: string) => {
+        if (href === "/me" && !isAuthenticated) {
+            router.push("/login");
+            return;
+        }
+        router.push(href);
+    };
 
     return (
         <>
@@ -32,7 +40,7 @@ export function AppNav() {
                         return (
                             <button
                                 key={href}
-                                onClick={() => router.push(href)}
+                                onClick={() => handleTabClick(href)}
                                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors w-full ${
                                     isActive
                                         ? "bg-[#ffefe5] text-[#d8602e]"
@@ -63,7 +71,7 @@ export function AppNav() {
                     return (
                         <button
                             key={href}
-                            onClick={() => router.push(href)}
+                            onClick={() => handleTabClick(href)}
                             className="flex flex-col items-center gap-0.5 px-3"
                         >
                             <Icon

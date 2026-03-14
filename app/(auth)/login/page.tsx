@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { OnboardingLayout, InputField, BottomButton } from "@/components/onboarding";
 import { useLogin } from "@/lib/api/hooks";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AxiosError } from "axios";
 import { ApiError } from "@/lib/api/types";
@@ -27,9 +27,15 @@ type LoginFormData = z.infer<typeof loginSchema>;
 export default function LoginPage() {
     const router = useRouter();
     const login = useLogin();
-    const { login: setAuth } = useAuth();
+    const { login: setAuth, isAuthenticated, isLoading: authLoading } = useAuth();
     const [serverError, setServerError] = useState("");
     const [errorType, setErrorType] = useState<"credentials" | "unverified" | "generic" | null>(null);
+
+    useEffect(() => {
+        if (!authLoading && isAuthenticated) {
+            router.replace("/me");
+        }
+    }, [authLoading, isAuthenticated, router]);
 
     const {
         register,

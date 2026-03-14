@@ -8,6 +8,15 @@ import { usePendingRequests, useAcceptRequest, useDeclineRequest } from "@/lib/a
 import { useNotifications, useMarkAllRead } from "@/lib/api/hooks/use-notifications";
 import { DeclinedToast } from "@/components/app/discovery/DeclinedToast";
 
+function formatRelativeTime(dateStr: string): string {
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const minutes = Math.floor(diff / 60000);
+    if (minutes < 60) return `${Math.max(1, minutes)}m`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h`;
+    return `${Math.floor(hours / 24)}d`;
+}
+
 export default function NotificationsPage() {
     const router = useRouter();
     const { data: pendingRequests } = usePendingRequests();
@@ -37,7 +46,6 @@ export default function NotificationsPage() {
         [declineMutation]
     );
 
-    // Filter notifications to show only non-connection-request types (those are shown separately)
     const updateNotifications = notifications?.filter(
         (n) => n.type !== "connection_request"
     );
@@ -85,49 +93,44 @@ export default function NotificationsPage() {
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, x: -100 }}
-                                    className="bg-white rounded-xl p-4 shadow-[0_0_7px_rgba(0,0,0,0.08)] flex items-center gap-3"
+                                    className="bg-white rounded-xl p-4 shadow-[0_0_7px_rgba(0,0,0,0.08)]"
                                 >
-                                    {/* Avatar */}
-                                    <div className="w-12 h-12 rounded-full bg-[#e8d5c8] flex-shrink-0 overflow-hidden">
-                                        {req.sender.photo_url && (
-                                            <img
-                                                src={req.sender.photo_url}
-                                                alt=""
-                                                className="w-full h-full object-cover"
-                                            />
-                                        )}
-                                    </div>
-
-                                    {/* Info */}
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-[15px] font-sans font-semibold text-[#181412] truncate">
-                                            {req.sender.first_name} {req.sender.last_name}
-                                        </p>
-                                        {req.sender.headline && (
-                                            <p className="text-[12px] font-sans text-[#715e55] truncate">
-                                                {req.sender.headline}
+                                    {/* Top row: avatar + name/headline */}
+                                    <div className="flex items-center gap-3 mb-3">
+                                        <div className="w-12 h-12 rounded-full bg-[#e8d5c8] flex-shrink-0 overflow-hidden">
+                                            {req.sender.photo_url && (
+                                                <img
+                                                    src={req.sender.photo_url}
+                                                    alt=""
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            )}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-[15px] font-sans font-semibold text-[#181412] truncate">
+                                                {req.sender.first_name} {req.sender.last_name}
                                             </p>
-                                        )}
+                                            {req.sender.headline && (
+                                                <p className="text-[12px] font-sans text-[#715e55] truncate">
+                                                    {req.sender.headline}
+                                                </p>
+                                            )}
+                                        </div>
                                     </div>
 
-                                    {/* Actions */}
-                                    <div className="flex gap-2 flex-shrink-0">
+                                    {/* Bottom row: full-width side-by-side buttons */}
+                                    <div className="flex gap-2">
                                         <button
                                             onClick={() => handleDecline(req.id)}
                                             disabled={declineMutation.isPending}
-                                            className="px-3 py-2 rounded-xl text-[13px] font-sans font-semibold text-[#715e55] border border-[#e8e0da] hover:bg-[#f5ede6] transition-colors"
+                                            className="flex-1 py-2 rounded-full text-[13px] font-sans font-semibold text-[#d8602e] border border-[#d8602e] bg-white hover:bg-[#fff0eb] transition-colors"
                                         >
                                             Decline
                                         </button>
                                         <button
-                                            onClick={() =>
-                                                handleAccept(
-                                                    req.id,
-                                                    req.sender.first_name
-                                                )
-                                            }
+                                            onClick={() => handleAccept(req.id, req.sender.first_name)}
                                             disabled={acceptMutation.isPending}
-                                            className="px-3 py-2 rounded-xl text-[13px] font-sans font-semibold text-white bg-[#d8602e] active:scale-[0.98] transition-transform disabled:opacity-50"
+                                            className="flex-1 py-2 rounded-full text-[13px] font-sans font-semibold text-white bg-[#d8602e] active:scale-[0.98] transition-transform disabled:opacity-50"
                                         >
                                             Accept
                                         </button>
@@ -147,43 +150,44 @@ export default function NotificationsPage() {
                             Updates
                         </h2>
                         <div className="flex flex-col gap-2">
-                            {updateNotifications.map((notif) => (
-                                <div
-                                    key={notif.id}
-                                    className={`flex items-start gap-3 p-4 rounded-xl transition-colors ${
-                                        notif.read
-                                            ? "bg-white"
-                                            : "bg-[#ffefe5]/50"
-                                    }`}
-                                >
-                                    <div className="w-9 h-9 rounded-full bg-[#f5ede6] flex items-center justify-center flex-shrink-0">
-                                        {notif.type === "connection_accepted" ? (
-                                            <UserCheck size={18} className="text-[#2e8b57]" />
-                                        ) : (
-                                            <UserPlus size={18} className="text-[#d8602e]" />
+                            {updateNotifications.map((notif) => {
+                                const senderPhotoUrl = notif.type === "connection_accepted"
+                                    ? (notif.data.sender_photo_url as string | undefined)
+                                    : undefined;
+
+                                return (
+                                    <div
+                                        key={notif.id}
+                                        className={`flex items-start gap-3 p-4 rounded-xl transition-colors ${
+                                            notif.read ? "bg-white" : "bg-[#ffefe5]/50"
+                                        }`}
+                                    >
+                                        <div className="w-9 h-9 rounded-full bg-[#f5ede6] flex items-center justify-center flex-shrink-0 overflow-hidden">
+                                            {senderPhotoUrl ? (
+                                                <img src={senderPhotoUrl} alt="" className="w-full h-full object-cover" />
+                                            ) : notif.type === "connection_accepted" ? (
+                                                <UserCheck size={18} className="text-[#2e8b57]" />
+                                            ) : (
+                                                <UserPlus size={18} className="text-[#d8602e]" />
+                                            )}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-[14px] font-sans font-semibold text-[#181412]">
+                                                {notif.title}
+                                            </p>
+                                            <p className="text-[13px] font-sans text-[#715e55]">
+                                                {notif.body}
+                                            </p>
+                                            <p className="text-[11px] font-sans text-[#9b8479] mt-1">
+                                                {formatRelativeTime(notif.created_at)}
+                                            </p>
+                                        </div>
+                                        {!notif.read && (
+                                            <div className="w-2 h-2 rounded-full bg-[#d8602e] flex-shrink-0 mt-2" />
                                         )}
                                     </div>
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-[14px] font-sans font-semibold text-[#181412]">
-                                            {notif.title}
-                                        </p>
-                                        <p className="text-[13px] font-sans text-[#715e55]">
-                                            {notif.body}
-                                        </p>
-                                        <p className="text-[11px] font-sans text-[#9b8479] mt-1">
-                                            {new Date(notif.created_at).toLocaleDateString(undefined, {
-                                                month: "short",
-                                                day: "numeric",
-                                                hour: "numeric",
-                                                minute: "2-digit",
-                                            })}
-                                        </p>
-                                    </div>
-                                    {!notif.read && (
-                                        <div className="w-2 h-2 rounded-full bg-[#d8602e] flex-shrink-0 mt-2" />
-                                    )}
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     </>
                 )}

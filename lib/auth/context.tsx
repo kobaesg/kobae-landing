@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import type { User } from "@/lib/api/types";
 import {
+    authApi,
     getAccessToken,
     getRefreshToken,
     setTokens,
@@ -34,17 +35,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Restore session on mount
     useEffect(() => {
-        const token = getAccessToken();
-        const storedUser = localStorage.getItem(USER_STORAGE_KEY);
-        if (token && storedUser) {
+        const restoreSession = async () => {
+            const token = getAccessToken();
+            const refreshToken = getRefreshToken();
+            const storedUser = localStorage.getItem(USER_STORAGE_KEY);
+
+            if (!storedUser || (!token && !refreshToken)) {
+                setIsLoading(false);
+                return;
+            }
+
             try {
-                setUserState(JSON.parse(storedUser));
+                const parsedUser = JSON.parse(storedUser) as User;
+
+                if (token) {
+                    setUserState(parsedUser);
+                    setIsLoading(false);
+                    return;
+                }
+
+                if (refreshToken) {
+                    const response = await authApi.refresh({
+                        refresh_token: refreshToken,
+                    });
+                    const { access_token, refresh_token, user } = response.data;
+                    setTokens(access_token, refresh_token);
+                    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
+                    setUserState(user);
+                }
             } catch {
                 clearTokens();
                 localStorage.removeItem(USER_STORAGE_KEY);
+                setUserState(null);
+            } finally {
+                setIsLoading(false);
             }
-        }
-        setIsLoading(false);
+        };
+
+        void restoreSession();
     }, []);
 
     const login = useCallback(
@@ -57,10 +85,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     );
 
     const logout = useCallback(() => {
-        clearTokens();
-        localStorage.removeItem(USER_STORAGE_KEY);
-        setUserState(null);
-        window.location.href = "/login";
+        const refreshToken = getRefreshToken();
+
+        const finishClientLogout = () => {
+            clearTokens();
+            localStorage.removeItem(USER_STORAGE_KEY);
+            setUserState(null);
+            window.location.href = "/login";
+        };
+
+        if (!refreshToken) {
+            finishClientLogout();
+            return;
+        }
+
+        authApi
+            .logout({ refresh_token: refreshToken })
+            .catch(() => {
+                // Always clear client session regardless of revoke outcome
+            })
+            .finally(() => {
+                finishClientLogout();
+            });
     }, []);
 
     const setUser = useCallback((user: User) => {

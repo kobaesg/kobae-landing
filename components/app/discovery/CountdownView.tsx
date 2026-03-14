@@ -1,18 +1,22 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Clock } from "lucide-react";
 
-interface Props { nextRefreshAt: string; message: string }
+interface Props { nextRefreshAt: string }
 
 function formatTimeLeft(ms: number): string {
-    if (ms <= 0) return "0:00:00";
-    const hours = Math.floor(ms / 3600000);
-    const minutes = Math.floor((ms % 3600000) / 60000);
-    const seconds = Math.floor((ms % 60000) / 1000);
-    return `${hours}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    if (ms <= 0) return "00:00:00";
+
+    const totalSeconds = Math.floor(ms / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    return [hours, minutes, seconds]
+        .map((value) => value.toString().padStart(2, "0"))
+        .join(":");
 }
 
-export function CountdownView({ nextRefreshAt, message }: Props) {
+export function CountdownView({ nextRefreshAt }: Props) {
     const [timeLeft, setTimeLeft] = useState(() => new Date(nextRefreshAt).getTime() - Date.now());
 
     useEffect(() => {
@@ -25,17 +29,21 @@ export function CountdownView({ nextRefreshAt, message }: Props) {
     }, [nextRefreshAt]);
 
     return (
-        <div className="flex-1 flex flex-col items-center justify-center gap-6 px-8 pb-20">
-            <div className="w-64 h-64 rounded-3xl bg-gradient-to-br from-[#ffefe5] via-[#f5ede6] to-[#e8d5c8] flex items-center justify-center">
-                <Clock size={48} className="text-[#d8602e]" strokeWidth={1} />
+        <div className="flex-1 flex flex-col items-center justify-center gap-4 px-5 pb-20">
+            {/* Blurred gradient image placeholder */}
+            <div className="w-full rounded-3xl overflow-hidden" style={{ aspectRatio: "4/3" }}>
+                <div className="w-full h-full bg-gradient-to-br from-[#f5d9c0] via-[#e8c9a8] to-[#d4b08a] flex items-center justify-center"
+                    style={{ filter: "blur(0px)" }}>
+                    <div className="w-24 h-24 rounded-full bg-white/20 backdrop-blur-sm" />
+                </div>
             </div>
-            <div className="flex flex-col items-center gap-3">
-                <span className="font-mono text-[36px] font-bold text-[#181412] tracking-wide">
+
+            {/* White card below */}
+            <div className="w-full bg-white rounded-2xl shadow-[0_0_7px_rgba(0,0,0,0.1)] p-5 flex flex-col items-center gap-2">
+                <p className="text-[13px] font-sans text-[#715e55]">Next recommendation in</p>
+                <span className="font-sans text-[40px] font-bold text-[#d8602e] leading-none">
                     {formatTimeLeft(timeLeft)}
                 </span>
-                <p className="text-[15px] font-sans text-[#715e55] text-center max-w-[280px]">
-                    {message}
-                </p>
             </div>
         </div>
     );

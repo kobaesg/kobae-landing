@@ -2,15 +2,17 @@
 
 import { useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { usePublicProfile, useMutualConnections } from "@/lib/api/hooks/use-public-profile";
 import { useSendRequest } from "@/lib/api/hooks/use-connections";
 import { useSkipProfile } from "@/lib/api/hooks/use-discovery";
 import { ArchetypeBadge } from "@/components/app/discovery/ArchetypeBadge";
 import { MutualConnectionsSheet } from "@/components/app/discovery/MutualConnectionsSheet";
+import { SocialKodesSheet } from "@/components/app/discovery/SocialKodesSheet";
 import { RequestSentModal } from "@/components/app/discovery/RequestSentModal";
 import { DeclinedToast } from "@/components/app/discovery/DeclinedToast";
+import { formatDisplayText, formatIntentLabel } from "@/lib/utils";
 
 export default function FullProfilePage() {
     const params = useParams();
@@ -25,6 +27,7 @@ export default function FullProfilePage() {
     const [showRequestSent, setShowRequestSent] = useState(false);
     const [showDeclinedToast, setShowDeclinedToast] = useState(false);
     const [showMutualsSheet, setShowMutualsSheet] = useState(false);
+    const [showKodesSheet, setShowKodesSheet] = useState(false);
 
     const canSendRequest = profile?.connection_status === "none";
     const isPendingSent = profile?.connection_status === "pending_sent";
@@ -66,6 +69,12 @@ export default function FullProfilePage() {
         );
     }
 
+    const mutualText = mutualConnections && mutualConnections.length > 0
+        ? mutualConnections.length === 1
+            ? `${mutualConnections[0].first_name} is a mutual connection`
+            : `${mutualConnections[0].first_name} and ${mutualConnections.length - 1} other${mutualConnections.length - 1 !== 1 ? "s" : ""} are mutual connections`
+        : null;
+
     return (
         <div className="min-h-dvh pb-28 relative">
             {/* Back button */}
@@ -76,7 +85,7 @@ export default function FullProfilePage() {
                 <ArrowLeft size={20} className="text-[#453933]" />
             </button>
 
-            {/* Photo */}
+            {/* Photo with overlays */}
             <div className="w-full aspect-[4/3] bg-gradient-to-br from-[#ffefe5] to-[#e8d5c8] relative">
                 {profile.photo_url && (
                     <img
@@ -84,6 +93,22 @@ export default function FullProfilePage() {
                         alt={profile.first_name}
                         className="w-full h-full object-cover"
                     />
+                )}
+
+                {/* Archetype badge overlay — top-right */}
+                {profile.kode && (
+                    <div className="absolute top-4 right-4">
+                        <ArchetypeBadge archetype={profile.kode.archetype} variant="purple" />
+                    </div>
+                )}
+
+                {/* Floating kode description mini-card */}
+                {profile.kode && (
+                    <div className="absolute top-16 right-4 max-w-[160px] bg-white/90 backdrop-blur rounded-xl shadow p-3">
+                        <p className="text-[11px] font-sans text-[#453933] leading-snug line-clamp-3">
+                            {profile.kode.description}
+                        </p>
+                    </div>
                 )}
             </div>
 
@@ -94,53 +119,68 @@ export default function FullProfilePage() {
                 className="px-5 -mt-4 relative"
             >
                 <div className="bg-white rounded-2xl shadow-[0_0_7px_rgba(0,0,0,0.15)] p-5">
-                    {/* Name + Archetype */}
-                    <div className="flex items-center gap-2 mb-1">
+                    {/* Name */}
+                    <div className="mb-1">
                         <h1 className="font-serif font-semibold text-[24px] text-[#181412]">
                             {profile.first_name} {profile.last_name}
                         </h1>
-                        {profile.kode && (
-                            <ArchetypeBadge archetype={profile.kode.archetype} />
-                        )}
                     </div>
 
                     {/* Headline */}
                     {profile.headline && (
-                        <p className="text-[14px] font-sans text-[#715e55] mb-4">
+                        <p className="text-[14px] font-sans text-[#715e55] mb-1">
                             {profile.headline}
+                        </p>
+                    )}
+
+                    {/* Occupation */}
+                    {profile.occupation && (
+                        <p className="text-[13px] font-sans text-[#9b8479] mb-4">
+                            {profile.occupation}
                         </p>
                     )}
 
                     {/* Social Kode */}
                     {profile.kode && (
                         <div className="mb-5">
-                            <h3 className="font-serif font-semibold text-[16px] text-[#181412] mb-2">
+                            <p className="text-[11px] font-sans font-semibold text-[#d8602e] uppercase tracking-wider mb-1">
                                 Social Kode
-                            </h3>
-                            <div className="bg-[#ffefe5] rounded-xl p-4">
-                                <p className="text-[15px] font-sans font-semibold text-[#d8602e] mb-1">
-                                    {profile.kode.archetype}
-                                </p>
-                                <p className="text-[13px] font-sans text-[#453933] leading-relaxed">
-                                    {profile.kode.description}
-                                </p>
-                            </div>
+                            </p>
+                            <p className="font-serif font-bold text-[24px] text-[#181412] leading-snug mb-1">
+                                {profile.kode.archetype}
+                            </p>
+                            <p className="text-[14px] font-sans text-[#715e55] leading-relaxed mb-2">
+                                {profile.kode.description}
+                            </p>
+                            <button
+                                onClick={() => setShowKodesSheet(true)}
+                                className="text-[13px] font-sans font-medium text-[#d8602e] flex items-center gap-0.5"
+                            >
+                                More Information <ChevronRight size={14} />
+                            </button>
                         </div>
                     )}
 
-                    {/* Common traits */}
+                    {/* What You Have in Common */}
                     {profile.common_traits && profile.common_traits.length > 0 && (
                         <div className="mb-5">
                             <h3 className="font-serif font-semibold text-[16px] text-[#181412] mb-2">
                                 What You Have in Common
                             </h3>
+                            <div className="bg-[#fff8f0] border-l-4 border-[#d8602e] rounded-r-xl px-4 py-3 mb-3">
+                                <p className="text-[13px] font-sans text-[#453933] leading-relaxed">
+                                    Your shared interests in{" "}
+                                    <span className="font-semibold">{profile.common_traits.map((trait) => formatDisplayText(trait)).join(", ")}</span>{" "}
+                                    suggests a foundation for an exciting connection.
+                                </p>
+                            </div>
                             <div className="flex flex-wrap gap-1.5">
                                 {profile.common_traits.map((trait) => (
                                     <span
                                         key={trait}
                                         className="px-3 py-1.5 rounded-full text-[13px] font-sans font-medium bg-[#f5ede6] text-[#453933]"
                                     >
-                                        {trait}
+                                        ✦ {formatDisplayText(trait)}
                                     </span>
                                 ))}
                             </div>
@@ -183,6 +223,44 @@ export default function FullProfilePage() {
                         </div>
                     )}
 
+                    {/* Hobbies */}
+                    {profile.hobbies && profile.hobbies.length > 0 && (
+                        <div className="mb-5">
+                            <h3 className="font-serif font-semibold text-[16px] text-[#181412] mb-2">
+                                Hobbies
+                            </h3>
+                            <div className="flex flex-wrap gap-1.5">
+                                {profile.hobbies.map((hobby) => (
+                                    <span
+                                        key={hobby}
+                                        className="px-3 py-1.5 rounded-full text-[13px] font-sans font-medium bg-white border border-[rgba(180,83,42,0.4)] text-[#453933]"
+                                    >
+                                        {formatDisplayText(hobby)}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Skills */}
+                    {profile.skills && profile.skills.length > 0 && (
+                        <div className="mb-5">
+                            <h3 className="font-serif font-semibold text-[16px] text-[#181412] mb-2">
+                                Skills
+                            </h3>
+                            <div className="flex flex-wrap gap-1.5">
+                                {profile.skills.map((skill) => (
+                                    <span
+                                        key={skill}
+                                        className="px-3 py-1.5 rounded-full text-[13px] font-sans font-medium bg-white border border-[rgba(180,83,42,0.4)] text-[#453933]"
+                                    >
+                                        {formatDisplayText(skill)}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
                     {/* Looking for */}
                     {profile.intents && profile.intents.length > 0 && (
                         <div className="mb-5">
@@ -195,7 +273,7 @@ export default function FullProfilePage() {
                                         key={intent}
                                         className="px-3 py-1.5 rounded-full text-[13px] font-sans font-medium bg-[#ffefe5] text-[#d8602e]"
                                     >
-                                        {intent}
+                                        {formatIntentLabel(intent)}
                                     </span>
                                 ))}
                             </div>
@@ -234,23 +312,30 @@ export default function FullProfilePage() {
                             </h3>
                             <button
                                 onClick={() => setShowMutualsSheet(true)}
-                                className="flex items-center gap-2"
+                                className="flex items-center gap-3 w-full text-left"
                             >
+                                {/* Stacked avatars */}
                                 <div className="flex -space-x-2">
-                                    {mutualConnections.slice(0, 3).map((conn) => (
+                                    {mutualConnections.slice(0, 3).map((mc) => (
                                         <div
-                                            key={conn.user_id}
-                                            className="w-8 h-8 rounded-full bg-[#e8d5c8] border-2 border-white overflow-hidden"
+                                            key={mc.user_id}
+                                            className="w-8 h-8 rounded-full border-2 border-white bg-[#e8ddd7] overflow-hidden flex-shrink-0 flex items-center justify-center"
                                         >
-                                            {conn.photo_url && (
-                                                <img src={conn.photo_url} alt="" className="w-full h-full object-cover" />
+                                            {mc.photo_url ? (
+                                                <img src={mc.photo_url} alt={mc.first_name} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <span className="text-[10px] font-serif font-semibold text-[#b4532a]">
+                                                    {mc.first_name[0]}
+                                                </span>
                                             )}
                                         </div>
                                     ))}
                                 </div>
-                                <span className="text-[13px] font-sans text-[#d8602e] font-medium">
-                                    View all {mutualConnections.length}
-                                </span>
+                                {/* Text + arrow */}
+                                <p className="text-[13px] font-sans text-[#453933] flex-1 leading-snug">
+                                    {mutualText}
+                                </p>
+                                <ChevronRight size={14} className="text-[#d8602e] flex-shrink-0" />
                             </button>
                         </div>
                     )}
@@ -258,13 +343,13 @@ export default function FullProfilePage() {
             </motion.div>
 
             {/* Sticky bottom actions */}
-            <div className="fixed bottom-0 left-0 right-0 md:left-56 bg-gradient-to-t from-white via-white to-white/0 pt-6 pb-5 px-5 z-20">
+            <div className="fixed bottom-16 md:bottom-0 left-0 right-0 md:left-56 bg-gradient-to-t from-white via-white to-white/0 pt-6 pb-5 px-5 z-20">
                 <div className="max-w-lg mx-auto flex flex-col gap-2">
                     {canSendRequest && (
                         <button
                             onClick={handleSendRequest}
                             disabled={sendRequestMutation.isPending}
-                            className="w-full py-3.5 rounded-2xl bg-[#d8602e] text-white font-semibold font-sans text-[15px] active:scale-[0.98] transition-transform disabled:opacity-50"
+                            className="w-full py-3.5 rounded-2xl bg-[#d8602e] text-white font-semibold font-sans text-[15px] active:scale-[0.98] transition-transform disabled:opacity-50 shadow-[0px_0px_10px_rgba(255,144,97,0.8)]"
                         >
                             {sendRequestMutation.isPending ? "Sending..." : "Send Request"}
                         </button>
@@ -283,13 +368,19 @@ export default function FullProfilePage() {
                         <button
                             onClick={handleSkip}
                             disabled={skipMutation.isPending}
-                            className="w-full py-3 rounded-2xl text-[#9b8479] font-semibold font-sans text-[14px] hover:bg-[#f5ede6] transition-colors"
+                            className="text-center text-[14px] font-sans text-[#9b8479] font-medium py-2"
                         >
-                            Skip Profile
+                            ✕ Skip Profile
                         </button>
                     )}
                 </div>
             </div>
+
+            <SocialKodesSheet
+                isOpen={showKodesSheet}
+                onClose={() => setShowKodesSheet(false)}
+                activeArchetype={profile.kode?.archetype}
+            />
 
             <MutualConnectionsSheet
                 isOpen={showMutualsSheet}
