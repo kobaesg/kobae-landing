@@ -1,5 +1,4 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
-import Cookies from "js-cookie";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
@@ -35,8 +34,46 @@ export function clearTokens() {
     localStorage.removeItem(REFRESH_TOKEN_KEY);
 }
 
+const REFRESH_BYPASS_HEADER = "x-skip-auth-refresh";
+let refreshPromise: Promise<string> | null = null;
+
+function shouldSkipAuthRefresh(config?: InternalAxiosRequestConfig): boolean {
+    return config?.headers?.[REFRESH_BYPASS_HEADER] === "true";
+}
+
+function redirectToLogin() {
+    if (typeof window !== "undefined" && window.location.pathname !== "/login") {
+        window.location.href = "/login";
+    }
+}
+
+async function refreshAccessToken(): Promise<string> {
+    const refreshToken = getRefreshToken();
+    if (!refreshToken) {
+        throw new Error("No refresh token available");
+    }
+
+    const response = await api.post<import("./types").AuthResponse>(
+        "/auth/refresh",
+        { refresh_token: refreshToken },
+        {
+            headers: {
+                [REFRESH_BYPASS_HEADER]: "true",
+            },
+        }
+    );
+
+    const { access_token, refresh_token } = response.data;
+    setTokens(access_token, refresh_token);
+    return access_token;
+}
+
 // Request interceptor: inject Bearer token
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+    if (shouldSkipAuthRefresh(config)) {
+        return config;
+    }
+
     const token = getAccessToken();
     if (token && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;
@@ -47,15 +84,43 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 // Response interceptor: handle 401 → redirect to login
 api.interceptors.response.use(
     (response) => response,
-    (error: AxiosError) => {
-        const url = error.config?.url ?? "";
-        const isAuthEndpoint = url.includes("/auth/");
-        if (error.response?.status === 401 && !isAuthEndpoint) {
-            clearTokens();
-            if (typeof window !== "undefined") {
-                window.location.href = "/login";
+    async (error: AxiosError) => {
+        const originalRequest = error.config as (InternalAxiosRequestConfig & {
+            _retry?: boolean;
+        }) | undefined;
+
+        if (
+            error.response?.status === 401 &&
+            originalRequest &&
+            !originalRequest._retry &&
+            !shouldSkipAuthRefresh(originalRequest)
+        ) {
+            originalRequest._retry = true;
+
+            try {
+                if (!refreshPromise) {
+                    refreshPromise = refreshAccessToken().finally(() => {
+                        refreshPromise = null;
+                    });
+                }
+
+                const newAccessToken = await refreshPromise;
+                if (originalRequest.headers) {
+                    originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+                }
+
+                return api(originalRequest);
+            } catch {
+                clearTokens();
+                redirectToLogin();
             }
         }
+
+        if (error.response?.status === 401) {
+            clearTokens();
+            redirectToLogin();
+        }
+
         return Promise.reject(error);
     }
 );
@@ -68,6 +133,20 @@ export const authApi = {
 
     login: (data: import("./types").LoginRequest) =>
         api.post<import("./types").AuthResponse>("/auth/login", data),
+
+    refresh: (data: import("./types").RefreshTokenRequest) =>
+        api.post<import("./types").AuthResponse>("/auth/refresh", data, {
+            headers: {
+                [REFRESH_BYPASS_HEADER]: "true",
+            },
+        }),
+
+    logout: (data: import("./types").LogoutRequest) =>
+        api.post<{ message: string }>("/auth/logout", data, {
+            headers: {
+                [REFRESH_BYPASS_HEADER]: "true",
+            },
+        }),
 
     verifyOTP: (data: import("./types").VerifyOTPRequest) =>
         api.post<import("./types").AuthResponse>("/auth/verify-otp", data),
@@ -178,4 +257,67 @@ export const offersApi = {
 
     update: (data: import("./types").UpdateOffersRequest) =>
         api.put("/profile/offers", data),
+};
+
+// ── Discovery API ─────────────────────────────────────────
+
+export const discoveryApi = {
+    getRecommendation: () =>
+        api.get<import("./types").DiscoveryResponse>(
+            "/discovery/recommendation"
+        ),
+
+    skipProfile: (data: { skipped_user_id: string }) =>
+        api.post("/discovery/skip", data),
+};
+
+// ── Connections API ───────────────────────────────────────
+
+export const connectionsApi = {
+    sendRequest: (data: import("./types").SendConnectionRequest) =>
+        api.post("/connections/request", data),
+
+    acceptRequest: (data: import("./types").RespondConnectionRequest) =>
+        api.post("/connections/accept", data),
+
+    declineRequest: (data: import("./types").RespondConnectionRequest) =>
+        api.post("/connections/decline", data),
+
+    getPendingRequests: () =>
+        api.get<{ requests: import("./types").ConnectionRequestItem[] }>(
+            "/connections/requests"
+        ),
+};
+
+// ── Users / Public Profile API ────────────────────────────
+
+export const usersApi = {
+    getPublicProfile: (userId: string) =>
+        api.get<import("./types").FullPublicProfile>(
+            `/users/${userId}/profile`
+        ),
+
+    getMutualConnections: (userId: string) =>
+        api.get<{
+            mutual_connections: import("./types").MutualConnection[];
+        }>(`/users/${userId}/mutual-connections`),
+};
+
+// ── Notifications API ─────────────────────────────────────
+
+export const notificationsApi = {
+    getAll: (params?: { limit?: number; offset?: number }) =>
+        api.get<{ notifications: import("./types").NotificationItem[] }>(
+            "/notifications",
+            { params }
+        ),
+
+    getUnreadCount: () =>
+        api.get<{ count: number }>("/notifications/unread-count"),
+
+    markRead: (id: string) =>
+        api.post(`/notifications/${id}/read`),
+
+    markAllRead: () =>
+        api.post("/notifications/read-all"),
 };

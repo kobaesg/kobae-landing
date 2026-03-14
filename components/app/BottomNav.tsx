@@ -2,6 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { Compass, Loader, MessageCircle, User } from "lucide-react";
+import { useAuth } from "@/lib/auth/context";
 
 const tabs = [
     { label: "Discovery", icon: Compass, href: "/discover" },
@@ -13,6 +14,15 @@ const tabs = [
 export function BottomNav() {
     const pathname = usePathname();
     const router = useRouter();
+    const { isAuthenticated } = useAuth();
+
+    const handleTabClick = (href: string) => {
+        if (href === "/me" && !isAuthenticated) {
+            router.push("/login");
+            return;
+        }
+        router.push(href);
+    };
 
     return (
         <div className="fixed bottom-0 left-1/2 -translate-x-1/2 z-50 bg-white h-16 w-full max-w-[390px] flex items-center justify-between px-12 py-3 shadow-[0_-1px_4px_0_rgba(0,0,0,0.08)]">
@@ -21,7 +31,7 @@ export function BottomNav() {
                 return (
                     <button
                         key={href}
-                        onClick={() => router.push(href)}
+                        onClick={() => handleTabClick(href)}
                         className="flex flex-col items-center w-12 gap-0.5"
                     >
                         <Icon

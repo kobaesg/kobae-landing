@@ -15,6 +15,7 @@ import {
     usePrompts,
 } from "@/lib/api/hooks";
 import { STEP_ROUTE_MAP } from "@/lib/api/types";
+import { formatDisplayText, formatIntentLabel } from "@/lib/utils";
 
 type Tab = "traits" | "about" | "connect";
 
@@ -23,14 +24,6 @@ const TABS: { id: Tab; label: string }[] = [
     { id: "about", label: "About" },
     { id: "connect", label: "Connect" },
 ];
-
-const INTENT_LABELS: Record<string, string> = {
-    up_and_comers: "Up-and-Comers",
-    role_models: "Role Models",
-    door_openers: "Door-Openers",
-    collaborators: "Collaborators",
-    anyone_whos_vibing: "Anyone who's Vibing",
-};
 
 export default function MyProfilePage() {
     const { isAuthenticated, logout } = useAuth();
@@ -68,6 +61,11 @@ export default function MyProfilePage() {
 
     const DONE_STEPS = ["complete", "kode_calculated"];
     useEffect(() => {
+        if (!isAuthenticated) {
+            router.replace("/login");
+            return;
+        }
+
         if (profileLoading) return;
         const step = profileData?.profile?.onboard_step;
         // No profile at all (user abandoned onboarding before step 1) — send to start
@@ -79,7 +77,7 @@ export default function MyProfilePage() {
             router.replace(STEP_ROUTE_MAP[step] || "/profile");
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [profileLoading, profileData, router]);
+    }, [isAuthenticated, profileLoading, profileData, router]);
 
     if (profileLoading) {
         return (
@@ -353,7 +351,7 @@ export default function MyProfilePage() {
                                                                 transition={{ duration: 0.2 }}
                                                                 className="flex items-center h-8 px-3 rounded-full bg-white border border-[rgba(180,83,42,0.4)] shadow-sm"
                                                             >
-                                                                <span className="text-[13px] font-semibold font-sans text-[#453933]">{tag}</span>
+                                                                <span className="text-[13px] font-semibold font-sans text-[#453933]">{formatDisplayText(tag)}</span>
                                                             </motion.div>
                                                         ))}
                                                     </motion.div>
@@ -409,7 +407,7 @@ export default function MyProfilePage() {
                                                                 transition={{ duration: 0.2 }}
                                                                 className="flex items-center h-8 px-3 rounded-full bg-[#ffefe5] border border-[rgba(180,83,42,0.4)]"
                                                             >
-                                                                <span className="text-[13px] font-semibold font-sans text-[#b4532a]">{INTENT_LABELS[item] ?? item}</span>
+                                                                <span className="text-[13px] font-semibold font-sans text-[#b4532a]">{formatIntentLabel(item)}</span>
                                                             </motion.div>
                                                         ))}
                                                     </motion.div>
