@@ -122,7 +122,11 @@ export default function SkillsPage() {
                 </FadeIn>
 
                 <button
-                    onClick={() => router.push("/intent")}
+                    onClick={async () => {
+                        await updateSkills.mutateAsync({ tags: [] });
+                        clearDraft();
+                        router.push("/intent");
+                    }}
                     className="block w-full text-center text-sm text-[var(--text-200)] font-sans hover:text-[var(--text-300)] transition-colors"
                 >
                     Skip for now

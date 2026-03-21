@@ -69,6 +69,20 @@ export default function QuestionnairePage() {
     const [currentSectionIndex, setCurrentSectionIndex] = useState(draft.currentSectionIndex);
     const [answers, setAnswers] = useState<Record<number, string>>(draft.answers);
 
+    // Seed default answers for slider questions so the Next button isn't
+    // blocked when the user leaves a slider at its initial position.
+    const seededAnswers = useMemo(() => {
+        if (!questions) return answers;
+        const defaults: Record<number, string> = {};
+        for (const q of questions) {
+            if (q.type === "slider" && answers[q.id] === undefined) {
+                defaults[q.id] = String(q.slider_min ?? 1);
+            }
+        }
+        if (Object.keys(defaults).length === 0) return answers;
+        return { ...defaults, ...answers };
+    }, [questions, answers]);
+
     const sections = useMemo(
         () => (questions ? groupQuestions(questions) : []),
         [questions]
@@ -78,7 +92,7 @@ export default function QuestionnairePage() {
     const isLastSection = currentSectionIndex === sections.length - 1;
 
     const allCurrentAnswered = currentSection?.questions.every(
-        (q) => answers[q.id] !== undefined && answers[q.id] !== ""
+        (q) => seededAnswers[q.id] !== undefined && seededAnswers[q.id] !== ""
     );
 
     const handleMCQAnswer = (questionId: number, answer: string) => {
@@ -104,7 +118,7 @@ export default function QuestionnairePage() {
 
         // Final section — submit all answers
         try {
-            const answerPayload = Object.entries(answers).map(
+            const answerPayload = Object.entries(seededAnswers).map(
                 ([qId, answer]) => ({
                     question_id: parseInt(qId),
                     answer,
@@ -197,7 +211,7 @@ export default function QuestionnairePage() {
                                                         optionKey={option.key}
                                                         text={option.text}
                                                         selected={
-                                                            answers[question.id] ===
+                                                            seededAnswers[question.id] ===
                                                             option.key
                                                         }
                                                         onClick={() =>
@@ -220,8 +234,8 @@ export default function QuestionnairePage() {
                                         question.slider_labels?.[1] || ""
                                     }
                                     value={
-                                        answers[question.id]
-                                            ? parseInt(answers[question.id])
+                                        seededAnswers[question.id]
+                                            ? parseInt(seededAnswers[question.id])
                                             : question.slider_min || 1
                                     }
                                     onChange={(value) =>
