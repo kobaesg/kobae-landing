@@ -12,7 +12,7 @@ import { RequestSentModal } from "@/components/app/discovery/RequestSentModal";
 import { DeclinedToast } from "@/components/app/discovery/DeclinedToast";
 
 export default function DiscoverPage() {
-    const { data, isLoading, error } = useDiscovery();
+    const { data, isLoading, isFetching, error } = useDiscovery();
     const skipMutation = useSkipProfile();
     const sendRequestMutation = useSendRequest();
 
@@ -48,7 +48,8 @@ export default function DiscoverPage() {
         setShowRequestSent(false);
     }, []);
 
-    if (isLoading) {
+    // Show loading spinner during initial load or when fetching
+    if (isLoading || (isFetching && !data)) {
         return (
             <div className="flex flex-col min-h-dvh">
                 <DiscoveryHeader />
@@ -82,7 +83,7 @@ export default function DiscoverPage() {
                 />
             )}
 
-            {recommendation && (
+            {recommendation && recommendation.profile.first_name && (
                 <div className="flex-1 pb-20">
                     <RecommendationCard
                         recommendation={recommendation}
