@@ -93,9 +93,18 @@ export default function SignupPage() {
         } catch (err) {
             const axiosError = err as AxiosError<ApiError>;
             if (axiosError.response?.status === 409) {
-                // Verified account already exists — direct them to log in and resume onboarding
-                setAccountExists(true);
-                setConflictMessage(axiosError.response?.data?.error?.message || "");
+                const errorMessage = axiosError.response?.data?.error?.message || "";
+                // Check if this is an unverified account (signup in progress)
+                if (errorMessage.toLowerCase().includes("unverified") ||
+                    errorMessage.toLowerCase().includes("not verified") ||
+                    errorMessage.toLowerCase().includes("pending verification")) {
+                    // User navigated back from verify page — resume signup flow
+                    router.push(`/verify?phone=${encodeURIComponent(data.phone)}`);
+                } else {
+                    // Verified account already exists — direct them to log in and resume onboarding
+                    setAccountExists(true);
+                    setConflictMessage(errorMessage);
+                }
             } else {
                 setServerError(
                     axiosError.response?.data?.error?.message || "Something went wrong. Please try again."
