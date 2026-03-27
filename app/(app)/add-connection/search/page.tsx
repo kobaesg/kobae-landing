@@ -220,7 +220,7 @@ export default function SearchUsersPage() {
                         initial={{ opacity: 0, y: 24 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 24 }}
-                        className="fixed bottom-0 left-0 right-0 px-4 pb-8 pt-3 bg-gradient-to-t from-[#f8f7f6] via-[#f8f7f6]/90 to-transparent"
+                        className="fixed bottom-16 md:bottom-0 left-0 right-0 px-4 pb-5 pt-3 bg-gradient-to-t from-[#f8f7f6] via-[#f8f7f6]/90 to-transparent"
                     >
                         <button
                             onClick={handleSend}
