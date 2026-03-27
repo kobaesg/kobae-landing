@@ -96,7 +96,10 @@ export default function NotificationsPage() {
                                     className="bg-white rounded-xl p-4 shadow-[0_0_7px_rgba(0,0,0,0.08)]"
                                 >
                                     {/* Top row: avatar + name/headline */}
-                                    <div className="flex items-center gap-3 mb-3">
+                                    <div
+                                        onClick={() => router.push(`/discover/${req.sender.user_id}`)}
+                                        className="flex items-center gap-3 mb-3 cursor-pointer hover:opacity-80 transition-opacity"
+                                    >
                                         <div className="w-12 h-12 rounded-full bg-[#e8d5c8] flex-shrink-0 overflow-hidden">
                                             {req.sender.photo_url && (
                                                 <img
