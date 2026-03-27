@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Search, SlidersHorizontal, Send, X } from "lucide-react";
+import { ArrowLeft, Search, SlidersHorizontal, Send, X, ScanLine } from "lucide-react";
 import { useConnections } from "@/lib/api/hooks/use-connections";
 import type { ConnectionCard } from "@/lib/api/types";
 
@@ -95,7 +95,13 @@ export default function ConnectionsPage() {
                 <h1 className="flex-1 text-center font-serif font-semibold text-[22px] leading-[30px] text-[#181412]">
                     Connections
                 </h1>
-                <div className="w-10" />
+                <button
+                    onClick={() => router.push("/scan")}
+                    className="w-10 h-10 flex items-center justify-center"
+                    aria-label="Scan QR code"
+                >
+                    <ScanLine size={22} className="text-[#453933]" strokeWidth={1.5} />
+                </button>
             </div>
 
             {/* Subheader row */}

@@ -199,9 +199,9 @@ export default function MyProfilePage() {
                                 )}
                             </motion.div>
                             <button
+                                onClick={() => router.push("/me/qr")}
                                 className="absolute bottom-0 right-0 translate-x-1 translate-y-1 w-10 h-10 flex items-center justify-center"
-                                aria-label="QR code"
-                                title="QR code - coming soon"
+                                aria-label="Show my QR code"
                             >
                                 <div className="w-8 h-8 bg-white border border-[rgba(180,83,42,0.5)] rounded-[5px] rotate-45 flex items-center justify-center shadow-sm">
                                     <QrCode size={14} className="text-[#d8602e] -rotate-45" />
@@ -243,7 +243,7 @@ export default function MyProfilePage() {
                         >
                             <button
                                 className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-full border border-[#b4532a] hover:bg-[#fff5ef] transition-colors"
-                                onClick={() => router.push("/connections")}
+                                onClick={() => router.push("/me/edit")}
                             >
                                 <Pencil size={14} className="text-[#b4532a]" strokeWidth={1.5} />
                                 <span className="text-[13px] font-semibold font-sans text-[#b4532a]">Edit Profile</span>
