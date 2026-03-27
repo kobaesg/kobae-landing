@@ -24,7 +24,7 @@ export default function MyQRCodePage() {
     const photoUrl = profile?.photo_url;
     const initials = `${firstName[0] ?? ""}${lastName[0] ?? ""}`.toUpperCase();
 
-    const qrValue = userId ? `https://kobae.app/users/${userId}` : "";
+    const qrValue = userId ? `https://kobaeapp.com/discover/${userId}` : "";
 
     return (
         <div className="flex flex-col min-h-dvh bg-[#f5f0eb]">
