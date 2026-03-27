@@ -46,7 +46,6 @@ export default function ProfilePage() {
     const [serverError, setServerError] = useState("");
     const draft = useOnboardingDraft((s) => s.profile);
     const setDraft = useOnboardingDraft((s) => s.setProfile);
-    const clearDraft = useOnboardingDraft((s) => s.clearProfile);
 
     const {
         register,
@@ -96,7 +95,6 @@ export default function ProfilePage() {
                 }
             }
 
-            clearDraft();
             router.push("/hobbies");
         } catch (err) {
             const axiosError = err as AxiosError<ApiError>;

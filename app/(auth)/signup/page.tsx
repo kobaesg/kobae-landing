@@ -88,7 +88,6 @@ export default function SignupPage() {
                 password: data.password,
                 terms_accepted: true,
             });
-            clearDraft();
             router.push(`/verify?phone=${encodeURIComponent(data.phone)}`);
         } catch (err) {
             const axiosError = err as AxiosError<ApiError>;
