@@ -312,6 +312,9 @@ export const usersApi = {
 
     blockUser: (userId: string) =>
         api.post(`/users/${userId}/block`),
+
+    searchUsers: (q: string) =>
+        api.get<{ users: import("./types").UserSearchResult[] }>(`/users/search`, { params: { q } }),
 };
 
 // ── Notifications API ─────────────────────────────────────

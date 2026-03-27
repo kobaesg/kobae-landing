@@ -312,6 +312,15 @@ export interface MutualConnection {
     headline?: string;
 }
 
+export interface UserSearchResult {
+    user_id: string;
+    first_name: string;
+    last_name: string;
+    photo_url?: string;
+    headline?: string;
+    occupation?: string;
+}
+
 export interface PublicKodeInfo {
     archetype: string;
     description: string;
