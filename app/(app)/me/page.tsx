@@ -128,20 +128,22 @@ export default function MyProfilePage() {
                 initial={{ opacity: 0, y: -8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
-                className="sticky top-0 z-30 bg-[#f8f7f6]/95 backdrop-blur border-b border-[#e8e0da] px-6 md:px-10 h-14 flex items-center justify-between"
+                className="sticky top-0 z-30 bg-[#f8f7f6]/95 backdrop-blur border-b border-[#e8e0da] px-4 md:px-10 h-14 flex items-center justify-between"
             >
-                <h1 className="font-serif font-semibold text-[20px] text-[#181412]">My Profile</h1>
-                <div ref={settingsRef} className="relative flex items-center gap-2">
-                    {/* Desktop extras in header */}
-                    <div className="hidden md:flex items-center gap-2">
-                        <button
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-semibold font-sans text-[#453933] hover:bg-[#f0e8e0] transition-colors"
-                            onClick={() => router.push("/connections")}
-                        >
-                            <Plus size={15} /> Add Connection
-                        </button>
-                    </div>
-                    {/* Settings button */}
+                {/* Left: add connection button */}
+                <button
+                    onClick={() => router.push("/add-connection")}
+                    className="w-9 h-9 flex items-center justify-center rounded-full bg-[#d8602e] hover:bg-[#c55528] shadow-[0_2px_8px_0_rgba(216,96,46,0.35)] transition-colors"
+                    aria-label="Add connection"
+                >
+                    <Plus size={18} className="text-white" strokeWidth={2.5} />
+                </button>
+
+                {/* Center: title */}
+                <h1 className="absolute left-1/2 -translate-x-1/2 font-serif font-semibold text-[20px] text-[#181412]">My Profile</h1>
+
+                {/* Right: settings */}
+                <div ref={settingsRef} className="relative flex items-center">
                     <button
                         onClick={() => setSettingsOpen((o) => !o)}
                         className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-[#f0e8e0] transition-colors"
@@ -199,9 +201,9 @@ export default function MyProfilePage() {
                                 )}
                             </motion.div>
                             <button
+                                onClick={() => router.push("/me/qr")}
                                 className="absolute bottom-0 right-0 translate-x-1 translate-y-1 w-10 h-10 flex items-center justify-center"
-                                aria-label="QR code"
-                                title="QR code - coming soon"
+                                aria-label="Show my QR code"
                             >
                                 <div className="w-8 h-8 bg-white border border-[rgba(180,83,42,0.5)] rounded-[5px] rotate-45 flex items-center justify-center shadow-sm">
                                     <QrCode size={14} className="text-[#d8602e] -rotate-45" />
@@ -243,7 +245,7 @@ export default function MyProfilePage() {
                         >
                             <button
                                 className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-full border border-[#b4532a] hover:bg-[#fff5ef] transition-colors"
-                                onClick={() => router.push("/connections")}
+                                onClick={() => router.push("/me/edit")}
                             >
                                 <Pencil size={14} className="text-[#b4532a]" strokeWidth={1.5} />
                                 <span className="text-[13px] font-semibold font-sans text-[#b4532a]">Edit Profile</span>
@@ -257,13 +259,6 @@ export default function MyProfilePage() {
                             </button>
                         </motion.div>
 
-                        {/* Mobile: add connection */}
-                        <button
-                            className="md:hidden flex items-center gap-2 w-full justify-center py-2 px-3 rounded-full border border-[rgba(180,83,42,0.4)] text-[13px] font-semibold font-sans text-[#453933]"
-                            onClick={() => router.push("/connections")}
-                        >
-                            <Plus size={14} /> Add Connection
-                        </button>
                     </motion.div>
 
                     {/* ── Right column: tabbed sections ── */}

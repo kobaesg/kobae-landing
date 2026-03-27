@@ -1,8 +1,8 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { connectionsApi } from "../client";
-import type { ConnectionRequestItem } from "../types";
+import { connectionsApi, usersApi } from "../client";
+import type { ConnectionCard, ConnectionRequestItem } from "../types";
 
 export function usePendingRequests() {
     return useQuery<ConnectionRequestItem[]>({
@@ -54,6 +54,40 @@ export function useDeclineRequest() {
             queryClient.invalidateQueries({
                 queryKey: ["connections", "pending"],
             });
+        },
+    });
+}
+
+export function useConnections() {
+    return useQuery<ConnectionCard[]>({
+        queryKey: ["connections"],
+        queryFn: async () => {
+            const res = await connectionsApi.getConnections();
+            return res.data.connections ?? [];
+        },
+        staleTime: 60 * 1000,
+    });
+}
+
+export function useRemoveConnection() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (userId: string) =>
+            connectionsApi.removeConnection(userId),
+        onSuccess: (_data, userId) => {
+            queryClient.invalidateQueries({ queryKey: ["connections"] });
+            queryClient.invalidateQueries({ queryKey: ["public-profile", userId] });
+        },
+    });
+}
+
+export function useBlockUser() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (userId: string) => usersApi.blockUser(userId),
+        onSuccess: (_data, userId) => {
+            queryClient.invalidateQueries({ queryKey: ["connections"] });
+            queryClient.invalidateQueries({ queryKey: ["public-profile", userId] });
         },
     });
 }
