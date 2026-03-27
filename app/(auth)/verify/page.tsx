@@ -5,6 +5,7 @@ import { useState, useEffect, useCallback, Suspense } from "react";
 import { OnboardingLayout, OTPInput, BottomButton } from "@/components/onboarding";
 import { useVerifyOTP, useResendOTP } from "@/lib/api/hooks";
 import { useAuth } from "@/lib/auth/context";
+import { useOnboardingDraft } from "@/lib/onboarding/store";
 import { AxiosError } from "axios";
 import { ApiError } from "@/lib/api/types";
 import { StaggerContainer, StaggerItem } from "@/components/onboarding/animations";
@@ -14,6 +15,7 @@ function VerifyContent() {
     const searchParams = useSearchParams();
     const phone = searchParams.get("phone") || "";
     const { login, isAuthenticated, isLoading: authLoading } = useAuth();
+    const clearSignupDraft = useOnboardingDraft((s) => s.clearSignup);
 
     // Already authenticated — skip OTP and resume wherever they left off
     useEffect(() => {
@@ -31,6 +33,7 @@ function VerifyContent() {
         onSuccess: (data) => {
             const { access_token, refresh_token, user } = data.data;
             login(access_token, refresh_token, user);
+            clearSignupDraft();
             router.push("/profile");
         },
     });
