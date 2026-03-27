@@ -279,11 +279,27 @@ export interface RespondConnectionRequest {
     request_id: string;
 }
 
+export interface RemoveConnectionRequest {
+    user_id: string;
+}
+
+export interface BlockUserRequest {
+    user_id: string;
+}
+
 export interface ConnectionRequestItem {
     id: string;
     sender: ProfileCard;
     status: string;
     created_at: string;
+}
+
+export interface ConnectionCard {
+    user_id: string;
+    first_name: string;
+    last_name: string;
+    photo_url?: string;
+    headline?: string;
 }
 
 // ── Public Profile ────────────────────────────────────────

@@ -287,6 +287,14 @@ export const connectionsApi = {
         api.get<{ requests: import("./types").ConnectionRequestItem[] }>(
             "/connections/requests"
         ),
+
+    getConnections: () =>
+        api.get<{ connections: import("./types").ConnectionCard[] }>(
+            "/connections"
+        ),
+
+    removeConnection: (userId: string) =>
+        api.post("/connections/remove", { user_id: userId } as import("./types").RemoveConnectionRequest),
 };
 
 // ── Users / Public Profile API ────────────────────────────
@@ -301,6 +309,9 @@ export const usersApi = {
         api.get<{
             mutual_connections: import("./types").MutualConnection[];
         }>(`/users/${userId}/mutual-connections`),
+
+    blockUser: (userId: string) =>
+        api.post(`/users/${userId}/block`),
 };
 
 // ── Notifications API ─────────────────────────────────────
