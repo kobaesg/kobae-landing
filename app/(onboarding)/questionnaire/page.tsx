@@ -176,7 +176,7 @@ export default function QuestionnairePage() {
                             <h2 className="text-lg font-serif font-bold text-[var(--foreground)]">
                                 {isSliderSection
                                     ? "Social Sliders"
-                                    : currentSection.title}
+                                    : formatTitle(currentSection.title)}
                             </h2>
                             <p className="text-xs text-[var(--text-200)] font-sans">
                                 {currentSection.label}
@@ -293,4 +293,17 @@ function highlightKeywords(text: string): string {
         /\*\*(.*?)\*\*/g,
         '<span class="text-[var(--primary)] font-semibold">$1</span>'
     );
+}
+
+/**
+ * Formats a snake_case or camelCase string to Title Case.
+ * Examples: "social_function" -> "Social Function", "socialFunction" -> "Social Function"
+ */
+function formatTitle(text: string): string {
+    return text
+        .replace(/_/g, ' ')
+        .replace(/([a-z])([A-Z])/g, '$1 $2')
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
 }
