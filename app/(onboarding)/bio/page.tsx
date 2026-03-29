@@ -19,7 +19,7 @@ const AVAILABLE_PROMPTS = [
     { id: 4, text: "I Can't Leave Home Without..." },
 ];
 
-const MAX_PROMPTS = 2;
+const MAX_PROMPTS = 3;
 
 export default function BioPage() {
     const router = useRouter();
