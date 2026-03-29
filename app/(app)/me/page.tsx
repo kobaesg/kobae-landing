@@ -125,7 +125,7 @@ export default function MyProfilePage() {
         <div className="min-h-dvh bg-[#f8f7f6]">
             {/* Page header */}
             <motion.div
-                initial={{ opacity: 0, y: -8 }}
+                initial={{ opacity: 1, y: 0 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
                 className="sticky top-0 z-30 bg-[#f8f7f6]/95 backdrop-blur border-b border-[#e8e0da] px-4 md:px-10 h-14 flex items-center justify-between"
