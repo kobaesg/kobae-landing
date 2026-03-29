@@ -13,6 +13,7 @@ export default function SearchUsersPage() {
     const [debouncedQuery, setDebouncedQuery] = useState("");
     const [selected, setSelected] = useState<Map<string, UserSearchResult>>(new Map());
     const [sentSuccess, setSentSuccess] = useState(false);
+    const [successCount, setSuccessCount] = useState(0);
     const inputRef = useRef<HTMLInputElement>(null);
 
     // Debounce input
@@ -38,9 +39,31 @@ export default function SearchUsersPage() {
 
     const handleSend = useCallback(async () => {
         const ids = Array.from(selected.keys());
-        await Promise.allSettled(ids.map((id) => sendRequest.mutateAsync(id)));
-        setSentSuccess(true);
-        setTimeout(() => router.back(), 1500);
+        let successfulRequests = 0;
+
+        try {
+            // Send requests sequentially to avoid overwhelming the server
+            // and prevent race conditions with token refresh
+            for (const id of ids) {
+                try {
+                    await sendRequest.mutateAsync(id);
+                    successfulRequests++;
+                } catch (error) {
+                    // Log individual failures but continue with remaining requests
+                    console.error(`Failed to send request to user ${id}:`, error);
+                }
+            }
+
+            // Show success message even if some requests failed
+            // This prevents users from getting logged out
+            setSuccessCount(successfulRequests);
+            setSentSuccess(true);
+            setTimeout(() => router.back(), 1500);
+        } catch (error) {
+            // If there's a catastrophic error, just go back
+            console.error("Error sending requests:", error);
+            router.back();
+        }
     }, [selected, sendRequest, router]);
 
     const initials = (user: UserSearchResult) => {
@@ -63,7 +86,7 @@ export default function SearchUsersPage() {
                     <Check size={28} className="text-white" strokeWidth={2.5} />
                 </motion.div>
                 <p className="font-serif font-semibold text-[22px] text-[#181412]">
-                    {selected.size === 1 ? "Request sent!" : `${selected.size} requests sent!`}
+                    {successCount === 1 ? "Request sent!" : `${successCount} request${successCount !== 1 ? "s" : ""} sent!`}
                 </p>
             </div>
         );
