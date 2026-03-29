@@ -105,7 +105,7 @@ export default function SkillsPage() {
                             in my...
                         </h1>
                         <p className="text-sm text-[var(--text-300)] font-sans">
-                            Pick a few strengths you&apos;d like others to know
+                            Pick 1-5 strengths you&apos;d like others to know
                             about.
                         </p>
                     </div>
@@ -116,7 +116,7 @@ export default function SkillsPage() {
                         categories={SKILL_CATEGORIES}
                         selected={selected}
                         onChange={handleSetSelected}
-                        min={3}
+                        min={1}
                         max={5}
                     />
                 </FadeIn>
@@ -134,7 +134,7 @@ export default function SkillsPage() {
 
                 <BottomButton
                     onClick={handleSubmit}
-                    disabled={selected.length < 3}
+                    disabled={selected.length < 1}
                     loading={updateSkills.isPending}
                 >
                     Next
