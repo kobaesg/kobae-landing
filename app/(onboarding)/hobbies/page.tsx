@@ -120,7 +120,7 @@ export default function HobbiesPage() {
                             , I enjoy...
                         </h1>
                         <p className="text-sm text-[var(--text-300)] font-sans">
-                            Choose at least 3 — you can always change this later.
+                            Choose 1-5 — you can always change this later.
                         </p>
                     </div>
                 </FadeIn>
@@ -130,7 +130,7 @@ export default function HobbiesPage() {
                         categories={HOBBY_CATEGORIES}
                         selected={selected}
                         onChange={handleSetSelected}
-                        min={3}
+                        min={1}
                         max={5}
                     />
                 </FadeIn>
@@ -144,7 +144,7 @@ export default function HobbiesPage() {
 
                 <BottomButton
                     onClick={handleSubmit}
-                    disabled={selected.length < 3}
+                    disabled={selected.length < 1}
                     loading={updateHobbies.isPending}
                 >
                     Next
