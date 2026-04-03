@@ -74,19 +74,19 @@ export default function NotificationsPage() {
             </div>
 
             {/* Connection Requests Section */}
-            {pendingRequests && pendingRequests.length > 0 && (
+            {pendingRequests && pendingRequests.filter((req) => req.sender).length > 0 && (
                 <div className="px-5 mb-6">
                     <div className="flex items-center gap-2 mb-3">
                         <h2 className="font-serif font-semibold text-[16px] text-[#181412]">
                             Connection Requests
                         </h2>
                         <span className="w-5 h-5 rounded-full bg-[#d8602e] text-white text-[11px] font-bold flex items-center justify-center">
-                            {pendingRequests.length}
+                            {pendingRequests.filter((req) => req.sender).length}
                         </span>
                     </div>
                     <div className="flex flex-col gap-3">
                         <AnimatePresence>
-                            {pendingRequests.map((req) => (
+                            {pendingRequests.filter((req) => req.sender).map((req) => (
                                 <motion.div
                                     key={req.id}
                                     layout
