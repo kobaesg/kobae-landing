@@ -1,0 +1,79 @@
+name: Update Git Submodules
+
+on:
+  # Run daily at 00:00 UTC
+  schedule:
+    - cron: '0 0 * * *'
+
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  update-submodules:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Update submodules
+        id: update
+        run: |
+          # Store current submodule commit
+          git submodule status > /tmp/before.txt
+
+          # Update submodules to latest
+          git submodule update --remote --merge
+
+          # Store new submodule commit
+          git submodule status > /tmp/after.txt
+
+          # Check if there are changes
+          if ! diff -q /tmp/before.txt /tmp/after.txt > /dev/null; then
+            echo "changes=true" >> $GITHUB_OUTPUT
+            echo "Submodule updates detected"
+            git diff --submodule=log
+          else
+            echo "changes=false" >> $GITHUB_OUTPUT
+            echo "No submodule updates available"
+          fi
+
+      - name: Create Pull Request
+        if: steps.update.outputs.changes == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: |
+            chore: update git submodules
+
+            Automated submodule update to latest commits
+          branch: auto-update-submodules
+          delete-branch: true
+          title: 'chore: update git submodules'
+          body: |
+            ## Automated Submodule Update
+
+            This PR updates the git submodules to their latest commits.
+
+            ### Changes
+
+            ```
+            ${{ steps.update.outputs.diff }}
+            ```
+
+            ### Submodules Updated
+            - kobae-backend-v3
+
+            ---
+
+            🤖 This PR was automatically created by the Update Git Submodules workflow.
+
+            Please review the changes before merging.
+          labels: |
+            dependencies
+            automated
