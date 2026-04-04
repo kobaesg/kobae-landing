@@ -142,9 +142,26 @@ export default function QuestionnairePage() {
         );
     }
 
+    const handleBack = () => {
+        if (showIntro) {
+            // On intro screen, use default browser back
+            router.back();
+        } else if (currentSectionIndex > 0) {
+            // Navigate to previous section
+            const prevIndex = currentSectionIndex - 1;
+            setCurrentSectionIndex(prevIndex);
+            setDraft({ currentSectionIndex: prevIndex });
+            window.scrollTo(0, 0);
+        } else {
+            // On first section, go back to intro
+            setShowIntro(true);
+            setDraft({ introSeen: false });
+        }
+    };
+
     if (showIntro) {
         return (
-            <OnboardingLayout showBack={true} currentStep={5}>
+            <OnboardingLayout showBack={true} currentStep={5} onBack={handleBack}>
                 <ReinforcementScreen
                     title="Let's find your Social Kōde."
                     subtitle="Fill up this short questionnaire to find out where you stand."
@@ -167,7 +184,7 @@ export default function QuestionnairePage() {
     );
 
     return (
-        <OnboardingLayout currentStep={5} showBack={true} showLogo={true}>
+        <OnboardingLayout currentStep={5} showBack={true} showLogo={true} onBack={handleBack}>
             <PageTransition pageKey={`section-${currentSectionIndex}`}>
                 <div className="pt-6 space-y-6">
                     {/* Section header */}
