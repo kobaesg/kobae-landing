@@ -21,6 +21,11 @@ jobs:
         with:
           submodules: recursive
           fetch-depth: 0
+          token: ${{ secrets.SUBMODULE_PAT || secrets.GITHUB_TOKEN }}
+
+      - name: Configure git for private submodules
+        run: |
+          git config --global url."https://x-access-token:${{ secrets.SUBMODULE_PAT || secrets.GITHUB_TOKEN }}@github.com/".insteadOf "https://github.com/"
 
       - name: Update submodules
         id: update
