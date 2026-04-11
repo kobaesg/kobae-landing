@@ -118,6 +118,17 @@ export default function LoginPage() {
                         />
                     </StaggerItem>
 
+                    <StaggerItem className="pt-1">
+                        <div className="text-right">
+                            <Link
+                                href="/forgot-password"
+                                className="text-xs text-[var(--primary)] font-medium hover:underline"
+                            >
+                                Forgot Password?
+                            </Link>
+                        </div>
+                    </StaggerItem>
+
                     {errorType === "credentials" && (
                         <StaggerItem className="pt-2">
                             <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-center space-y-1">

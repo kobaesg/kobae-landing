@@ -68,6 +68,34 @@ export interface ResendOTPRequest {
     phone: string;
 }
 
+export interface ForgotPasswordRequest {
+    phone: string;
+}
+
+export interface ForgotPasswordResponse {
+    message: string;
+    expires_in: number;
+}
+
+export interface VerifyPasswordResetOTPRequest {
+    phone: string;
+    code: string;
+}
+
+export interface VerifyPasswordResetOTPResponse {
+    reset_token: string;
+    expires_in: number;
+}
+
+export interface ResetPasswordRequest {
+    token: string;
+    new_password: string;
+}
+
+export interface ResetPasswordResponse {
+    message: string;
+}
+
 export interface AuthResponse {
     access_token: string;
     refresh_token: string;

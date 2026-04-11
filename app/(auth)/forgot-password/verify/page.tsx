@@ -1,0 +1,159 @@
+"use client";
+
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect, useCallback, Suspense } from "react";
+import { OnboardingLayout, OTPInput, BottomButton } from "@/components/onboarding";
+import { useVerifyPasswordResetOTP, useForgotPassword } from "@/lib/api/hooks";
+import { AxiosError } from "axios";
+import { ApiError } from "@/lib/api/types";
+import { StaggerContainer, StaggerItem } from "@/components/onboarding/animations";
+
+function VerifyPasswordResetContent() {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const phone = searchParams.get("phone") || "";
+
+    const [otp, setOtp] = useState("");
+    const [error, setError] = useState("");
+    const [resendTimer, setResendTimer] = useState(30);
+    const [resendMessage, setResendMessage] = useState("");
+
+    const verifyOTP = useVerifyPasswordResetOTP();
+    const resendOTP = useForgotPassword();
+
+    // Countdown timer
+    useEffect(() => {
+        if (resendTimer <= 0) return;
+        const interval = setInterval(() => {
+            setResendTimer((prev) => prev - 1);
+        }, 1000);
+        return () => clearInterval(interval);
+    }, [resendTimer]);
+
+    const handleVerify = useCallback(async () => {
+        if (otp.length !== 6) return;
+        if (verifyOTP.isPending) return;
+        setError("");
+        try {
+            const response = await verifyOTP.mutateAsync({ phone, code: otp });
+            // Navigate to reset page with the reset token
+            const resetToken = response.data.reset_token;
+            router.push(`/forgot-password/reset?token=${encodeURIComponent(resetToken)}`);
+        } catch (err) {
+            const axiosError = err as AxiosError<ApiError>;
+            setError(
+                axiosError.response?.data?.error?.message ||
+                    "Incorrect verification code. Please try again."
+            );
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [otp, phone, verifyOTP.mutateAsync, router]);
+
+    // Auto-submit when all 6 digits entered
+    useEffect(() => {
+        if (otp.length === 6) {
+            handleVerify();
+        }
+    }, [otp, handleVerify]);
+
+    const handleResend = async () => {
+        try {
+            await resendOTP.mutateAsync({ phone });
+            setResendTimer(30);
+            setResendMessage("OTP has been resent");
+            setError("");
+            setOtp("");
+            setTimeout(() => setResendMessage(""), 3000);
+        } catch {
+            setError("Failed to resend OTP. Please try again.");
+        }
+    };
+
+    const formatTimer = (seconds: number) => {
+        const m = Math.floor(seconds / 60);
+        const s = seconds % 60;
+        return `${m}:${s.toString().padStart(2, "0")}`;
+    };
+
+    return (
+        <OnboardingLayout showBack={true} showLogo={true} onBack={() => router.push("/forgot-password")}>
+            <div className="pt-10 space-y-8">
+                <StaggerContainer staggerDelay={0.08} delayChildren={0.05}>
+                    <StaggerItem>
+                        <div className="text-center space-y-2">
+                            <h1 className="text-2xl font-serif font-bold text-[var(--foreground)]">
+                                Verify Your Phone
+                            </h1>
+                            <p className="text-sm text-[var(--text-300)] font-sans">
+                                Please enter the 6-digit verification code sent to{" "}
+                                <span className="font-semibold text-[var(--text-400)]">
+                                    {phone}
+                                </span>
+                            </p>
+                        </div>
+                    </StaggerItem>
+
+                    <StaggerItem className="pt-6">
+                        <OTPInput
+                            value={otp}
+                            onChange={setOtp}
+                            error={error}
+                            disabled={verifyOTP.isPending}
+                        />
+                    </StaggerItem>
+
+                    {resendMessage && (
+                        <StaggerItem>
+                            <p className="text-sm text-green-600 font-sans text-center">
+                                {resendMessage}
+                            </p>
+                        </StaggerItem>
+                    )}
+
+                    <StaggerItem className="pt-2">
+                        <div className="text-center">
+                            {resendTimer > 0 ? (
+                                <p className="text-sm text-[var(--text-200)] font-sans">
+                                    Resend code in{" "}
+                                    <span className="font-medium">
+                                        {formatTimer(resendTimer)}
+                                    </span>
+                                </p>
+                            ) : (
+                                <button
+                                    onClick={handleResend}
+                                    disabled={resendOTP.isPending}
+                                    className="text-sm text-[var(--primary)] font-sans font-medium hover:underline disabled:opacity-50"
+                                >
+                                    Resend code
+                                </button>
+                            )}
+                        </div>
+                    </StaggerItem>
+                </StaggerContainer>
+
+                <BottomButton
+                    onClick={handleVerify}
+                    disabled={otp.length !== 6}
+                    loading={verifyOTP.isPending}
+                >
+                    Verify
+                </BottomButton>
+            </div>
+        </OnboardingLayout>
+    );
+}
+
+export default function VerifyPasswordResetPage() {
+    return (
+        <Suspense
+            fallback={
+                <div className="min-h-dvh bg-[var(--background)] flex items-center justify-center">
+                    <div className="w-8 h-8 border-2 border-[var(--primary)] border-t-transparent rounded-full animate-spin" />
+                </div>
+            }
+        >
+            <VerifyPasswordResetContent />
+        </Suspense>
+    );
+}

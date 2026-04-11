@@ -153,6 +153,15 @@ export const authApi = {
 
     resendOTP: (data: import("./types").ResendOTPRequest) =>
         api.post<import("./types").OTPResponse>("/auth/resend-otp", data),
+
+    forgotPassword: (data: import("./types").ForgotPasswordRequest) =>
+        api.post<import("./types").ForgotPasswordResponse>("/auth/forgot-password", data),
+
+    verifyPasswordResetOTP: (data: import("./types").VerifyPasswordResetOTPRequest) =>
+        api.post<import("./types").VerifyPasswordResetOTPResponse>("/auth/verify-password-reset-otp", data),
+
+    resetPassword: (data: import("./types").ResetPasswordRequest) =>
+        api.post<import("./types").ResetPasswordResponse>("/auth/reset-password", data),
 };
 
 // ── Profile API ───────────────────────────────────────────
