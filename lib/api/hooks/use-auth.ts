@@ -7,6 +7,12 @@ import type {
     LoginRequest,
     VerifyOTPRequest,
     ResendOTPRequest,
+    ForgotPasswordRequest,
+    ForgotPasswordResponse,
+    VerifyPasswordResetOTPRequest,
+    VerifyPasswordResetOTPResponse,
+    ResetPasswordRequest,
+    ResetPasswordResponse,
     AuthResponse,
     OTPResponse,
 } from "../types";
@@ -40,5 +46,23 @@ export function useVerifyOTP(options?: {
 export function useResendOTP() {
     return useMutation<AxiosResponse<OTPResponse>, Error, ResendOTPRequest>({
         mutationFn: (data) => authApi.resendOTP(data),
+    });
+}
+
+export function useForgotPassword() {
+    return useMutation<AxiosResponse<ForgotPasswordResponse>, Error, ForgotPasswordRequest>({
+        mutationFn: (data) => authApi.forgotPassword(data),
+    });
+}
+
+export function useVerifyPasswordResetOTP() {
+    return useMutation<AxiosResponse<VerifyPasswordResetOTPResponse>, Error, VerifyPasswordResetOTPRequest>({
+        mutationFn: (data) => authApi.verifyPasswordResetOTP(data),
+    });
+}
+
+export function useResetPassword() {
+    return useMutation<AxiosResponse<ResetPasswordResponse>, Error, ResetPasswordRequest>({
+        mutationFn: (data) => authApi.resetPassword(data),
     });
 }
