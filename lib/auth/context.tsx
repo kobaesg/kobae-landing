@@ -62,12 +62,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     setTokens(access_token, refresh_token);
                     localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
                     setUserState(user);
+                    setIsLoading(false);
                 }
             } catch {
                 clearTokens();
                 localStorage.removeItem(USER_STORAGE_KEY);
                 setUserState(null);
-            } finally {
                 setIsLoading(false);
             }
         };
