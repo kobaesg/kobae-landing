@@ -1,5 +1,6 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
 export const api = axios.create({
@@ -32,6 +33,60 @@ export function setTokens(accessToken: string, refreshToken: string) {
 export function clearTokens() {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(REFRESH_TOKEN_KEY);
+}
+
+/**
+ * Decode a JWT token and extract the payload (without verification)
+ */
+function decodeJwtPayload(token: string): { exp?: number; iat?: number } | null {
+    try {
+        const parts = token.split(".");
+        if (parts.length !== 3) return null;
+        const payload = JSON.parse(atob(parts[1]));
+        return payload;
+    } catch {
+        return null;
+    }
+}
+
+/**
+ * Check if a token is expired or will expire within the given buffer (in seconds)
+ */
+export function isTokenExpired(token: string | null, bufferSeconds = 60): boolean {
+    if (!token) return true;
+    const payload = decodeJwtPayload(token);
+    if (!payload?.exp) return true;
+    const now = Math.floor(Date.now() / 1000);
+    return payload.exp <= now + bufferSeconds;
+}
+
+/**
+ * Ensure we have a valid (non-expired) access token.
+ * If the current token is expired or about to expire, refresh it.
+ * Returns the valid access token or null if refresh fails.
+ */
+export async function ensureValidAccessToken(): Promise<string | null> {
+    const currentToken = getAccessToken();
+    
+    // If token is valid (not expired within 60 seconds), return it
+    if (currentToken && !isTokenExpired(currentToken, 60)) {
+        return currentToken;
+    }
+    
+    // Token is expired or about to expire, try to refresh
+    const refreshToken = getRefreshToken();
+    if (!refreshToken) {
+        return null;
+    }
+    
+    try {
+        const newToken = await refreshAccessToken();
+        return newToken;
+    } catch {
+        // Refresh failed, clear tokens
+        clearTokens();
+        return null;
+    }
 }
 
 const REFRESH_BYPASS_HEADER = "x-skip-auth-refresh";
@@ -344,3 +399,47 @@ export const notificationsApi = {
     markAllRead: () =>
         api.post("/notifications/read-all"),
 };
+
+// ── Chat API ──────────────────────────────────────────────
+
+export const chatApi = {
+    getConversations: () =>
+        api.get<import("./types").ConversationListResponse>("/chat/conversations"),
+
+    createConversation: (data: import("./types").CreateConversationRequest) =>
+        api.post<import("./types").ConversationResponse>("/chat/conversations", data),
+
+    getConversation: (conversationId: string) =>
+        api.get<import("./types").ConversationResponse>(
+            `/chat/conversations/${conversationId}`
+        ),
+
+    getMessages: (conversationId: string, params?: { limit?: number; before?: string }) =>
+        api.get<import("./types").MessageListResponse>(
+            `/chat/conversations/${conversationId}/messages`,
+            { params }
+        ),
+
+    sendMessage: (conversationId: string, data: import("./types").SendMessageRequest) =>
+        api.post<import("./types").MessageResponse>(
+            `/chat/conversations/${conversationId}/messages`,
+            data
+        ),
+
+    markRead: (conversationId: string) =>
+        api.post<import("./types").MarkReadResponse>(
+            `/chat/conversations/${conversationId}/read`
+        ),
+
+    getUnreadCount: () =>
+        api.get<import("./types").ChatUnreadCountResponse>("/chat/unread-count"),
+};
+
+// ── WebSocket URL Helper ──────────────────────────────────
+
+export function getChatWebSocketUrl(): string {
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+    const wsProtocol = baseUrl.startsWith("https") ? "wss" : "ws";
+    const wsUrl = baseUrl.replace(/^https?/, wsProtocol);
+    return `${wsUrl}/ws/chat`;
+}

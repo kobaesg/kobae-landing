@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth/context";
 import { AppNav } from "@/components/app/AppNav";
+import { ChatWebSocketProvider } from "@/lib/chat/use-chat-websocket";
 
 export default function AppGroupLayout({
     children,
@@ -32,12 +33,14 @@ export default function AppGroupLayout({
     }
 
     return (
-        <div className="min-h-dvh bg-[#f8f7f6]">
-            <AppNav />
-            {/* Offset content for sidebar on desktop, bottom nav on mobile */}
-            <div className="md:pl-56 pb-16 md:pb-0">
-                {children}
+        <ChatWebSocketProvider>
+            <div className="min-h-dvh bg-[#f8f7f6]">
+                <AppNav />
+                {/* Offset content for sidebar on desktop, bottom nav on mobile */}
+                <div className="md:pl-56 pb-16 md:pb-0">
+                    {children}
+                </div>
             </div>
-        </div>
+        </ChatWebSocketProvider>
     );
 }
