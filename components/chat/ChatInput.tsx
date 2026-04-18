@@ -39,14 +39,14 @@ export function ChatInput({ onSend, disabled = false, placeholder = "Type a mess
     const hasContent = message.trim().length > 0;
 
     return (
-        <div className="flex items-end gap-2 px-2 py-2 bg-white shadow-[0_-1px_3px_rgba(0,0,0,0.1)]">
+        <div className="flex items-end gap-3 px-4 py-3 bg-white shadow-[0_-1px_3px_rgba(0,0,0,0.1)]">
             {/* Plus button */}
             <button
                 type="button"
-                className="w-[65px] h-[65px] rounded-full bg-[#ededed] flex items-center justify-center flex-shrink-0 active:scale-95 transition-transform"
+                className="w-[52px] h-[52px] rounded-full bg-[#ededed] flex items-center justify-center flex-shrink-0 active:scale-95 transition-transform"
                 aria-label="Add attachment"
             >
-                <Plus size={28} className="text-[#614e41]" strokeWidth={1.5} />
+                <Plus size={24} className="text-[#614e41]" strokeWidth={1.5} />
             </button>
 
             {/* Text input */}
@@ -68,7 +68,7 @@ export function ChatInput({ onSend, disabled = false, placeholder = "Type a mess
                 type="button"
                 onClick={hasContent ? handleSubmit : undefined}
                 disabled={disabled}
-                className={`w-[65px] h-[65px] rounded-full flex items-center justify-center flex-shrink-0 active:scale-95 transition-all ${
+                className={`w-[52px] h-[52px] rounded-full flex items-center justify-center flex-shrink-0 active:scale-95 transition-all ${
                     hasContent
                         ? "bg-[#d8602e] shadow-[0_0_10px_rgba(255,204,177,0.8)]"
                         : "bg-[#ededed]"
@@ -76,9 +76,9 @@ export function ChatInput({ onSend, disabled = false, placeholder = "Type a mess
                 aria-label={hasContent ? "Send message" : "Record voice note"}
             >
                 {hasContent ? (
-                    <Send size={28} className="text-white" strokeWidth={1.5} />
+                    <Send size={24} className="text-white" strokeWidth={1.5} />
                 ) : (
-                    <Mic size={28} className="text-[#614e41]" strokeWidth={1.5} />
+                    <Mic size={24} className="text-[#614e41]" strokeWidth={1.5} />
                 )}
             </button>
         </div>

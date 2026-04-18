@@ -4,7 +4,6 @@ import type {
     ConversationWithDetails,
     Message,
     CreateConversationRequest,
-    SendMessageRequest,
 } from "../types";
 
 // Query keys
@@ -88,63 +87,15 @@ export function useMessages(conversationId: string | undefined) {
         select: (data) => ({
             pages: data.pages,
             pageParams: data.pageParams,
-            // Flatten all messages and reverse to show oldest first
-            messages: data.pages.flatMap((page) => page.messages).reverse(),
+            // Flatten all messages - backend already returns in chronological order (oldest first)
+            messages: data.pages.flatMap((page) => page.messages),
         }),
     });
 }
 
-export function useSendMessage() {
-    const queryClient = useQueryClient();
-
-    return useMutation({
-        mutationFn: async ({
-            conversationId,
-            content,
-        }: {
-            conversationId: string;
-            content: string;
-        }) => {
-            const response = await chatApi.sendMessage(conversationId, { content });
-            return { message: response.data.message, conversationId };
-        },
-        onSuccess: ({ message, conversationId }) => {
-            // Optimistically add message to cache
-            queryClient.setQueryData(
-                chatKeys.messages(conversationId),
-                (old: ReturnType<typeof useMessages>["data"]) => {
-                    if (!old) return old;
-                    return {
-                        ...old,
-                        messages: [...old.messages, message],
-                    };
-                }
-            );
-
-            // Update conversation's last message
-            queryClient.setQueryData<ConversationWithDetails[]>(
-                chatKeys.conversations(),
-                (old) => {
-                    if (!old) return old;
-                    return old.map((conv) => {
-                        if (conv.id !== conversationId) return conv;
-                        return {
-                            ...conv,
-                            last_message: {
-                                id: message.id,
-                                content: message.content,
-                                sender_id: message.sender_id,
-                                sent_at: message.sent_at,
-                                read_at: message.read_at,
-                            },
-                            updated_at: message.sent_at,
-                        };
-                    });
-                }
-            );
-        },
-    });
-}
+// Note: Message sending is now handled via WebSocket in use-chat-websocket.ts
+// The useSendMessage mutation has been removed in favor of WebSocket-based messaging
+// which provides better real-time experience with optimistic updates and retry support
 
 // ── Read Status ───────────────────────────────────────────
 
@@ -186,74 +137,5 @@ export function useChatUnreadCount() {
     });
 }
 
-// ── Cache Helpers (for WebSocket updates) ─────────────────
-
-export function useAddMessageToCache() {
-    const queryClient = useQueryClient();
-
-    return (conversationId: string, message: Message) => {
-        // Add to messages cache
-        queryClient.setQueryData(
-            chatKeys.messages(conversationId),
-            (old: ReturnType<typeof useMessages>["data"]) => {
-                if (!old) return old;
-                // Check if message already exists
-                if (old.messages.some((m) => m.id === message.id)) return old;
-                return {
-                    ...old,
-                    messages: [...old.messages, message],
-                };
-            }
-        );
-
-        // Update conversation's last message and move to top
-        queryClient.setQueryData<ConversationWithDetails[]>(
-            chatKeys.conversations(),
-            (old) => {
-                if (!old) return old;
-                const updated = old.map((conv) => {
-                    if (conv.id !== conversationId) return conv;
-                    return {
-                        ...conv,
-                        last_message: {
-                            id: message.id,
-                            content: message.content,
-                            sender_id: message.sender_id,
-                            sent_at: message.sent_at,
-                            read_at: message.read_at,
-                        },
-                        unread_count: conv.unread_count + 1,
-                        updated_at: message.sent_at,
-                    };
-                });
-                // Sort by updated_at descending
-                return updated.sort(
-                    (a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
-                );
-            }
-        );
-
-        // Invalidate unread count
-        queryClient.invalidateQueries({ queryKey: chatKeys.unreadCount() });
-    };
-}
-
-export function useUpdateMessageReadStatus() {
-    const queryClient = useQueryClient();
-
-    return (conversationId: string, messageId: string, readAt: string) => {
-        queryClient.setQueryData(
-            chatKeys.messages(conversationId),
-            (old: ReturnType<typeof useMessages>["data"]) => {
-                if (!old) return old;
-                return {
-                    ...old,
-                    messages: old.messages.map((m) => {
-                        if (m.id !== messageId) return m;
-                        return { ...m, read_at: readAt };
-                    }),
-                };
-            }
-        );
-    };
-}
+// Note: Cache helpers for WebSocket updates are now in use-chat-websocket.ts
+// They have been moved there to properly handle the infinite query data structure

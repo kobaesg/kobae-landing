@@ -416,6 +416,9 @@ export interface ConversationWithDetails {
     unread_count: number;
 }
 
+// Message status for local state tracking
+export type MessageStatus = 'sending' | 'sent' | 'failed';
+
 export interface Message {
     id: string;
     conversation_id: string;
@@ -423,6 +426,9 @@ export interface Message {
     content: string;
     sent_at: string;
     read_at?: string;
+    // Local-only fields for optimistic updates
+    status?: MessageStatus;
+    localId?: string; // Temporary ID for pending messages
 }
 
 export interface CreateConversationRequest {

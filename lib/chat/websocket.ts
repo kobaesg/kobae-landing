@@ -1,5 +1,5 @@
-import { getAccessToken, getChatWebSocketUrl } from "@/lib/api/client";
-import type { WSIncomingMessage, WSOutgoingMessage, Message } from "@/lib/api/types";
+import { getChatWebSocketUrl, ensureValidAccessToken } from "@/lib/api/client";
+import type { WSIncomingMessage, WSOutgoingMessage } from "@/lib/api/types";
 
 type MessageHandler = (message: WSOutgoingMessage) => void;
 type ConnectionHandler = () => void;
@@ -13,6 +13,10 @@ interface ChatWebSocketOptions {
     maxReconnectAttempts?: number;
 }
 
+// WebSocket close codes
+const WS_CLOSE_NORMAL = 1000;
+const WS_CLOSE_POLICY_VIOLATION = 1008; // Often used for auth failures
+
 export class ChatWebSocket {
     private ws: WebSocket | null = null;
     private options: ChatWebSocketOptions;
@@ -20,6 +24,7 @@ export class ChatWebSocket {
     private reconnectTimeout: NodeJS.Timeout | null = null;
     private isIntentionallyClosed = false;
     private messageQueue: WSIncomingMessage[] = [];
+    private isConnecting = false;
 
     constructor(options: ChatWebSocketOptions = {}) {
         this.options = {
@@ -29,25 +34,41 @@ export class ChatWebSocket {
         };
     }
 
-    connect(): void {
-        if (this.ws?.readyState === WebSocket.OPEN) {
+    /**
+     * Update the WebSocket options (e.g., message handlers).
+     * This allows updating callbacks when React component dependencies change.
+     */
+    updateOptions(options: Partial<ChatWebSocketOptions>): void {
+        this.options = {
+            ...this.options,
+            ...options,
+        };
+    }
+
+    async connect(): Promise<void> {
+        if (this.ws?.readyState === WebSocket.OPEN || this.isConnecting) {
             return;
         }
 
-        const token = getAccessToken();
-        if (!token) {
-            console.warn("[ChatWS] No access token available, cannot connect");
-            return;
-        }
-
+        this.isConnecting = true;
         this.isIntentionallyClosed = false;
-        const wsUrl = `${getChatWebSocketUrl()}?token=${encodeURIComponent(token)}`;
 
         try {
+            // Ensure we have a valid (non-expired) token before connecting
+            const token = await ensureValidAccessToken();
+            if (!token) {
+                console.warn("[ChatWS] No valid access token available, cannot connect");
+                this.isConnecting = false;
+                return;
+            }
+
+            const wsUrl = `${getChatWebSocketUrl()}?token=${encodeURIComponent(token)}`;
+
             this.ws = new WebSocket(wsUrl);
             this.setupEventHandlers();
         } catch (error) {
             console.error("[ChatWS] Failed to create WebSocket:", error);
+            this.isConnecting = false;
             this.scheduleReconnect();
         }
     }
@@ -57,6 +78,7 @@ export class ChatWebSocket {
 
         this.ws.onopen = () => {
             console.log("[ChatWS] Connected");
+            this.isConnecting = false;
             this.reconnectAttempts = 0;
             this.options.onConnect?.();
             this.flushMessageQueue();
@@ -73,15 +95,31 @@ export class ChatWebSocket {
 
         this.ws.onclose = (event) => {
             console.log("[ChatWS] Disconnected:", event.code, event.reason);
+            this.isConnecting = false;
             this.options.onDisconnect?.();
 
             if (!this.isIntentionallyClosed) {
+                // Check if this was an auth-related close
+                // Common patterns: 1008 (policy violation), or server closes with specific reason
+                const isAuthError = 
+                    event.code === WS_CLOSE_POLICY_VIOLATION ||
+                    event.reason?.toLowerCase().includes("unauthorized") ||
+                    event.reason?.toLowerCase().includes("token") ||
+                    event.reason?.toLowerCase().includes("auth");
+
+                if (isAuthError) {
+                    console.log("[ChatWS] Auth error detected, will refresh token before reconnecting");
+                    // Don't count auth errors toward max attempts - they're recoverable
+                    this.reconnectAttempts = Math.max(0, this.reconnectAttempts - 1);
+                }
+
                 this.scheduleReconnect();
             }
         };
 
         this.ws.onerror = (error) => {
             console.error("[ChatWS] Error:", error);
+            this.isConnecting = false;
             this.options.onError?.(error);
         };
     }
@@ -97,13 +135,17 @@ export class ChatWebSocket {
         }
 
         this.reconnectAttempts++;
-        const delay = this.options.reconnectInterval ?? 3000;
+        
+        // Use exponential backoff with jitter for better reconnection behavior
+        const baseDelay = this.options.reconnectInterval ?? 3000;
+        const delay = Math.min(baseDelay * Math.pow(1.5, this.reconnectAttempts - 1), 30000);
+        const jitter = Math.random() * 1000;
 
-        console.log(`[ChatWS] Reconnecting in ${delay}ms (attempt ${this.reconnectAttempts})`);
+        console.log(`[ChatWS] Reconnecting in ${Math.round(delay + jitter)}ms (attempt ${this.reconnectAttempts})`);
 
         this.reconnectTimeout = setTimeout(() => {
             this.connect();
-        }, delay);
+        }, delay + jitter);
     }
 
     private flushMessageQueue(): void {
@@ -115,7 +157,7 @@ export class ChatWebSocket {
         }
     }
 
-    send(message: WSIncomingMessage): void {
+    async send(message: WSIncomingMessage): Promise<void> {
         if (this.ws?.readyState === WebSocket.OPEN) {
             this.ws.send(JSON.stringify(message));
         } else {
@@ -123,7 +165,7 @@ export class ChatWebSocket {
             this.messageQueue.push(message);
             // Try to connect if not already connecting
             if (!this.ws || this.ws.readyState === WebSocket.CLOSED) {
-                this.connect();
+                await this.connect();
             }
         }
     }
@@ -137,7 +179,7 @@ export class ChatWebSocket {
         }
 
         if (this.ws) {
-            this.ws.close(1000, "Client disconnect");
+            this.ws.close(WS_CLOSE_NORMAL, "Client disconnect");
             this.ws = null;
         }
     }
@@ -180,6 +222,18 @@ export class ChatWebSocket {
     get readyState(): number | undefined {
         return this.ws?.readyState;
     }
+
+    /**
+     * Force a reconnection with a fresh token.
+     * Useful when you know the token has been refreshed elsewhere.
+     */
+    async reconnectWithFreshToken(): Promise<void> {
+        console.log("[ChatWS] Forcing reconnection with fresh token");
+        this.disconnect();
+        this.isIntentionallyClosed = false;
+        this.reconnectAttempts = 0;
+        await this.connect();
+    }
 }
 
 // Singleton instance for app-wide use
@@ -188,6 +242,10 @@ let chatWebSocketInstance: ChatWebSocket | null = null;
 export function getChatWebSocket(options?: ChatWebSocketOptions): ChatWebSocket {
     if (!chatWebSocketInstance) {
         chatWebSocketInstance = new ChatWebSocket(options);
+    } else if (options) {
+        // Update options on existing instance to ensure callbacks stay current
+        // This is critical for React hooks where callbacks change due to dependency updates
+        chatWebSocketInstance.updateOptions(options);
     }
     return chatWebSocketInstance;
 }

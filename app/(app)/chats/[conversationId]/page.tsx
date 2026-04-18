@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
-import { useConversation, useMessages, useSendMessage, useMarkRead } from "@/lib/api/hooks/use-chat";
+import { useConversation, useMessages, useMarkRead } from "@/lib/api/hooks/use-chat";
+import { useChatWebSocket } from "@/lib/chat/use-chat-websocket";
 import { useAuth } from "@/lib/auth/context";
 import { ChatHeader, ChatBubble, ChatInput, DateSeparator, ScrollToBottomFAB } from "@/components/chat";
 import type { Message } from "@/lib/api/types";
@@ -70,7 +71,7 @@ export default function ChatPage() {
 
     const { data: conversation, isLoading: conversationLoading } = useConversation(conversationId);
     const { data: messagesData, isLoading: messagesLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useMessages(conversationId);
-    const sendMessage = useSendMessage();
+    const { sendMessage, retryMessage, removeFailedMessage, isConnected } = useChatWebSocket();
     const markRead = useMarkRead();
 
     const messages = messagesData?.messages ?? [];
@@ -113,12 +114,24 @@ export default function ChatPage() {
         }
     }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-    // Handle send message
+    // Handle send message via WebSocket
     const handleSend = (content: string) => {
         if (!conversationId) return;
-        sendMessage.mutate({ conversationId, content });
+        sendMessage(conversationId, content);
         // Scroll to bottom after sending
         setTimeout(() => scrollToBottom("smooth"), 100);
+    };
+
+    // Handle retry failed message
+    const handleRetry = (message: Message) => {
+        if (!message.localId) return;
+        retryMessage(conversationId, message.localId, message.content);
+    };
+
+    // Handle remove failed message
+    const handleRemoveFailedMessage = (message: Message) => {
+        if (!message.localId) return;
+        removeFailedMessage(conversationId, message.localId);
     };
 
     // Loading state
@@ -152,7 +165,7 @@ export default function ChatPage() {
     }
 
     return (
-        <div className="flex flex-col h-dvh bg-[#f5f0eb]">
+        <div className="flex flex-col h-[calc(100dvh-4rem)] md:h-dvh bg-[#f5f0eb]">
             {/* Header */}
             <ChatHeader
                 participant={conversation.participant}
@@ -182,11 +195,13 @@ export default function ChatPage() {
                         if (item.type === "message" && item.message) {
                             return (
                                 <ChatBubble
-                                    key={item.message.id}
+                                    key={item.message.localId || item.message.id}
                                     message={item.message}
                                     isFromMe={item.isFromMe ?? false}
                                     sender={conversation.participant}
                                     showAvatar={item.showAvatar}
+                                    onRetry={item.message.status === 'failed' ? () => handleRetry(item.message!) : undefined}
+                                    onRemove={item.message.status === 'failed' ? () => handleRemoveFailedMessage(item.message!) : undefined}
                                 />
                             );
                         }
@@ -208,7 +223,7 @@ export default function ChatPage() {
             {/* Input area */}
             <ChatInput
                 onSend={handleSend}
-                disabled={sendMessage.isPending}
+                disabled={!isConnected}
             />
         </div>
     );
