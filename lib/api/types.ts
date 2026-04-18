@@ -390,6 +390,106 @@ export interface UnreadCountResponse {
     count: number;
 }
 
+// ── Chat ──────────────────────────────────────────────────
+
+export interface ConversationParticipant {
+    user_id: string;
+    first_name: string;
+    last_name: string;
+    photo_url?: string;
+}
+
+export interface MessagePreview {
+    id: string;
+    content: string;
+    sender_id: string;
+    sent_at: string;
+    read_at?: string;
+}
+
+export interface ConversationWithDetails {
+    id: string;
+    created_at: string;
+    updated_at: string;
+    participant: ConversationParticipant;
+    last_message?: MessagePreview;
+    unread_count: number;
+}
+
+export interface Message {
+    id: string;
+    conversation_id: string;
+    sender_id: string;
+    content: string;
+    sent_at: string;
+    read_at?: string;
+}
+
+export interface CreateConversationRequest {
+    user_id: string;
+}
+
+export interface SendMessageRequest {
+    content: string;
+}
+
+export interface ConversationListResponse {
+    conversations: ConversationWithDetails[];
+}
+
+export interface ConversationResponse {
+    conversation: ConversationWithDetails;
+}
+
+export interface MessageListResponse {
+    messages: Message[];
+    has_more: boolean;
+    next_cursor?: string;
+}
+
+export interface MessageResponse {
+    message: Message;
+}
+
+export interface MarkReadResponse {
+    read_count: number;
+    read_at: string;
+}
+
+export interface ChatUnreadCountResponse {
+    total_unread: number;
+}
+
+// WebSocket message types
+export type WSMessageType =
+    | "send_message"
+    | "typing"
+    | "stop_typing"
+    | "mark_read"
+    | "new_message"
+    | "message_read"
+    | "user_typing"
+    | "user_stop_typing"
+    | "error"
+    | "connected";
+
+export interface WSIncomingMessage {
+    type: WSMessageType;
+    conversation_id?: string;
+    content?: string;
+    message_id?: string;
+}
+
+export interface WSOutgoingMessage {
+    type: WSMessageType;
+    conversation_id?: string;
+    message?: Message;
+    user_id?: string;
+    message_id?: string;
+    read_at?: string;
+    error?: string;
+}
+
 // ── API Error ─────────────────────────────────────────────
 
 export interface ApiError {

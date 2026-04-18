@@ -344,3 +344,47 @@ export const notificationsApi = {
     markAllRead: () =>
         api.post("/notifications/read-all"),
 };
+
+// ── Chat API ──────────────────────────────────────────────
+
+export const chatApi = {
+    getConversations: () =>
+        api.get<import("./types").ConversationListResponse>("/chat/conversations"),
+
+    createConversation: (data: import("./types").CreateConversationRequest) =>
+        api.post<import("./types").ConversationResponse>("/chat/conversations", data),
+
+    getConversation: (conversationId: string) =>
+        api.get<import("./types").ConversationResponse>(
+            `/chat/conversations/${conversationId}`
+        ),
+
+    getMessages: (conversationId: string, params?: { limit?: number; before?: string }) =>
+        api.get<import("./types").MessageListResponse>(
+            `/chat/conversations/${conversationId}/messages`,
+            { params }
+        ),
+
+    sendMessage: (conversationId: string, data: import("./types").SendMessageRequest) =>
+        api.post<import("./types").MessageResponse>(
+            `/chat/conversations/${conversationId}/messages`,
+            data
+        ),
+
+    markRead: (conversationId: string) =>
+        api.post<import("./types").MarkReadResponse>(
+            `/chat/conversations/${conversationId}/read`
+        ),
+
+    getUnreadCount: () =>
+        api.get<import("./types").ChatUnreadCountResponse>("/chat/unread-count"),
+};
+
+// ── WebSocket URL Helper ──────────────────────────────────
+
+export function getChatWebSocketUrl(): string {
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+    const wsProtocol = baseUrl.startsWith("https") ? "wss" : "ws";
+    const wsUrl = baseUrl.replace(/^https?/, wsProtocol);
+    return `${wsUrl}/ws/chat`;
+}
