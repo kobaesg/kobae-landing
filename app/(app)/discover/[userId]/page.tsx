@@ -284,7 +284,7 @@ export default function FullProfilePage() {
                     {profile.offers && profile.offers.length > 0 && (
                         <div className="mb-5">
                             <h3 className="font-serif font-semibold text-[16px] text-[#181412] mb-2">
-                                Connect With Me
+                                Connect With Me For
                             </h3>
                             <div className="grid grid-cols-2 gap-2">
                                 {profile.offers.map((offer, i) => (

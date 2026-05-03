@@ -410,7 +410,7 @@ export default function MyProfilePage() {
                                             )}
                                             {offersList.length > 0 && (
                                                 <section>
-                                                    <h3 className="font-serif font-medium text-[20px] text-[#181412] mb-3">Connect With Me For...</h3>
+                                                    <h3 className="font-serif font-medium text-[20px] text-[#181412] mb-3">Connect With Me For</h3>
                                                     <motion.div
                                                         className="grid grid-cols-1 sm:grid-cols-2 gap-4"
                                                         initial="hidden"
