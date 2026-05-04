@@ -17,6 +17,11 @@ import { ApiError } from "@/lib/api/types";
 import { useOnboardingDraft } from "@/lib/onboarding/store";
 import { StaggerContainer, StaggerItem } from "@/components/onboarding/animations";
 import { useAuth } from "@/lib/auth/context";
+import {
+    usePasscodeStore,
+    PASSCODE_ENABLED,
+    requiresPasscodeVerification,
+} from "@/lib/auth/passcode-store";
 
 const signupSchema = z.object({
     email: z.string().email("Please enter a valid email address"),
@@ -41,14 +46,9 @@ export default function SignupPage() {
     const draft = useOnboardingDraft((s) => s.signup);
     const setDraft = useOnboardingDraft((s) => s.setSignup);
     const clearDraft = useOnboardingDraft((s) => s.clearSignup);
+    const { isVerified: isPasscodeVerified } = usePasscodeStore();
 
-    // Already logged in — skip signup entirely and resume wherever they left off
-    useEffect(() => {
-        if (!authLoading && isAuthenticated) {
-            router.replace("/me");
-        }
-    }, [authLoading, isAuthenticated, router]);
-
+    // All hooks must be called before any conditional returns
     const {
         register,
         handleSubmit,
@@ -65,6 +65,20 @@ export default function SignupPage() {
         },
     });
 
+    // Passcode gate: redirect to /passcode if not verified
+    useEffect(() => {
+        if (requiresPasscodeVerification(isPasscodeVerified)) {
+            router.replace("/passcode");
+        }
+    }, [isPasscodeVerified, router]);
+
+    // Already logged in — skip signup entirely and resume wherever they left off
+    useEffect(() => {
+        if (!authLoading && isAuthenticated) {
+            router.replace("/me");
+        }
+    }, [authLoading, isAuthenticated, router]);
+
     // Sync form changes to draft store
     useEffect(() => {
         const subscription = watch((values) => {
@@ -76,6 +90,11 @@ export default function SignupPage() {
         });
         return () => subscription.unsubscribe();
     }, [watch, setDraft]);
+
+    // Don't render if passcode verification is required (after all hooks)
+    if (PASSCODE_ENABLED && !isPasscodeVerified) {
+        return null;
+    }
 
     const onSubmit = async (data: SignupFormData) => {
         setServerError("");
