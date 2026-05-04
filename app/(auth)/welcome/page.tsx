@@ -2,8 +2,12 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { PASSCODE_ENABLED } from "@/lib/auth/passcode-store";
 
 const EASE = [0.25, 0.1, 0.25, 1] as const;
+
+// Determine the next route based on passcode gate status
+const CONTINUE_HREF = PASSCODE_ENABLED ? "/passcode" : "/signup";
 
 export default function WelcomePage() {
     return (
@@ -53,7 +57,7 @@ export default function WelcomePage() {
                 >
                     <motion.div whileTap={{ scale: 0.97 }} className="w-full">
                         <Link
-                            href="/signup"
+                            href={CONTINUE_HREF}
                             className="block w-full py-3 rounded-3xl bg-[var(--primary)] text-white font-sans font-semibold text-base text-center shadow-[0_0_10px_rgba(255,144,97,0.8)] hover:bg-[var(--primary-400)] transition-all"
                         >
                             Continue
