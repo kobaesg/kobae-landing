@@ -15,6 +15,7 @@ export function OurSolution() {
                 >
                     <h2 className="text-4xl md:text-5xl lg:text-[56px] font-normal leading-tight lg:leading-[64px] tracking-tight">
                         Our solution:
+                        <br/>
                         New friends through existing ones
                     </h2>
                     <p className="mt-5 text-2xl font-normal leading-9 text-[#453933] max-w-xl mx-auto">

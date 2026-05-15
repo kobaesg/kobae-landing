@@ -16,8 +16,11 @@ export function OurWhy () {
                     <h2 className="text-4xl md:text-5xl lg:text-[56px] font-normal leading-tight lg:leading-[64px] tracking-tight">
                         Who even likes networking?
                     </h2>
-                    <p className="mt-5 text-2xl font-normal leading-9 text-[#453933] max-w-xl mx-auto">
+                        <br/>
+                        <br/>
+                    <p className="mt-5 text-2xl font-normal leading-9 text-[#453933] mx-auto">
                         Many find it pointless, awkward, intimidating or noisy.
+                        <br/> 
                         Yet, socialising is a human need that shouldn’t be this hard.   
                         <br />
                         <br />
