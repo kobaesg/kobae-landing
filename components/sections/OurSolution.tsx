@@ -20,7 +20,9 @@ export function OurSolution() {
                     </h2>
                     <p className="mt-5 text-2xl font-normal leading-9 text-[#453933] max-w-xl mx-auto">
                         Mutuals and Introductions invoke trust to get conversations going. 
+                        <br/>
                         Ultimately, we don’t want just another connection
+                        <br/>
                         but rather a friend that you feel you should have made long ago. 
                     </p>
                 </motion.div>

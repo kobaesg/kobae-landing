@@ -25,6 +25,7 @@ export function OurWhy () {
                         <br />
                         <br />
                         Kobae was created so people can enjoy 
+                        <br/>
                         meeting the right people with ease.  
                     </p>
                 </motion.div>
