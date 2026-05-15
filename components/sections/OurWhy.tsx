@@ -14,16 +14,15 @@ export function OurWhy () {
                     className="text-center"
                 >
                     <h2 className="text-4xl md:text-5xl lg:text-[56px] font-normal leading-tight lg:leading-[64px] tracking-tight">
-                        Connection shouldn't be a chore.
+                        Who even likes networking?
                     </h2>
                     <p className="mt-5 text-2xl font-normal leading-9 text-[#453933] max-w-xl mx-auto">
-                        Kobae's origin lies in our belief that connection 
-                        should be neither performative nor transactional. 
+                        Many find it pointless, awkward, intimidating or noisy.
+                        Yet, socialising is a human need that shouldn’t be this hard.   
                         <br />
                         <br />
-                        The right people are hidden within our circles,
-                        and through mutuals and data, find your people
-                        that you should have uncovered, long ago. 
+                        Kobae was created so people can enjoy 
+                        meeting the right people with ease.  
                     </p>
                 </motion.div>
             </div>

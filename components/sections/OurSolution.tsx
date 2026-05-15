@@ -14,13 +14,13 @@ export function OurSolution() {
                     className="text-center"
                 >
                     <h2 className="text-4xl md:text-5xl lg:text-[56px] font-normal leading-tight lg:leading-[64px] tracking-tight">
-                        The solution is in fact simple.
+                        Our solution:
+                        New friends through existing ones
                     </h2>
                     <p className="mt-5 text-2xl font-normal leading-9 text-[#453933] max-w-xl mx-auto">
-                        We believe that the way relationship building should be done
-                        is through mutuals for trust,
-                        with professional and personal considerations to be holistic
-                        and with consideration of the type of person you are.
+                        Mutuals and Introductions invoke trust to get conversations going. 
+                        Ultimately, we don’t want just another connection
+                        but rather a friend that you feel you should have made long ago. 
                     </p>
                 </motion.div>
             </div>
