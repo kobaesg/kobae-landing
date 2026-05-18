@@ -400,6 +400,13 @@ export const notificationsApi = {
         api.post("/notifications/read-all"),
 };
 
+// ── Circles API ───────────────────────────────────────────
+
+export const circlesApi = {
+    getGraph: () =>
+        api.get<import("./types").CirclesGraphResponse>("/circles/graph"),
+};
+
 // ── Chat API ──────────────────────────────────────────────
 
 export const chatApi = {
