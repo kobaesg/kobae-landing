@@ -496,6 +496,29 @@ export interface WSOutgoingMessage {
     error?: string;
 }
 
+// ── Circles Graph ─────────────────────────────────────────
+
+export interface GraphNode {
+    user_id: string;
+    first_name: string;
+    last_name: string;
+    photo_url?: string;
+    archetype?: string;
+    degree: number; // 0 = self, 1 = direct connection, 2 = friend of friend
+}
+
+export interface GraphLink {
+    source: string; // user_id
+    target: string; // user_id
+    type: "connected" | "potential";
+}
+
+export interface CirclesGraphResponse {
+    me: GraphNode;
+    nodes: GraphNode[];
+    links: GraphLink[];
+}
+
 // ── API Error ─────────────────────────────────────────────
 
 export interface ApiError {
