@@ -1,22 +1,33 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { UserMinus, ShieldOff } from "lucide-react";
-import { useRemoveConnection, useBlockUser } from "@/lib/api/hooks/use-connections";
+import { UserMinus, ShieldOff, UserPlus, XCircle, Check, X } from "lucide-react";
+import { useRemoveConnection, useBlockUser, useSendRequest } from "@/lib/api/hooks/use-connections";
+
+type ConnectionStatus = "none" | "pending_sent" | "pending_received" | "connected";
 
 interface Props {
     isOpen: boolean;
     onClose: () => void;
     userId: string;
     userName: string;
+    connectionStatus: ConnectionStatus;
     onActionComplete: () => void;
 }
 
-export function ConnectionActionsSheet({ isOpen, onClose, userId, userName, onActionComplete }: Props) {
+export function ConnectionActionsSheet({ 
+    isOpen, 
+    onClose, 
+    userId, 
+    userName, 
+    connectionStatus,
+    onActionComplete 
+}: Props) {
     const removeConnection = useRemoveConnection();
     const blockUser = useBlockUser();
+    const sendRequest = useSendRequest();
 
-    const isPending = removeConnection.isPending || blockUser.isPending;
+    const isPending = removeConnection.isPending || blockUser.isPending || sendRequest.isPending;
 
     function handleRemove() {
         removeConnection.mutate(userId, {
@@ -35,6 +46,132 @@ export function ConnectionActionsSheet({ isOpen, onClose, userId, userName, onAc
             },
         });
     }
+
+    function handleSendRequest() {
+        sendRequest.mutate(userId, {
+            onSuccess: () => {
+                onClose();
+                onActionComplete();
+            },
+        });
+    }
+
+    // Render different actions based on connection status
+    const renderActions = () => {
+        switch (connectionStatus) {
+            case "connected":
+                return (
+                    <>
+                        <button
+                            onClick={handleRemove}
+                            disabled={isPending}
+                            className="flex items-center gap-4 w-full py-4 text-left disabled:opacity-50"
+                        >
+                            <div className="w-10 h-10 rounded-full bg-[#f5f0eb] flex items-center justify-center flex-shrink-0">
+                                {removeConnection.isPending ? (
+                                    <div className="w-4 h-4 border-2 border-[#453933] border-t-transparent rounded-full animate-spin" />
+                                ) : (
+                                    <UserMinus size={20} className="text-[#453933]" strokeWidth={1.5} />
+                                )}
+                            </div>
+                            <span className="text-[16px] font-sans text-[#181412]">
+                                Remove connection
+                            </span>
+                        </button>
+                        <div className="h-px bg-[#f0ebe6] mx-0" />
+                    </>
+                );
+
+            case "none":
+                return (
+                    <>
+                        <button
+                            onClick={handleSendRequest}
+                            disabled={isPending}
+                            className="flex items-center gap-4 w-full py-4 text-left disabled:opacity-50"
+                        >
+                            <div className="w-10 h-10 rounded-full bg-[#f5f0eb] flex items-center justify-center flex-shrink-0">
+                                {sendRequest.isPending ? (
+                                    <div className="w-4 h-4 border-2 border-[#453933] border-t-transparent rounded-full animate-spin" />
+                                ) : (
+                                    <UserPlus size={20} className="text-[#453933]" strokeWidth={1.5} />
+                                )}
+                            </div>
+                            <span className="text-[16px] font-sans text-[#181412]">
+                                Request to connect
+                            </span>
+                        </button>
+                        <div className="h-px bg-[#f0ebe6] mx-0" />
+                    </>
+                );
+
+            case "pending_sent":
+                return (
+                    <>
+                        <button
+                            onClick={handleRemove}
+                            disabled={isPending}
+                            className="flex items-center gap-4 w-full py-4 text-left disabled:opacity-50"
+                        >
+                            <div className="w-10 h-10 rounded-full bg-[#f5f0eb] flex items-center justify-center flex-shrink-0">
+                                {removeConnection.isPending ? (
+                                    <div className="w-4 h-4 border-2 border-[#453933] border-t-transparent rounded-full animate-spin" />
+                                ) : (
+                                    <XCircle size={20} className="text-[#453933]" strokeWidth={1.5} />
+                                )}
+                            </div>
+                            <span className="text-[16px] font-sans text-[#181412]">
+                                Cancel request
+                            </span>
+                        </button>
+                        <div className="h-px bg-[#f0ebe6] mx-0" />
+                    </>
+                );
+
+            case "pending_received":
+                return (
+                    <>
+                        <button
+                            onClick={() => {
+                                // For pending_received, we'd need to accept the request
+                                // This would require the request ID, which we don't have here
+                                // For now, show a message or handle differently
+                                onClose();
+                            }}
+                            disabled={isPending}
+                            className="flex items-center gap-4 w-full py-4 text-left disabled:opacity-50"
+                        >
+                            <div className="w-10 h-10 rounded-full bg-[#e8f5e9] flex items-center justify-center flex-shrink-0">
+                                <Check size={20} className="text-[#2e7d32]" strokeWidth={1.5} />
+                            </div>
+                            <span className="text-[16px] font-sans text-[#181412]">
+                                Accept request
+                            </span>
+                        </button>
+                        <div className="h-px bg-[#f0ebe6] mx-0" />
+                        <button
+                            onClick={() => {
+                                // For declining, we'd need the request ID
+                                onClose();
+                            }}
+                            disabled={isPending}
+                            className="flex items-center gap-4 w-full py-4 text-left disabled:opacity-50"
+                        >
+                            <div className="w-10 h-10 rounded-full bg-[#ffebee] flex items-center justify-center flex-shrink-0">
+                                <X size={20} className="text-[#c62828]" strokeWidth={1.5} />
+                            </div>
+                            <span className="text-[16px] font-sans text-[#181412]">
+                                Decline request
+                            </span>
+                        </button>
+                        <div className="h-px bg-[#f0ebe6] mx-0" />
+                    </>
+                );
+
+            default:
+                return null;
+        }
+    };
 
     return (
         <AnimatePresence>
@@ -60,24 +197,7 @@ export function ConnectionActionsSheet({ isOpen, onClose, userId, userName, onAc
                         </div>
 
                         <div className="px-5 pb-6 pt-2">
-                            <button
-                                onClick={handleRemove}
-                                disabled={isPending}
-                                className="flex items-center gap-4 w-full py-4 text-left disabled:opacity-50"
-                            >
-                                <div className="w-10 h-10 rounded-full bg-[#f5f0eb] flex items-center justify-center flex-shrink-0">
-                                    {removeConnection.isPending ? (
-                                        <div className="w-4 h-4 border-2 border-[#453933] border-t-transparent rounded-full animate-spin" />
-                                    ) : (
-                                        <UserMinus size={20} className="text-[#453933]" strokeWidth={1.5} />
-                                    )}
-                                </div>
-                                <span className="text-[16px] font-sans text-[#181412]">
-                                    Remove connection
-                                </span>
-                            </button>
-
-                            <div className="h-px bg-[#f0ebe6] mx-0" />
+                            {renderActions()}
 
                             <button
                                 onClick={handleBlock}

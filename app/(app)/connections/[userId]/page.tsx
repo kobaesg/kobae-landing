@@ -323,6 +323,7 @@ export default function ConnectionProfilePage() {
                 onClose={() => setShowActionsSheet(false)}
                 userId={userId}
                 userName={profile.first_name}
+                connectionStatus={(profile.connection_status as "none" | "pending_sent" | "pending_received" | "connected") || "none"}
                 onActionComplete={handleActionComplete}
             />
         </div>
