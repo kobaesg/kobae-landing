@@ -15,17 +15,11 @@ const ForceGraph2D = dynamic(() => import("react-force-graph-2d"), {
     ),
 });
 
-// Archetype color mapping
-const ARCHETYPE_COLORS: Record<string, string> = {
-    "The Anchor": "#3B82F6", // blue
-    "The Diplomat": "#10B981", // emerald
-    "The Catalyst": "#F59E0B", // amber
-    "The Visionary": "#8B5CF6", // violet
-    "The Strategist": "#EF4444", // red
-    "The Harmonizer": "#EC4899", // pink
-    "The Pioneer": "#F97316", // orange
-    "The Sage": "#6366F1", // indigo
-    default: "#6B7280", // gray
+// Node color mapping by degree
+const NODE_COLORS = {
+    self: "#7C3AED", // Purple for self (degree 0)
+    connection: "#9CA3AF", // gray-400 for direct connections (degree 1)
+    friendOfFriend: "#D1D5DB", // gray-300 for friends of friends (degree 2+)
 };
 
 // Extended node type for force graph internal use
@@ -52,24 +46,36 @@ export function NodeGraph({ data, width = 400, height = 500 }: NodeGraphProps) {
     const graphRef = useRef<any>(null);
     const [hoveredNode, setHoveredNode] = useState<ForceGraphNode | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
-    const [dimensions, setDimensions] = useState({ width, height });
+    const [dimensions, setDimensions] = useState<{ width: number; height: number } | null>(null);
+    const [isReady, setIsReady] = useState(false);
 
-    // Update dimensions on resize
+    // Update dimensions on resize and initial mount
     useEffect(() => {
         const updateDimensions = () => {
             if (containerRef.current) {
                 const rect = containerRef.current.getBoundingClientRect();
-                setDimensions({
-                    width: rect.width || width,
-                    height: rect.height || height,
-                });
+                // Only update if we have valid dimensions
+                if (rect.width > 0 && rect.height > 0) {
+                    setDimensions({
+                        width: rect.width,
+                        height: rect.height,
+                    });
+                    setIsReady(true);
+                }
             }
         };
 
-        updateDimensions();
+        // Use requestAnimationFrame to ensure layout is complete
+        const rafId = requestAnimationFrame(() => {
+            updateDimensions();
+        });
+
         window.addEventListener("resize", updateDimensions);
-        return () => window.removeEventListener("resize", updateDimensions);
-    }, [width, height]);
+        return () => {
+            cancelAnimationFrame(rafId);
+            window.removeEventListener("resize", updateDimensions);
+        };
+    }, []);
 
     // Transform data for force graph
     const graphData = useMemo(() => {
@@ -108,8 +114,11 @@ export function NodeGraph({ data, width = 400, height = 500 }: NodeGraphProps) {
         });
     }, [graphData.nodes]);
 
-    // Configure forces and center graph on load
+    // Configure forces and center graph on load - only after dimensions are ready
     useEffect(() => {
+        // Don't configure forces until we have valid dimensions
+        if (!isReady || !dimensions) return;
+
         // Add delay to ensure ForceGraph2D is fully mounted before configuring forces
         const configureForces = () => {
             if (graphRef.current) {
@@ -138,12 +147,13 @@ export function NodeGraph({ data, width = 400, height = 500 }: NodeGraphProps) {
         const timer = setTimeout(configureForces, 100);
         
         return () => clearTimeout(timer);
-    }, [graphData]);
+    }, [graphData, isReady, dimensions]);
 
-    // Get node color based on archetype
+    // Get node color based on degree
     const getNodeColor = useCallback((node: ForceGraphNode) => {
-        if (node.degree === 0) return "#7C3AED"; // Purple for self
-        return ARCHETYPE_COLORS[node.archetype || ""] || ARCHETYPE_COLORS.default;
+        if (node.degree === 0) return NODE_COLORS.self; // Purple for self
+        if (node.degree === 1) return NODE_COLORS.connection; // Medium gray for direct connections
+        return NODE_COLORS.friendOfFriend; // Light gray for friends of friends
     }, []);
 
     // Get node size based on degree
@@ -270,6 +280,17 @@ export function NodeGraph({ data, width = 400, height = 500 }: NodeGraphProps) {
         },
         []
     );
+
+    // Show loading state until dimensions are ready
+    if (!isReady || !dimensions) {
+        return (
+            <div ref={containerRef} className="absolute inset-0">
+                <div className="flex items-center justify-center h-full">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div ref={containerRef} className="absolute inset-0">
