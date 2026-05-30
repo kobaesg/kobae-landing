@@ -54,11 +54,15 @@ export default function SearchUsersPage() {
                 }
             }
 
-            // Show success message even if some requests failed
-            // This prevents users from getting logged out
-            setSuccessCount(successfulRequests);
-            setSentSuccess(true);
-            setTimeout(() => router.back(), 1500);
+            // Only show success message if at least one request succeeded
+            if (successfulRequests > 0) {
+                setSuccessCount(successfulRequests);
+                setSentSuccess(true);
+                setTimeout(() => router.back(), 1500);
+            } else {
+                // If all requests failed, just go back without showing success screen
+                router.back();
+            }
         } catch (error) {
             // If there's a catastrophic error, just go back
             console.error("Error sending requests:", error);
