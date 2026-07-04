@@ -166,7 +166,7 @@ function ResetPasswordContent() {
                 </StaggerContainer>
 
                 <BottomButton
-                    type="submit"
+                    onClick={handleSubmit(onSubmit)}
                     disabled={!isValid || !token}
                     loading={resetPassword.isPending}
                 >

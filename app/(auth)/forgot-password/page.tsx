@@ -110,7 +110,7 @@ export default function ForgotPasswordPage() {
                 </StaggerContainer>
 
                 <BottomButton
-                    type="submit"
+                    onClick={handleSubmit(onSubmit)}
                     disabled={!isValid}
                     loading={forgotPassword.isPending}
                 >
