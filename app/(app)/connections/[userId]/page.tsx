@@ -22,6 +22,7 @@ export default function ConnectionProfilePage() {
     const [showMutualsSheet, setShowMutualsSheet] = useState(false);
     const [showKodesSheet, setShowKodesSheet] = useState(false);
     const [showActionsSheet, setShowActionsSheet] = useState(false);
+    const [kodeExpanded, setKodeExpanded] = useState(false);
 
     const handleActionComplete = useCallback(() => {
         router.back();
@@ -112,9 +113,15 @@ export default function ConnectionProfilePage() {
                             <p className="font-serif font-bold text-[24px] text-[#181412] leading-snug mb-1">
                                 {profile.kode.archetype}
                             </p>
-                            <p className="text-[14px] font-sans text-[#715e55] leading-relaxed mb-2">
+                            <p className={`text-[14px] font-sans text-[#715e55] leading-relaxed mb-1 ${!kodeExpanded ? "line-clamp-3" : ""}`}>
                                 {profile.kode.description}
                             </p>
+                            <button
+                                onClick={() => setKodeExpanded((v) => !v)}
+                                className="text-[13px] font-sans font-medium text-[#d8602e] mb-2"
+                            >
+                                {kodeExpanded ? "See less" : "See more"}
+                            </button>
                             <button
                                 onClick={() => setShowKodesSheet(true)}
                                 className="text-[13px] font-sans font-medium text-[#d8602e] flex items-center gap-0.5"
