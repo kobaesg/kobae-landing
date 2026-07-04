@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useProfile } from "@/lib/api/hooks";
 import { useAuth } from "@/lib/auth/context";
 import { OnboardStep, STEP_ROUTE_MAP, ONBOARD_STEP_ORDER } from "@/lib/api/types";
+import { ensureValidAccessToken } from "@/lib/api/client";
 
 /**
  * Returns the correct route for a given onboard step.
@@ -35,6 +36,14 @@ export function useOnboardingGuard(requiredStep: OnboardStep) {
     const router = useRouter();
     const { isAuthenticated, isLoading: authLoading } = useAuth();
     const { data: profileData, isLoading: profileLoading } = useProfile(isAuthenticated);
+
+    // Proactively refresh the access token every 10 minutes so long-form
+    // onboarding pages (bio, questionnaire) never hit a silent expiry mid-submit.
+    useEffect(() => {
+        if (!isAuthenticated) return;
+        const id = setInterval(() => { ensureValidAccessToken(); }, 10 * 60 * 1000);
+        return () => clearInterval(id);
+    }, [isAuthenticated]);
 
     useEffect(() => {
         if (authLoading || profileLoading) return;

@@ -9,6 +9,7 @@ import {
 } from "@/components/onboarding";
 import { useOnboardingGuard } from "@/lib/onboarding/guard";
 import { usePrompts, useUpdatePrompts, useUpdateBio } from "@/lib/api/hooks";
+import { ensureValidAccessToken } from "@/lib/api/client";
 import { useOnboardingDraft } from "@/lib/onboarding/store";
 import { StaggerContainer, StaggerItem } from "@/components/onboarding/animations";
 
@@ -100,6 +101,7 @@ export default function BioPage() {
 
     const handleSubmit = async () => {
         try {
+            await ensureValidAccessToken();
             // Save prompts
             if (filledPrompts.length > 0) {
                 const promptData = filledPrompts.map((id) => ({

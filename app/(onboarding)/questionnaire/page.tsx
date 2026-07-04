@@ -15,6 +15,7 @@ import {
     useBulkSubmitAnswers,
     useCalculateKode,
 } from "@/lib/api/hooks";
+import { ensureValidAccessToken } from "@/lib/api/client";
 import type { Question } from "@/lib/api/types";
 import { useOnboardingDraft } from "@/lib/onboarding/store";
 import { PageTransition, FadeIn } from "@/components/onboarding/animations";
@@ -118,6 +119,7 @@ export default function QuestionnairePage() {
 
         // Final section — submit all answers
         try {
+            await ensureValidAccessToken();
             const answerPayload = Object.entries(seededAnswers).map(
                 ([qId, answer]) => ({
                     question_id: parseInt(qId),
