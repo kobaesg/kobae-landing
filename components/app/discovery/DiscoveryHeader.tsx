@@ -1,5 +1,5 @@
 "use client";
-import { Bell } from "lucide-react";
+import { Bell, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useUnreadCount } from "@/lib/api/hooks/use-notifications";
 
@@ -11,7 +11,13 @@ export function DiscoveryHeader({ title = "Today's Connection" }: Props) {
 
     return (
         <div className="flex items-center px-5 pt-6 pb-4 relative">
-            <div className="w-10" />
+            <button
+                onClick={() => router.push("/add-connection")}
+                className="w-9 h-9 flex items-center justify-center rounded-full bg-[#d8602e] hover:bg-[#c55528] shadow-[0_2px_8px_0_rgba(216,96,46,0.35)] transition-colors"
+                aria-label="Add connection"
+            >
+                <Plus size={18} className="text-white" strokeWidth={2.5} />
+            </button>
             <h1 className="flex-1 text-center font-serif font-semibold text-[24px] text-[#181412]">{title}</h1>
             <button
                 onClick={() => router.push("/notifications")}

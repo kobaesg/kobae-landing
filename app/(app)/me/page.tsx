@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Settings, ChevronRight, LogOut, Pencil, Users, QrCode, Plus, User } from "lucide-react";
+import { Settings, ChevronRight, LogOut, Pencil, Users, QrCode, User } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/lib/auth/context";
 import {
@@ -130,14 +130,8 @@ export default function MyProfilePage() {
                 transition={{ duration: 0.3 }}
                 className="sticky top-0 z-30 bg-[#f8f7f6]/95 backdrop-blur border-b border-[#e8e0da] px-4 md:px-10 h-14 flex items-center justify-between"
             >
-                {/* Left: add connection button */}
-                <button
-                    onClick={() => router.push("/add-connection")}
-                    className="w-9 h-9 flex items-center justify-center rounded-full bg-[#d8602e] hover:bg-[#c55528] shadow-[0_2px_8px_0_rgba(216,96,46,0.35)] transition-colors"
-                    aria-label="Add connection"
-                >
-                    <Plus size={18} className="text-white" strokeWidth={2.5} />
-                </button>
+                {/* Left: spacing */}
+                <div className="w-9" />
 
                 {/* Center: title */}
                 <h1 className="absolute left-1/2 -translate-x-1/2 font-serif font-semibold text-[20px] text-[#181412]">My Profile</h1>
