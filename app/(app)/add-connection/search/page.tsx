@@ -54,11 +54,13 @@ export default function SearchUsersPage() {
                 }
             }
 
-            // Show success message even if some requests failed
-            // This prevents users from getting logged out
-            setSuccessCount(successfulRequests);
-            setSentSuccess(true);
-            setTimeout(() => router.back(), 1500);
+            if (successfulRequests > 0) {
+                setSuccessCount(successfulRequests);
+                setSentSuccess(true);
+                setTimeout(() => router.back(), 1500);
+            } else {
+                router.back();
+            }
         } catch (error) {
             // If there's a catastrophic error, just go back
             console.error("Error sending requests:", error);
@@ -75,7 +77,7 @@ export default function SearchUsersPage() {
     const subtext = (user: UserSearchResult) =>
         user.headline || user.occupation || "";
 
-    if (sentSuccess) {
+    if (sentSuccess && successCount > 0) {
         return (
             <div className="min-h-dvh bg-[#f8f7f6] flex flex-col items-center justify-center gap-4">
                 <motion.div
@@ -86,7 +88,7 @@ export default function SearchUsersPage() {
                     <Check size={28} className="text-white" strokeWidth={2.5} />
                 </motion.div>
                 <p className="font-serif font-semibold text-[22px] text-[#181412]">
-                    {successCount === 1 ? "Request sent!" : `${successCount} request${successCount !== 1 ? "s" : ""} sent!`}
+                    {successCount === 1 ? "Request sent!" : `${successCount} requests sent!`}
                 </p>
             </div>
         );

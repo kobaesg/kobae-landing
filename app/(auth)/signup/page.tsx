@@ -218,7 +218,7 @@ export default function SignupPage() {
                 </StaggerContainer>
 
                 <BottomButton
-                    type="submit"
+                    onClick={handleSubmit(onSubmit)}
                     disabled={!isValid}
                     loading={signup.isPending}
                 >

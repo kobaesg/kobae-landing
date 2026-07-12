@@ -177,7 +177,7 @@ export default function LoginPage() {
                 </StaggerContainer>
 
                 <BottomButton
-                    type="submit"
+                    onClick={handleSubmit(onSubmit)}
                     disabled={!isValid}
                     loading={login.isPending}
                 >

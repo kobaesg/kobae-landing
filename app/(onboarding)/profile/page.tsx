@@ -181,7 +181,7 @@ export default function ProfilePage() {
                 )}
 
                 <BottomButton
-                    type="submit"
+                    onClick={handleSubmit(onSubmit)}
                     disabled={!isValid}
                     loading={createProfile.isPending}
                 >
