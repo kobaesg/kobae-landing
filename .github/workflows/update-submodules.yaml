@@ -19,16 +19,34 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          submodules: recursive
+          submodules: false  # Don't auto-checkout, we'll handle this manually
           fetch-depth: 0
-          token: ${{ secrets.SUBMODULE_PAT || secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check for SUBMODULE_PAT secret
+        id: check-secret
+        run: |
+          if [ -n "${{ secrets.SUBMODULE_PAT }}" ]; then
+            echo "has_secret=true" >> $GITHUB_OUTPUT
+            echo "Private submodule access token is available"
+          else
+            echo "has_secret=false" >> $GITHUB_OUTPUT
+            echo "WARNING: SUBMODULE_PAT secret not found. Private submodules will not be updated."
+          fi
 
       - name: Configure git for private submodules
+        if: steps.check-secret.outputs.has_secret == 'true'
         run: |
-          git config --global url."https://x-access-token:${{ secrets.SUBMODULE_PAT || secrets.GITHUB_TOKEN }}@github.com/".insteadOf "https://github.com/"
+          git config --global url."https://x-access-token:${{ secrets.SUBMODULE_PAT }}@github.com/".insteadOf "https://github.com/"
+
+      - name: Initialize and update submodules
+        if: steps.check-secret.outputs.has_secret == 'true'
+        run: |
+          git submodule update --init --recursive
 
       - name: Update submodules
         id: update
+        if: steps.check-secret.outputs.has_secret == 'true'
         run: |
           # Store current submodule commit
           git submodule status > /tmp/before.txt
@@ -50,7 +68,7 @@ jobs:
           fi
 
       - name: Create Pull Request
-        if: steps.update.outputs.changes == 'true'
+        if: steps.check-secret.outputs.has_secret == 'true' && steps.update.outputs.changes == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
           commit-message: |
